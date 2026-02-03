@@ -65,5 +65,49 @@
             "author": "Steve Jobs",
             "company": "Acme Inc."
         }
+    },
+    "trips": {
+        "validation": {
+            "title_min_length": "Trip title must be at least 3 characters",
+            "destination_required": "Destination is required",
+            "start_date_required": "Start date is required",
+            "end_date_required": "End date is required",
+            "end_date_before_start": "End date must be after start date"
+        },
+        "errors": {
+            "create_failed": "Failed to create trip. Please try again."
+        },
+        "fields": {
+            "title": "Trip Title",
+            "destination": "Destination",
+            "start_date": "Start Date",
+            "end_date": "End Date",
+            "budget": "Budget",
+            "travelers": "Travelers",
+            "description": "Description"
+        },
+        "placeholders": {
+            "title": "e.g., Summer Adventure in Japan",
+            "destination": "e.g., Tokyo, Japan",
+            "budget": "e.g., $5,000",
+            "travelers": "e.g., 2 people",
+            "description": "Tell us about your trip plans..."
+        },
+        "create": {
+            "title": "Plan Your Next",
+            "subtitle": "Journey",
+            "description": "Every great adventure starts with a plan. Let's create something unforgettable together.",
+            "badge": "New Adventure",
+            "back_button": "Back to Dashboard",
+            "submit_button": "Create Trip",
+            "submitting": "Creating Trip...",
+            "optional": "Optional",
+            "tips_title": "Planning Tips",
+            "tips": {
+                "tip1": "Choose a memorable title that captures the essence of your trip",
+                "tip2": "Be specific with your destination for better recommendations",
+                "tip3": "Set realistic dates and budget to help with planning"
+            }
+        }
     }
 }

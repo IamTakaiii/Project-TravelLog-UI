@@ -25,6 +25,9 @@ const LayoutInvitationsLazyRouteImport = createFileRoute(
   '/_layout/invitations',
 )()
 const LayoutDashboardLazyRouteImport = createFileRoute('/_layout/dashboard')()
+const LayoutTripsCreateLazyRouteImport = createFileRoute(
+  '/_layout/trips/create',
+)()
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -88,6 +91,13 @@ const LayoutDashboardLazyRoute = LayoutDashboardLazyRouteImport.update({
 } as any).lazy(() =>
   import('./routes/_layout.dashboard.lazy').then((d) => d.Route),
 )
+const LayoutTripsCreateLazyRoute = LayoutTripsCreateLazyRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => LayoutTripsLazyRoute,
+} as any).lazy(() =>
+  import('./routes/_layout.trips.create.lazy').then((d) => d.Route),
+)
 
 export interface FileRoutesByFullPath {
   '/$': typeof SplatRoute
@@ -99,7 +109,8 @@ export interface FileRoutesByFullPath {
   '/invitations': typeof LayoutInvitationsLazyRoute
   '/profile': typeof LayoutProfileLazyRoute
   '/settings': typeof LayoutSettingsLazyRoute
-  '/trips': typeof LayoutTripsLazyRoute
+  '/trips': typeof LayoutTripsLazyRouteWithChildren
+  '/trips/create': typeof LayoutTripsCreateLazyRoute
 }
 export interface FileRoutesByTo {
   '/$': typeof SplatRoute
@@ -110,8 +121,9 @@ export interface FileRoutesByTo {
   '/invitations': typeof LayoutInvitationsLazyRoute
   '/profile': typeof LayoutProfileLazyRoute
   '/settings': typeof LayoutSettingsLazyRoute
-  '/trips': typeof LayoutTripsLazyRoute
+  '/trips': typeof LayoutTripsLazyRouteWithChildren
   '/': typeof LayoutIndexRoute
+  '/trips/create': typeof LayoutTripsCreateLazyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -124,8 +136,9 @@ export interface FileRoutesById {
   '/_layout/invitations': typeof LayoutInvitationsLazyRoute
   '/_layout/profile': typeof LayoutProfileLazyRoute
   '/_layout/settings': typeof LayoutSettingsLazyRoute
-  '/_layout/trips': typeof LayoutTripsLazyRoute
+  '/_layout/trips': typeof LayoutTripsLazyRouteWithChildren
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/trips/create': typeof LayoutTripsCreateLazyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -140,6 +153,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/settings'
     | '/trips'
+    | '/trips/create'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/$'
@@ -152,6 +166,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/trips'
     | '/'
+    | '/trips/create'
   id:
     | '__root__'
     | '/$'
@@ -165,6 +180,7 @@ export interface FileRouteTypes {
     | '/_layout/settings'
     | '/_layout/trips'
     | '/_layout/'
+    | '/_layout/trips/create'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -254,15 +270,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutDashboardLazyRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/trips/create': {
+      id: '/_layout/trips/create'
+      path: '/create'
+      fullPath: '/trips/create'
+      preLoaderRoute: typeof LayoutTripsCreateLazyRouteImport
+      parentRoute: typeof LayoutTripsLazyRoute
+    }
   }
 }
+
+interface LayoutTripsLazyRouteChildren {
+  LayoutTripsCreateLazyRoute: typeof LayoutTripsCreateLazyRoute
+}
+
+const LayoutTripsLazyRouteChildren: LayoutTripsLazyRouteChildren = {
+  LayoutTripsCreateLazyRoute: LayoutTripsCreateLazyRoute,
+}
+
+const LayoutTripsLazyRouteWithChildren = LayoutTripsLazyRoute._addFileChildren(
+  LayoutTripsLazyRouteChildren,
+)
 
 interface LayoutRouteChildren {
   LayoutDashboardLazyRoute: typeof LayoutDashboardLazyRoute
   LayoutInvitationsLazyRoute: typeof LayoutInvitationsLazyRoute
   LayoutProfileLazyRoute: typeof LayoutProfileLazyRoute
   LayoutSettingsLazyRoute: typeof LayoutSettingsLazyRoute
-  LayoutTripsLazyRoute: typeof LayoutTripsLazyRoute
+  LayoutTripsLazyRoute: typeof LayoutTripsLazyRouteWithChildren
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
@@ -271,7 +306,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutInvitationsLazyRoute: LayoutInvitationsLazyRoute,
   LayoutProfileLazyRoute: LayoutProfileLazyRoute,
   LayoutSettingsLazyRoute: LayoutSettingsLazyRoute,
-  LayoutTripsLazyRoute: LayoutTripsLazyRoute,
+  LayoutTripsLazyRoute: LayoutTripsLazyRouteWithChildren,
   LayoutIndexRoute: LayoutIndexRoute,
 }
 

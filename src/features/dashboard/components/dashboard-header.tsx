@@ -33,7 +33,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                     </p>
 
                     <div className="pt-4 flex flex-wrap gap-4 animate-in slide-in-from-bottom-4 duration-500 delay-400">
-                        <Link to="/trips">
+                        <Link to="/trips/create">
                             <Button size="lg" className="rounded-full px-8 shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 transition-all">
                                 <Plus className="mr-2 size-5" /> Plan a New Trip
                             </Button>
