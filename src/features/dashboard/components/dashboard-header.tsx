@@ -38,7 +38,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                                 <Plus className="mr-2 size-5" /> Plan a New Trip
                             </Button>
                         </Link>
-                        <Button size="lg" variant="outline" className="rounded-full px-8 bg-background/50 backdrop-blur-sm border-primary/20 hover:bg-background/80">
+                        <Button size="lg" variant="outline" className="rounded-full px-8 bg-background/50 backdrop-blur-sm border-primary/30 dark:border-primary/20 hover:bg-background/80 hover:border-primary/50 shadow-sm hover:shadow-md transition-all">
                             <Search className="mr-2 size-4" /> Explore Destinations
                         </Button>
                     </div>
