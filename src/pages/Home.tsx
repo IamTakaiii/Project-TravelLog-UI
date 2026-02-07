@@ -1,11 +1,8 @@
-import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Map, ArrowRight } from "lucide-react";
 
 export const Home = () => {
-	const { t } = useTranslation();
-
 	return (
 		<div className="flex flex-col items-center justify-center min-h-[80vh] text-center space-y-6 p-4">
 			<div className="p-4 rounded-full bg-primary/10 animate-in fade-in zoom-in duration-500">
