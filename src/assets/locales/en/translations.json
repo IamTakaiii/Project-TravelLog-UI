@@ -111,6 +111,14 @@
             "travelers": "Travelers",
             "description": "Description"
         },
+        "destination_types": {
+            "unknown": "Select Type",
+            "country": "Country",
+            "city": "City",
+            "province": "Province",
+            "island": "Island",
+            "other": "Other"
+        },
         "placeholders": {
             "title": "e.g., Summer Adventure in Japan",
             "destination": "e.g., Tokyo, Japan",
@@ -133,6 +141,15 @@
                 "tip2": "Be specific with your destination for better recommendations",
                 "tip3": "Set realistic dates and budget to help with planning"
             }
+        },
+        "edit": {
+            "title": "Edit Trip",
+            "subtitle": "Details",
+            "description": "Update your trip details, dates, and plans.",
+            "badge": "Edit Mode",
+            "back_to_trip": "Back to Trip",
+            "submit_button": "Save Changes",
+            "submitting": "Saving Changes..."
         },
         "list": {
             "title": "Your",

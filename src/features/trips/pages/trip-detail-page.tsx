@@ -1,5 +1,5 @@
-import { Link, useParams } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link, useParams, useNavigate } from "@tanstack/react-router";
+import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
 	ArrowLeft,
 	Calendar,
@@ -9,10 +9,12 @@ import {
 	Edit,
 	Trash2,
 	Share2,
+	Loader2,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { tripQueryOptions } from "../queries/trips-queries";
+import { tripsApi } from "../api/trips-api";
+import { tripQueryOptions, tripsQueryOptions } from "../queries/trips-queries";
 import { motion, type Variants } from "framer-motion";
 import {
 	formatDate,
@@ -20,6 +22,20 @@ import {
 	calculateDuration,
 	getStatusConfig,
 } from "../utils/trip-utils";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
+import { useTranslateError } from "@/hooks/use-translate-error";
+import { toast } from "sonner"; // Assuming sonner is used for toasts, or replace with appropriate toast lib
 
 const containerVariants: Variants = {
 	hidden: { opacity: 0 },
@@ -38,10 +54,30 @@ const itemVariants: Variants = {
 
 export function TripDetailPage() {
 	const { t } = useTranslation();
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const { translateError } = useTranslateError();
 	const params = useParams({ from: "/_layout/trips/$tripId" });
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
 	// Data is already prefetched by the route loader, so this will be instant
 	const { data: trip } = useSuspenseQuery(tripQueryOptions(params.tripId));
+
+	const deleteTripMutation = useMutation({
+		mutationFn: (id: string) => tripsApi.delete(id),
+		onSuccess: () => {
+			toast.success(t("Trip deleted successfully")); // Add translation key if needed
+			queryClient.invalidateQueries({ queryKey: tripsQueryOptions.queryKey });
+			navigate({ to: "/trips" });
+		},
+		onError: (error) => {
+			toast.error(translateError(error.message));
+		}
+	});
+
+	const handleDelete = () => {
+		deleteTripMutation.mutate(trip.id);
+	};
 
 	const statusConfig = getStatusConfig(trip.status);
 	const duration = calculateDuration(trip.startDate, trip.endDate);
@@ -91,20 +127,42 @@ export function TripDetailPage() {
 					>
 						<Share2 className="size-4" />
 					</Button>
-					<Button
-						variant="outline"
-						size="icon"
-						className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 hover:text-white"
-					>
-						<Edit className="size-4" />
-					</Button>
-					<Button
-						variant="outline"
-						size="icon"
-						className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-destructive/80 hover:text-white hover:border-destructive"
-					>
-						<Trash2 className="size-4" />
-					</Button>
+					<Link to={`/trips/${trip.id}/edit` as any}>
+						<Button
+							variant="outline"
+							size="icon"
+							className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 hover:text-white"
+						>
+							<Edit className="size-4" />
+						</Button>
+					</Link>
+
+					<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+						<AlertDialogTrigger asChild>
+							<Button
+								variant="outline"
+								size="icon"
+								className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-destructive/80 hover:text-white hover:border-destructive"
+							>
+								<Trash2 className="size-4" />
+							</Button>
+						</AlertDialogTrigger>
+						<AlertDialogContent>
+							<AlertDialogHeader>
+								<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+								<AlertDialogDescription>
+									This action cannot be undone. This will permanently delete your trip
+									and remove your data from our servers.
+								</AlertDialogDescription>
+							</AlertDialogHeader>
+							<AlertDialogFooter>
+								<AlertDialogCancel>Cancel</AlertDialogCancel>
+								<AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+									{deleteTripMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
+								</AlertDialogAction>
+							</AlertDialogFooter>
+						</AlertDialogContent>
+					</AlertDialog>
 				</div>
 
 				{/* Title Overlay */}

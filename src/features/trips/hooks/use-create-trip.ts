@@ -17,6 +17,7 @@ export function useCreateTrip() {
 		defaultValues: {
 			title: "",
 			destination: "",
+			destinationType: "unknown",
 			startDate: "",
 			endDate: "",
 			description: "",

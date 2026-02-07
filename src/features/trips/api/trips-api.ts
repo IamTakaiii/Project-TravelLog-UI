@@ -10,6 +10,7 @@ export interface Trip {
 	description: string | null;
 	coverImage: string | null;
 	destination: string | null;
+	destinationType?: string;
 	budget: string | null;
 	startDate: string;
 	endDate: string;
@@ -31,6 +32,7 @@ export interface CreateTripPayload {
 	description?: string;
 	coverImage?: string;
 	destination?: string;
+	destinationType?: string;
 	budget?: string;
 	startDate: string;
 	endDate: string;
@@ -62,6 +64,7 @@ export const tripsApi = {
 		if (data.description) payload.description = data.description;
 		if (data.coverImage) payload.coverImage = data.coverImage;
 		if (data.destination) payload.destination = data.destination;
+		if (data.destinationType) payload.destinationType = data.destinationType;
 		if (data.budget) payload.budget = data.budget;
 
 		const response = await fetch(`${API_URL}/api/v1/trips`, {
@@ -78,8 +81,8 @@ export const tripsApi = {
 			};
 			throw new Error(
 				errorData.error?.code ||
-					errorData.message ||
-					"trips.errors.create_failed"
+				errorData.message ||
+				"trips.errors.create_failed"
 			);
 		}
 
@@ -119,5 +122,51 @@ export const tripsApi = {
 
 		const result = (await response.json()) as ApiResponse<Trip>;
 		return result.data;
+	},
+
+	async update(id: string, data: Partial<CreateTripFormValues>): Promise<Trip> {
+		const headers = await getAuthHeaders();
+
+		const payload: Partial<CreateTripPayload> = {
+			...data,
+			startDate: data.startDate ? new Date(data.startDate).toISOString() : undefined,
+			endDate: data.endDate ? new Date(data.endDate).toISOString() : undefined,
+		};
+
+		const response = await fetch(`${API_URL}/api/v1/trips/${id}`, {
+			method: "PATCH",
+			headers,
+			credentials: "include",
+			body: JSON.stringify(payload),
+		});
+
+		if (!response.ok) {
+			const errorData = (await response.json().catch(() => ({}))) as {
+				error?: { code?: string };
+				message?: string;
+			};
+			throw new Error(
+				errorData.error?.code ||
+				errorData.message ||
+				"trips.errors.update_failed"
+			);
+		}
+
+		const result = (await response.json()) as ApiResponse<Trip>;
+		return result.data;
+	},
+
+	async delete(id: string): Promise<void> {
+		const headers = await getAuthHeaders();
+
+		const response = await fetch(`${API_URL}/api/v1/trips/${id}`, {
+			method: "DELETE",
+			headers,
+			credentials: "include",
+		});
+
+		if (!response.ok) {
+			throw new Error("trips.errors.delete_failed");
+		}
 	},
 };

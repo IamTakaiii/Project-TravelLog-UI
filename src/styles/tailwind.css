@@ -378,22 +378,27 @@
   /* FORCE OVERRIDE: Change accent hover background to primary/10 */
   .hover\:bg-accent:hover {
     background-color: oklch(from var(--primary) l c h / 0.1) !important;
+    color: var(--foreground) !important;
   }
 
   .focus\:bg-accent:focus {
     background-color: oklch(from var(--primary) l c h / 0.1) !important;
+    color: var(--foreground) !important;
   }
 
   .data-\[state\=open\]\:bg-accent[data-state="open"] {
     background-color: oklch(from var(--primary) l c h / 0.1) !important;
+    color: var(--foreground) !important;
   }
 
   .data-\[active\=true\]\:bg-accent[data-active="true"] {
     background-color: oklch(from var(--primary) l c h / 0.1) !important;
+    color: var(--foreground) !important;
   }
 
   .data-\[selected\=true\]\:bg-accent[data-selected="true"] {
     background-color: oklch(from var(--primary) l c h / 0.1) !important;
+    color: var(--foreground) !important;
   }
 }
 

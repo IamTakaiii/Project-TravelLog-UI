@@ -1,6 +1,5 @@
-import { createLazyFileRoute } from "@tanstack/react-router";
-import { TripDetailPage } from "@/features/trips/pages/trip-detail-page";
+import { createLazyFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute("/_layout/trips/$tripId")({
-	component: TripDetailPage,
+	component: Outlet,
 });

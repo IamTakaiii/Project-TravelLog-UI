@@ -30,6 +30,12 @@ const LayoutDashboardLazyRouteImport = createFileRoute('/_layout/dashboard')()
 const LayoutTripsCreateLazyRouteImport = createFileRoute(
   '/_layout/trips/create',
 )()
+const LayoutTripsTripIdIndexLazyRouteImport = createFileRoute(
+  '/_layout/trips/$tripId/',
+)()
+const LayoutTripsTripIdEditLazyRouteImport = createFileRoute(
+  '/_layout/trips/$tripId/edit',
+)()
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -114,6 +120,22 @@ const LayoutTripsTripIdRoute = LayoutTripsTripIdRouteImport.update({
 } as any).lazy(() =>
   import('./routes/_layout.trips.$tripId.lazy').then((d) => d.Route),
 )
+const LayoutTripsTripIdIndexLazyRoute =
+  LayoutTripsTripIdIndexLazyRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => LayoutTripsTripIdRoute,
+  } as any).lazy(() =>
+    import('./routes/_layout.trips.$tripId.index.lazy').then((d) => d.Route),
+  )
+const LayoutTripsTripIdEditLazyRoute =
+  LayoutTripsTripIdEditLazyRouteImport.update({
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => LayoutTripsTripIdRoute,
+  } as any).lazy(() =>
+    import('./routes/_layout.trips.$tripId.edit.lazy').then((d) => d.Route),
+  )
 
 export interface FileRoutesByFullPath {
   '/$': typeof SplatRoute
@@ -126,9 +148,11 @@ export interface FileRoutesByFullPath {
   '/profile': typeof LayoutProfileLazyRoute
   '/settings': typeof LayoutSettingsLazyRoute
   '/trips': typeof LayoutTripsLazyRouteWithChildren
-  '/trips/$tripId': typeof LayoutTripsTripIdRoute
+  '/trips/$tripId': typeof LayoutTripsTripIdRouteWithChildren
   '/trips/create': typeof LayoutTripsCreateLazyRoute
   '/trips/': typeof LayoutTripsIndexRoute
+  '/trips/$tripId/edit': typeof LayoutTripsTripIdEditLazyRoute
+  '/trips/$tripId/': typeof LayoutTripsTripIdIndexLazyRoute
 }
 export interface FileRoutesByTo {
   '/$': typeof SplatRoute
@@ -140,9 +164,10 @@ export interface FileRoutesByTo {
   '/profile': typeof LayoutProfileLazyRoute
   '/settings': typeof LayoutSettingsLazyRoute
   '/': typeof LayoutIndexRoute
-  '/trips/$tripId': typeof LayoutTripsTripIdRoute
   '/trips/create': typeof LayoutTripsCreateLazyRoute
   '/trips': typeof LayoutTripsIndexRoute
+  '/trips/$tripId/edit': typeof LayoutTripsTripIdEditLazyRoute
+  '/trips/$tripId': typeof LayoutTripsTripIdIndexLazyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -157,9 +182,11 @@ export interface FileRoutesById {
   '/_layout/settings': typeof LayoutSettingsLazyRoute
   '/_layout/trips': typeof LayoutTripsLazyRouteWithChildren
   '/_layout/': typeof LayoutIndexRoute
-  '/_layout/trips/$tripId': typeof LayoutTripsTripIdRoute
+  '/_layout/trips/$tripId': typeof LayoutTripsTripIdRouteWithChildren
   '/_layout/trips/create': typeof LayoutTripsCreateLazyRoute
   '/_layout/trips/': typeof LayoutTripsIndexRoute
+  '/_layout/trips/$tripId/edit': typeof LayoutTripsTripIdEditLazyRoute
+  '/_layout/trips/$tripId/': typeof LayoutTripsTripIdIndexLazyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -177,6 +204,8 @@ export interface FileRouteTypes {
     | '/trips/$tripId'
     | '/trips/create'
     | '/trips/'
+    | '/trips/$tripId/edit'
+    | '/trips/$tripId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/$'
@@ -188,9 +217,10 @@ export interface FileRouteTypes {
     | '/profile'
     | '/settings'
     | '/'
-    | '/trips/$tripId'
     | '/trips/create'
     | '/trips'
+    | '/trips/$tripId/edit'
+    | '/trips/$tripId'
   id:
     | '__root__'
     | '/$'
@@ -207,6 +237,8 @@ export interface FileRouteTypes {
     | '/_layout/trips/$tripId'
     | '/_layout/trips/create'
     | '/_layout/trips/'
+    | '/_layout/trips/$tripId/edit'
+    | '/_layout/trips/$tripId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -317,17 +349,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutTripsTripIdRouteImport
       parentRoute: typeof LayoutTripsLazyRoute
     }
+    '/_layout/trips/$tripId/': {
+      id: '/_layout/trips/$tripId/'
+      path: '/'
+      fullPath: '/trips/$tripId/'
+      preLoaderRoute: typeof LayoutTripsTripIdIndexLazyRouteImport
+      parentRoute: typeof LayoutTripsTripIdRoute
+    }
+    '/_layout/trips/$tripId/edit': {
+      id: '/_layout/trips/$tripId/edit'
+      path: '/edit'
+      fullPath: '/trips/$tripId/edit'
+      preLoaderRoute: typeof LayoutTripsTripIdEditLazyRouteImport
+      parentRoute: typeof LayoutTripsTripIdRoute
+    }
   }
 }
 
+interface LayoutTripsTripIdRouteChildren {
+  LayoutTripsTripIdEditLazyRoute: typeof LayoutTripsTripIdEditLazyRoute
+  LayoutTripsTripIdIndexLazyRoute: typeof LayoutTripsTripIdIndexLazyRoute
+}
+
+const LayoutTripsTripIdRouteChildren: LayoutTripsTripIdRouteChildren = {
+  LayoutTripsTripIdEditLazyRoute: LayoutTripsTripIdEditLazyRoute,
+  LayoutTripsTripIdIndexLazyRoute: LayoutTripsTripIdIndexLazyRoute,
+}
+
+const LayoutTripsTripIdRouteWithChildren =
+  LayoutTripsTripIdRoute._addFileChildren(LayoutTripsTripIdRouteChildren)
+
 interface LayoutTripsLazyRouteChildren {
-  LayoutTripsTripIdRoute: typeof LayoutTripsTripIdRoute
+  LayoutTripsTripIdRoute: typeof LayoutTripsTripIdRouteWithChildren
   LayoutTripsCreateLazyRoute: typeof LayoutTripsCreateLazyRoute
   LayoutTripsIndexRoute: typeof LayoutTripsIndexRoute
 }
 
 const LayoutTripsLazyRouteChildren: LayoutTripsLazyRouteChildren = {
-  LayoutTripsTripIdRoute: LayoutTripsTripIdRoute,
+  LayoutTripsTripIdRoute: LayoutTripsTripIdRouteWithChildren,
   LayoutTripsCreateLazyRoute: LayoutTripsCreateLazyRoute,
   LayoutTripsIndexRoute: LayoutTripsIndexRoute,
 }
