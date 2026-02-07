@@ -108,6 +108,17 @@
                 "tip2": "Be specific with your destination for better recommendations",
                 "tip3": "Set realistic dates and budget to help with planning"
             }
+        },
+        "list": {
+            "title": "Your",
+            "subtitle": "Adventures",
+            "description": "Browse and manage all your travel plans in one place.",
+            "badge": "My Trips",
+            "create_button": "New Trip",
+            "search_placeholder": "Search trips by title, destination...",
+            "empty_title": "No trips yet",
+            "empty_description": "Start your journey by creating your first trip. Plan, explore, and make unforgettable memories.",
+            "create_first_trip": "Create Your First Trip"
         }
     }
 }

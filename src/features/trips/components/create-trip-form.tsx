@@ -3,7 +3,6 @@ import {
 	Calendar,
 	FileText,
 	DollarSign,
-	Users,
 	Loader2,
 	Sparkles,
 	AlertCircle,
@@ -163,56 +162,28 @@ export function CreateTripForm() {
 					</div>
 				</div>
 
-				{/* Optional Fields */}
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-					{/* Budget */}
-					<div className="space-y-2">
-						<Label
-							htmlFor="budget"
-							className="text-sm font-semibold flex items-center gap-2"
-						>
-							<DollarSign className="size-4 text-muted-foreground" />
-							{t("trips.fields.budget")}{" "}
-							<span className="text-xs font-normal text-muted-foreground">
-								({t("trips.create.optional")})
-							</span>
-						</Label>
-						<div className="relative">
-							<DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-							<Input
-								id="budget"
-								placeholder={t("trips.placeholders.budget")}
-								type="text"
-								disabled={isLoading}
-								{...register("budget")}
-								className="pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors"
-							/>
-						</div>
-					</div>
-
-					{/* Number of Travelers */}
-					<div className="space-y-2">
-						<Label
-							htmlFor="travelers"
-							className="text-sm font-semibold flex items-center gap-2"
-						>
-							<Users className="size-4 text-muted-foreground" />
-							{t("trips.fields.travelers")}{" "}
-							<span className="text-xs font-normal text-muted-foreground">
-								({t("trips.create.optional")})
-							</span>
-						</Label>
-						<div className="relative">
-							<Users className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-							<Input
-								id="travelers"
-								placeholder={t("trips.placeholders.travelers")}
-								type="text"
-								disabled={isLoading}
-								{...register("travelers")}
-								className="pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors"
-							/>
-						</div>
+				{/* Budget */}
+				<div className="space-y-2">
+					<Label
+						htmlFor="budget"
+						className="text-sm font-semibold flex items-center gap-2"
+					>
+						<DollarSign className="size-4 text-muted-foreground" />
+						{t("trips.fields.budget")}{" "}
+						<span className="text-xs font-normal text-muted-foreground">
+							({t("trips.create.optional")})
+						</span>
+					</Label>
+					<div className="relative">
+						<DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+						<Input
+							id="budget"
+							placeholder={t("trips.placeholders.budget")}
+							type="text"
+							disabled={isLoading}
+							{...register("budget")}
+							className="pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors"
+						/>
 					</div>
 				</div>
 

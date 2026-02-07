@@ -1,8 +1,9 @@
-import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
+import { authQueryKeys } from "@/features/auth/queries/auth-queries";
 import {
 	type RegisterFormValues,
 	registerSchema,
@@ -10,8 +11,7 @@ import {
 
 export function useRegister() {
 	const navigate = useNavigate();
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const queryClient = useQueryClient();
 
 	const form = useForm<RegisterFormValues>({
 		resolver: zodResolver(registerSchema),
@@ -23,54 +23,52 @@ export function useRegister() {
 		},
 	});
 
-	async function onSubmit(data: RegisterFormValues) {
-		setIsLoading(true);
-		setError(null);
-		try {
-			const { error: signUpError } = await authClient.signUp.email({
+	const registerMutation = useMutation({
+		mutationFn: async (data: RegisterFormValues) => {
+			const { error } = await authClient.signUp.email({
 				email: data.email,
 				password: data.password,
 				name: data.name,
 			});
+			if (error) throw error;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: authQueryKeys.session });
+			navigate({ to: "/" });
+		},
+	});
 
-			if (signUpError) {
-				// Map error codes to user-friendly messages
-				const errorMessage = getErrorMessage(signUpError.code);
-				setError(errorMessage);
-			} else {
-				// Navigate to dashboard on success
-				navigate({ to: "/" });
-			}
-		} catch (err) {
-			console.error("Registration error:", err);
-			setError("An unexpected error occurred. Please try again.");
-		} finally {
-			setIsLoading(false);
-		}
+	const socialRegisterMutation = useMutation({
+		mutationFn: async (provider: "github" | "google") => {
+			const { error } = await authClient.signIn.social({
+				provider,
+				callbackURL: "/",
+			});
+			if (error) throw error;
+		},
+	});
+
+	async function onSubmit(data: RegisterFormValues) {
+		registerMutation.mutate(data);
 	}
 
 	const handleSocialSignUp = async (provider: "github" | "google") => {
-		setIsLoading(true);
-		setError(null);
-		try {
-			await authClient.signIn.social({
-				provider,
-				callbackURL: "/dashboard",
-			});
-		} catch (err) {
-			console.error("Social sign-up error:", err);
-			setError(`Failed to connect with ${provider}. Please try again.`);
-			setIsLoading(false);
-		}
+		socialRegisterMutation.mutate(provider);
 	};
+
+	const error = registerMutation.error || socialRegisterMutation.error;
+	const errorMessage = error ? getErrorMessage(error.message as any) : null;
 
 	return {
 		form,
-		isLoading,
-		error,
+		isLoading: registerMutation.isPending || socialRegisterMutation.isPending,
+		error: errorMessage,
 		onSubmit,
 		handleSocialSignUp,
-		clearError: () => setError(null),
+		clearError: () => {
+			registerMutation.reset();
+			socialRegisterMutation.reset();
+		},
 	};
 }
 

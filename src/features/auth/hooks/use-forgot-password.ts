@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import {
 	ForgotPasswordFormValues,
@@ -8,10 +8,6 @@ import {
 } from "../schemas/forgot-password-schema";
 
 export function useForgotPassword() {
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [isSuccess, setIsSuccess] = useState(false);
-
 	const form = useForm<ForgotPasswordFormValues>({
 		resolver: zodResolver(forgotPasswordSchema),
 		defaultValues: {
@@ -19,43 +15,32 @@ export function useForgotPassword() {
 		},
 	});
 
-	async function onSubmit(data: ForgotPasswordFormValues) {
-		setIsLoading(true);
-		setError(null);
-		setIsSuccess(false);
-
-		try {
-			const { error: forgotError } = await authClient.requestPasswordReset({
+	const forgotPasswordMutation = useMutation({
+		mutationFn: async (data: ForgotPasswordFormValues) => {
+			const { error } = await authClient.requestPasswordReset({
 				email: data.email,
 				redirectTo: "/reset-password",
 			});
+			if (error) throw error;
+		},
+	});
 
-			if (forgotError) {
-				setError(
-					forgotError.message || "auth.validation.forgot_password_error"
-				);
-			} else {
-				setIsSuccess(true);
-			}
-		} catch (err) {
-			console.error(err);
-			setError("auth.validation.unexpected_error");
-		} finally {
-			setIsLoading(false);
-		}
-	}
+	const onSubmit = (data: ForgotPasswordFormValues) => {
+		forgotPasswordMutation.mutate(data);
+	};
 
 	const resetForm = () => {
 		form.reset();
-		setError(null);
-		setIsSuccess(false);
+		forgotPasswordMutation.reset();
 	};
 
 	return {
 		form,
-		isLoading,
-		error,
-		isSuccess,
+		isLoading: forgotPasswordMutation.isPending,
+		error: forgotPasswordMutation.error
+			? forgotPasswordMutation.error.message
+			: null,
+		isSuccess: forgotPasswordMutation.isSuccess,
 		onSubmit,
 		resetForm,
 	};

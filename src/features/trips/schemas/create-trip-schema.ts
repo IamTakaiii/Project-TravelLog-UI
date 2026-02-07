@@ -3,9 +3,7 @@ import { z } from "zod";
 export const createTripSchema = z
 	.object({
 		title: z.string().min(3, { message: "trips.validation.title_min_length" }),
-		destination: z
-			.string()
-			.min(2, { message: "trips.validation.destination_required" }),
+		destination: z.string().optional(),
 		startDate: z
 			.string()
 			.min(1, { message: "trips.validation.start_date_required" }),
@@ -13,8 +11,8 @@ export const createTripSchema = z
 			.string()
 			.min(1, { message: "trips.validation.end_date_required" }),
 		description: z.string().optional(),
+		coverImage: z.string().optional(),
 		budget: z.string().optional(),
-		travelers: z.string().optional(),
 	})
 	.refine(
 		(data) => {
