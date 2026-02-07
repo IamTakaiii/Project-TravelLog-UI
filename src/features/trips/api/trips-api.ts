@@ -60,10 +60,39 @@ async function getAuthHeaders(): Promise<HeadersInit> {
 	return headers;
 }
 
+async function request<T>(
+	endpoint: string,
+	options: RequestInit = {}
+): Promise<T> {
+	const headers = await getAuthHeaders();
+
+	const response = await fetch(`${API_URL}${endpoint}`, {
+		...options,
+		headers: {
+			...headers,
+			...options.headers,
+		},
+		credentials: "include",
+	});
+
+	if (!response.ok) {
+		const errorData = (await response.json().catch(() => ({}))) as {
+			error?: { code?: string };
+			message?: string;
+		};
+		throw new Error(
+			errorData.error?.code ||
+				errorData.message ||
+				"trips.errors.request_failed"
+		);
+	}
+
+	const result = (await response.json()) as ApiResponse<T>;
+	return result.data;
+}
+
 export const tripsApi = {
 	async create(data: CreateTripFormValues): Promise<Trip> {
-		const headers = await getAuthHeaders();
-
 		const payload: CreateTripPayload = {
 			title: data.title,
 			startDate: new Date(data.startDate).toISOString(),
@@ -77,66 +106,25 @@ export const tripsApi = {
 		if (data.currency) payload.currency = data.currency;
 		if (data.budget) payload.budget = data.budget;
 
-		const response = await fetch(`${API_URL}/api/v1/trips`, {
+		return request<Trip>("/api/v1/trips", {
 			method: "POST",
-			headers,
-			credentials: "include",
 			body: JSON.stringify(payload),
 		});
-
-		if (!response.ok) {
-			const errorData = (await response.json().catch(() => ({}))) as {
-				error?: { code?: string };
-				message?: string;
-			};
-			throw new Error(
-				errorData.error?.code ||
-					errorData.message ||
-					"trips.errors.create_failed"
-			);
-		}
-
-		const result = (await response.json()) as ApiResponse<Trip>;
-		return result.data;
 	},
 
 	async getAll(): Promise<Trip[]> {
-		const headers = await getAuthHeaders();
-
-		const response = await fetch(`${API_URL}/api/v1/trips`, {
+		return request<Trip[]>("/api/v1/trips", {
 			method: "GET",
-			headers,
-			credentials: "include",
 		});
-
-		if (!response.ok) {
-			throw new Error("trips.errors.fetch_failed");
-		}
-
-		const result = (await response.json()) as ApiResponse<Trip[]>;
-		return result.data;
 	},
 
 	async getById(id: string): Promise<Trip> {
-		const headers = await getAuthHeaders();
-
-		const response = await fetch(`${API_URL}/api/v1/trips/${id}`, {
+		return request<Trip>(`/api/v1/trips/${id}`, {
 			method: "GET",
-			headers,
-			credentials: "include",
 		});
-
-		if (!response.ok) {
-			throw new Error("trips.errors.fetch_failed");
-		}
-
-		const result = (await response.json()) as ApiResponse<Trip>;
-		return result.data;
 	},
 
 	async update(id: string, data: Partial<CreateTripFormValues>): Promise<Trip> {
-		const headers = await getAuthHeaders();
-
 		const payload: Partial<CreateTripPayload> = {
 			...data,
 			startDate: data.startDate
@@ -145,40 +133,15 @@ export const tripsApi = {
 			endDate: data.endDate ? new Date(data.endDate).toISOString() : undefined,
 		};
 
-		const response = await fetch(`${API_URL}/api/v1/trips/${id}`, {
+		return request<Trip>(`/api/v1/trips/${id}`, {
 			method: "PATCH",
-			headers,
-			credentials: "include",
 			body: JSON.stringify(payload),
 		});
-
-		if (!response.ok) {
-			const errorData = (await response.json().catch(() => ({}))) as {
-				error?: { code?: string };
-				message?: string;
-			};
-			throw new Error(
-				errorData.error?.code ||
-					errorData.message ||
-					"trips.errors.update_failed"
-			);
-		}
-
-		const result = (await response.json()) as ApiResponse<Trip>;
-		return result.data;
 	},
 
 	async delete(id: string): Promise<void> {
-		const headers = await getAuthHeaders();
-
-		const response = await fetch(`${API_URL}/api/v1/trips/${id}`, {
+		await request<void>(`/api/v1/trips/${id}`, {
 			method: "DELETE",
-			headers,
-			credentials: "include",
 		});
-
-		if (!response.ok) {
-			throw new Error("trips.errors.delete_failed");
-		}
 	},
 };
