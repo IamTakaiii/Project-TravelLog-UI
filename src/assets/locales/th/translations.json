@@ -110,15 +110,15 @@
             "end_date": "วันที่สิ้นสุด",
             "budget": "งบประมาณ",
             "travelers": "จำนวนนักเดินทาง",
-            "description": "รายละเอียด",
-            "destination_types": {
-                "unknown": "เลือกประเภท",
-                "country": "ประเทศ",
-                "city": "เมือง",
-                "province": "จังหวัด",
-                "island": "เกาะ",
-                "other": "อื่นๆ"
-            }
+            "description": "รายละเอียด"
+        },
+        "destination_types": {
+            "unknown": "เลือกประเภท",
+            "country": "ประเทศ",
+            "city": "เมือง",
+            "province": "จังหวัด",
+            "island": "เกาะ",
+            "other": "อื่นๆ"
         },
         "placeholders": {
             "title": "เช่น การผจญภัยฤดูร้อนในญี่ปุ่น",
@@ -151,6 +151,10 @@
             "back_to_trip": "กลับไปหน้ารายละเอียดทริป",
             "submit_button": "บันทึกการเปลี่ยนแปลง",
             "submitting": "กำลังบันทึก..."
+        },
+        "detail": {
+            "type": "ประเภท",
+            "trip": "ทริป"
         },
         "list": {}
     }

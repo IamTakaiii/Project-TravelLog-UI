@@ -98,17 +98,17 @@ export function TripDetailPage() {
 			{/* Hero Section with Cover Image */}
 			<motion.div
 				variants={itemVariants}
-				className="relative h-[40vh] min-h-[400px] lg:h-[50vh] w-full overflow-hidden"
+				className="relative h-[40vh] min-h-[320px] lg:h-[45vh] w-full overflow-hidden"
 			>
 				<img
 					src={coverImage}
 					alt={trip.title}
 					className="w-full h-full object-cover"
 				/>
-				<div className="absolute inset-0 bg-gradient-to-t from-background via-black/40 to-black/30" />
+				<div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
 
 				{/* Navigation Bar */}
-				<div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-10">
+				<div className="absolute top-0 left-0 right-0 p-4 lg:p-6 flex justify-between items-start z-10">
 					<Link to="/trips">
 						<Button
 							variant="ghost"
@@ -172,14 +172,14 @@ export function TripDetailPage() {
 				</div>
 
 				{/* Title & Metadata Overlay */}
-				<div className="absolute bottom-0 left-0 right-0 p-6 lg:p-12">
+				<div className="absolute bottom-0 left-0 right-0 p-6 lg:px-12 lg:pb-8">
 					<div className="max-w-7xl mx-auto w-full">
-						<div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-							<div className="space-y-4 max-w-3xl">
-								<div className="flex flex-wrap items-center gap-3">
+						<div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+							<div className="space-y-3 max-w-3xl">
+								<div className="flex flex-wrap items-center gap-2">
 									<span
 										className={cn(
-											"inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 shadow-sm",
+											"inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 shadow-sm",
 											statusConfig.className.replace("bg-", "bg-opacity-80 bg-").replace("border-", "border-opacity-50 border-")
 										)}
 									>
@@ -191,36 +191,36 @@ export function TripDetailPage() {
 									</span>
 
 									{trip.destinationType && trip.destinationType !== 'unknown' && (
-										<span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/40 text-white backdrop-blur-md border border-white/10 text-xs font-bold uppercase tracking-wider shadow-sm">
+										<span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-black/40 text-white backdrop-blur-md border border-white/10 text-[11px] font-bold uppercase tracking-wider shadow-sm">
 											<Globe className="size-3" />
-											{trip.destinationType}
+											{t(`trips.destination_types.${trip.destinationType}`, { defaultValue: trip.destinationType })}
 										</span>
 									)}
 								</div>
 
-								<h1 className="text-4xl md:text-6xl lg:text-7xl font-[800] text-white tracking-tight drop-shadow-lg leading-tight">
+								<h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white tracking-tight drop-shadow-lg leading-tight">
 									{trip.title}
 								</h1>
 
 								{trip.destination && (
-									<div className="flex items-center gap-2 text-white/90 text-lg md:text-xl font-medium drop-shadow-md">
-										<MapPin className="size-5 text-primary" />
+									<div className="flex items-center gap-2 text-white/90 text-base font-medium drop-shadow-md">
+										<MapPin className="size-4 text-emerald-400" />
 										<span>{trip.destination}</span>
 									</div>
 								)}
 							</div>
 
 							{/* Author/Collaborators Placeholder */}
-							<div className="hidden md:flex flex-col items-end gap-2">
-								<div className="flex -space-x-3">
-									<div className="size-10 rounded-full border-2 border-background bg-muted flex items-center justify-center text-xs font-bold" title="You">
+							<div className="hidden md:flex items-center gap-3 bg-black/30 backdrop-blur-md rounded-full px-4 py-2 border border-white/10">
+								<div className="flex -space-x-2">
+									<div className="size-8 rounded-full border-2 border-white/20 bg-white/20 flex items-center justify-center text-[10px] font-bold text-white" title="You">
 										ME
 									</div>
-									<div className="size-10 rounded-full border-2 border-background bg-muted/80 flex items-center justify-center text-xs">
+									<div className="size-8 rounded-full border-2 border-white/20 bg-white/10 flex items-center justify-center text-xs text-white/70 hover:bg-white/20 transition-colors cursor-pointer">
 										+
 									</div>
 								</div>
-								<span className="text-xs text-white/70 font-medium">Trip Members</span>
+								<span className="text-xs text-white/70 font-medium">Members</span>
 							</div>
 						</div>
 					</div>
@@ -228,62 +228,64 @@ export function TripDetailPage() {
 			</motion.div>
 
 			{/* Main Content Layout */}
-			<div className="max-w-7xl mx-auto px-6 lg:px-12 -mt-12 relative z-10">
+			<div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
 
 				{/* Stats Grid */}
 				<motion.div
 					variants={itemVariants}
-					className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12 shadow-xl shadow-black/5 rounded-3xl"
+					className="grid grid-cols-2 lg:grid-cols-4 gap-4 my-8"
 				>
 					{/* Date Card */}
-					<div className="bg-card hover:bg-accent/5 transition-colors rounded-2xl lg:rounded-l-3xl lg:rounded-r-none p-6 border border-border/50 flex flex-col items-center text-center justify-center group">
+					<div className="bg-card hover:bg-primary/5 transition-all duration-200 p-5 flex flex-col items-center text-center justify-center group rounded-xl border border-border/50 shadow-sm">
 						<div className="mb-3 p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
-							<Calendar className="size-6 text-primary" />
+							<Calendar className="size-5 text-primary" />
 						</div>
-						<span className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-1">
-							Travel Dates
+						<span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+							{t("trips.detail.travel_dates", "Travel Dates")}
 						</span>
-						<p className="font-bold text-foreground text-lg">
+						<p className="font-bold text-foreground text-sm">
 							{formatDateRange(trip.startDate, trip.endDate)}
 						</p>
 					</div>
 
 					{/* Duration Card */}
-					<div className="bg-card hover:bg-accent/5 transition-colors rounded-2xl lg:rounded-none p-6 border border-border/50 lg:border-l-0 flex flex-col items-center text-center justify-center group">
-						<div className="mb-3 p-3 rounded-full bg-orange-500/10 group-hover:bg-orange-500/20 transition-colors">
-							<Clock className="size-6 text-orange-600" />
+					<div className="bg-card hover:bg-primary/5 transition-all duration-200 p-5 flex flex-col items-center text-center justify-center group rounded-xl border border-border/50 shadow-sm">
+						<div className="mb-3 p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+							<Clock className="size-5 text-primary" />
 						</div>
-						<span className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-1">
-							Duration
+						<span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+							{t("trips.detail.duration", "Duration")}
 						</span>
-						<p className="font-bold text-foreground text-lg">
-							{duration} {duration === 1 ? "Day" : "Days"}
+						<p className="font-bold text-foreground text-sm">
+							{duration} {duration === 1 ? t("trips.detail.day", "Day") : t("trips.detail.days", "Days")}
 						</p>
 					</div>
 
 					{/* Destination/Type Card */}
-					<div className="bg-card hover:bg-accent/5 transition-colors rounded-2xl lg:rounded-none p-6 border border-border/50 lg:border-l-0 flex flex-col items-center text-center justify-center group">
-						<div className="mb-3 p-3 rounded-full bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
-							<Plane className="size-6 text-blue-600" />
+					<div className="bg-card hover:bg-primary/5 transition-all duration-200 p-5 flex flex-col items-center text-center justify-center group rounded-xl border border-border/50 shadow-sm">
+						<div className="mb-3 p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+							<Plane className="size-5 text-primary" />
 						</div>
-						<span className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-1">
-							Type
+						<span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+							{t("trips.detail.type")}
 						</span>
-						<p className="font-bold text-foreground text-lg capitalize">
-							{trip.destinationType !== 'unknown' ? trip.destinationType : 'Trip'}
+						<p className="font-bold text-foreground text-sm">
+							{trip.destinationType && trip.destinationType !== 'unknown'
+								? t(`trips.destination_types.${trip.destinationType}`, { defaultValue: trip.destinationType })
+								: t("trips.detail.trip")}
 						</p>
 					</div>
 
 					{/* Budget Card */}
-					<div className="bg-card hover:bg-accent/5 transition-colors rounded-2xl lg:rounded-l-none lg:rounded-r-3xl p-6 border border-border/50 lg:border-l-0 flex flex-col items-center text-center justify-center group">
-						<div className="mb-3 p-3 rounded-full bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-colors">
-							<DollarSign className="size-6 text-emerald-600" />
+					<div className="bg-card hover:bg-primary/5 transition-all duration-200 p-5 flex flex-col items-center text-center justify-center group rounded-xl border border-border/50 shadow-sm">
+						<div className="mb-3 p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+							<DollarSign className="size-5 text-primary" />
 						</div>
-						<span className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-1">
-							Budget
+						<span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+							{t("trips.detail.budget", "Budget")}
 						</span>
-						<p className="font-bold text-foreground text-lg">
-							{trip.budget ? `${trip.currency || 'USD'} ${trip.budget}` : "-"}
+						<p className="font-bold text-foreground text-sm">
+							{trip.budget ? `${trip.currency || 'USD'} ${trip.budget.toLocaleString()}` : "-"}
 						</p>
 					</div>
 				</motion.div>

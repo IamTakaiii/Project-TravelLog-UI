@@ -122,7 +122,7 @@ export function ForgotPasswordForm() {
 			<Link to="/login" className="w-full">
 				<Button
 					variant="ghost"
-					className="w-full h-12 text-muted-foreground hover:bg-gray-500/40 group"
+					className="w-full h-12 text-muted-foreground hover:bg-primary/10 group"
 				>
 					<ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
 					{t("auth.forgot_password.back_to_login")}

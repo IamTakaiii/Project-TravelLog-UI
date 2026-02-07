@@ -151,6 +151,10 @@
             "submit_button": "Save Changes",
             "submitting": "Saving Changes..."
         },
+        "detail": {
+            "type": "Type",
+            "trip": "Trip"
+        },
         "list": {
             "title": "Your",
             "subtitle": "Adventures",

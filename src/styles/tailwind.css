@@ -375,7 +375,7 @@
     font-family: var(--font-heading);
   }
 
-  /* FORCE OVERRIDE: Change accent hover background to primary/10 */
+  /* FORCE OVERRIDE: Change accent hover background to primary-based colors */
   .hover\:bg-accent:hover {
     background-color: oklch(from var(--primary) l c h / 0.1) !important;
     color: var(--foreground) !important;
@@ -399,6 +399,61 @@
   .data-\[selected\=true\]\:bg-accent[data-selected="true"] {
     background-color: oklch(from var(--primary) l c h / 0.1) !important;
     color: var(--foreground) !important;
+  }
+
+  /* FORCE OVERRIDE: Change accent hover with opacity variants to primary-based */
+  .hover\:bg-accent\/5:hover {
+    background-color: oklch(from var(--primary) l c h / 0.05) !important;
+  }
+
+  .hover\:bg-accent\/10:hover {
+    background-color: oklch(from var(--primary) l c h / 0.1) !important;
+  }
+
+  .hover\:bg-accent\/20:hover {
+    background-color: oklch(from var(--primary) l c h / 0.2) !important;
+  }
+
+  .group:hover .group-hover\:bg-accent\/5 {
+    background-color: oklch(from var(--primary) l c h / 0.05) !important;
+  }
+
+  .group:hover .group-hover\:bg-accent\/10 {
+    background-color: oklch(from var(--primary) l c h / 0.1) !important;
+  }
+
+  .group:hover .group-hover\:bg-accent\/20 {
+    background-color: oklch(from var(--primary) l c h / 0.2) !important;
+  }
+
+  /* Static accent background overrides */
+  .bg-accent {
+    background-color: oklch(from var(--primary) l c h / 0.1) !important;
+  }
+
+  .bg-accent\/5 {
+    background-color: oklch(from var(--primary) l c h / 0.05) !important;
+  }
+
+  .bg-accent\/10 {
+    background-color: oklch(from var(--primary) l c h / 0.1) !important;
+  }
+
+  .bg-accent\/20 {
+    background-color: oklch(from var(--primary) l c h / 0.2) !important;
+  }
+
+  /* Muted hover overrides - use primary-tinted muted for better theme consistency */
+  .hover\:bg-muted:hover {
+    background-color: oklch(from var(--primary) l c h / 0.08) !important;
+  }
+
+  .hover\:bg-muted\/50:hover {
+    background-color: oklch(from var(--primary) l c h / 0.05) !important;
+  }
+
+  .hover\:bg-muted\/80:hover {
+    background-color: oklch(from var(--primary) l c h / 0.08) !important;
   }
 }
 
