@@ -1,8 +1,19 @@
 // Types
-export type { TabType, TripDetailContextValue, StatCardProps, TabConfig } from "./types";
+export type {
+	TabType,
+	TripDetailContextValue,
+	StatCardProps,
+	TabConfig,
+} from "./types";
 
 // Constants
-export { containerVariants, itemVariants, tabContentVariants, TAB_CONFIGS, DEFAULT_COVER_IMAGE } from "./constants";
+export {
+	containerVariants,
+	itemVariants,
+	tabContentVariants,
+	TAB_CONFIGS,
+	DEFAULT_COVER_IMAGE,
+} from "./constants";
 
 // Context
 export { TripDetailProvider, useTripDetail } from "./trip-detail-context";
@@ -18,7 +29,13 @@ export { MainContent } from "./main-content";
 export { DeleteTripDialog } from "./delete-trip-dialog";
 
 // Tabs
-export { ItineraryTab, PlacesTab, MoneyTab, EmptyState, TabHeader } from "./tabs";
+export {
+	ItineraryTab,
+	PlacesTab,
+	MoneyTab,
+	EmptyState,
+	TabHeader,
+} from "./tabs";
 export { TabContent } from "./tabs/tab-content";
 
 // Sidebar

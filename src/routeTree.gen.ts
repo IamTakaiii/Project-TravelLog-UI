@@ -33,6 +33,9 @@ const LayoutTripsCreateLazyRouteImport = createFileRoute(
 const LayoutTripsTripIdIndexLazyRouteImport = createFileRoute(
   '/_layout/trips/$tripId/',
 )()
+const LayoutTripsTripIdMoneyLazyRouteImport = createFileRoute(
+  '/_layout/trips/$tripId/money',
+)()
 const LayoutTripsTripIdEditLazyRouteImport = createFileRoute(
   '/_layout/trips/$tripId/edit',
 )()
@@ -128,6 +131,14 @@ const LayoutTripsTripIdIndexLazyRoute =
   } as any).lazy(() =>
     import('./routes/_layout.trips.$tripId.index.lazy').then((d) => d.Route),
   )
+const LayoutTripsTripIdMoneyLazyRoute =
+  LayoutTripsTripIdMoneyLazyRouteImport.update({
+    id: '/money',
+    path: '/money',
+    getParentRoute: () => LayoutTripsTripIdRoute,
+  } as any).lazy(() =>
+    import('./routes/_layout.trips.$tripId.money.lazy').then((d) => d.Route),
+  )
 const LayoutTripsTripIdEditLazyRoute =
   LayoutTripsTripIdEditLazyRouteImport.update({
     id: '/edit',
@@ -152,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/trips/create': typeof LayoutTripsCreateLazyRoute
   '/trips/': typeof LayoutTripsIndexRoute
   '/trips/$tripId/edit': typeof LayoutTripsTripIdEditLazyRoute
+  '/trips/$tripId/money': typeof LayoutTripsTripIdMoneyLazyRoute
   '/trips/$tripId/': typeof LayoutTripsTripIdIndexLazyRoute
 }
 export interface FileRoutesByTo {
@@ -167,6 +179,7 @@ export interface FileRoutesByTo {
   '/trips/create': typeof LayoutTripsCreateLazyRoute
   '/trips': typeof LayoutTripsIndexRoute
   '/trips/$tripId/edit': typeof LayoutTripsTripIdEditLazyRoute
+  '/trips/$tripId/money': typeof LayoutTripsTripIdMoneyLazyRoute
   '/trips/$tripId': typeof LayoutTripsTripIdIndexLazyRoute
 }
 export interface FileRoutesById {
@@ -186,6 +199,7 @@ export interface FileRoutesById {
   '/_layout/trips/create': typeof LayoutTripsCreateLazyRoute
   '/_layout/trips/': typeof LayoutTripsIndexRoute
   '/_layout/trips/$tripId/edit': typeof LayoutTripsTripIdEditLazyRoute
+  '/_layout/trips/$tripId/money': typeof LayoutTripsTripIdMoneyLazyRoute
   '/_layout/trips/$tripId/': typeof LayoutTripsTripIdIndexLazyRoute
 }
 export interface FileRouteTypes {
@@ -205,6 +219,7 @@ export interface FileRouteTypes {
     | '/trips/create'
     | '/trips/'
     | '/trips/$tripId/edit'
+    | '/trips/$tripId/money'
     | '/trips/$tripId/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -220,6 +235,7 @@ export interface FileRouteTypes {
     | '/trips/create'
     | '/trips'
     | '/trips/$tripId/edit'
+    | '/trips/$tripId/money'
     | '/trips/$tripId'
   id:
     | '__root__'
@@ -238,6 +254,7 @@ export interface FileRouteTypes {
     | '/_layout/trips/create'
     | '/_layout/trips/'
     | '/_layout/trips/$tripId/edit'
+    | '/_layout/trips/$tripId/money'
     | '/_layout/trips/$tripId/'
   fileRoutesById: FileRoutesById
 }
@@ -356,6 +373,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutTripsTripIdIndexLazyRouteImport
       parentRoute: typeof LayoutTripsTripIdRoute
     }
+    '/_layout/trips/$tripId/money': {
+      id: '/_layout/trips/$tripId/money'
+      path: '/money'
+      fullPath: '/trips/$tripId/money'
+      preLoaderRoute: typeof LayoutTripsTripIdMoneyLazyRouteImport
+      parentRoute: typeof LayoutTripsTripIdRoute
+    }
     '/_layout/trips/$tripId/edit': {
       id: '/_layout/trips/$tripId/edit'
       path: '/edit'
@@ -368,11 +392,13 @@ declare module '@tanstack/react-router' {
 
 interface LayoutTripsTripIdRouteChildren {
   LayoutTripsTripIdEditLazyRoute: typeof LayoutTripsTripIdEditLazyRoute
+  LayoutTripsTripIdMoneyLazyRoute: typeof LayoutTripsTripIdMoneyLazyRoute
   LayoutTripsTripIdIndexLazyRoute: typeof LayoutTripsTripIdIndexLazyRoute
 }
 
 const LayoutTripsTripIdRouteChildren: LayoutTripsTripIdRouteChildren = {
   LayoutTripsTripIdEditLazyRoute: LayoutTripsTripIdEditLazyRoute,
+  LayoutTripsTripIdMoneyLazyRoute: LayoutTripsTripIdMoneyLazyRoute,
   LayoutTripsTripIdIndexLazyRoute: LayoutTripsTripIdIndexLazyRoute,
 }
 

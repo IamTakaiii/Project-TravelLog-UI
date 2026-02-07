@@ -1,149 +1,128 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Wallet, DollarSign, TrendingDown, TrendingUp, PieChart } from "lucide-react";
+import {
+	Wallet,
+	DollarSign,
+	TrendingDown,
+	TrendingUp,
+	ArrowRight,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useTripDetail } from "../trip-detail-context";
 import { tabContentVariants } from "../constants";
 import { TabHeader } from "./tab-header";
+import { expensesQueryOptions } from "@/features/money/queries/money-queries";
+import {
+	formatMoney,
+	CENTRAL_FUND_ID,
+} from "@/features/money/utils/money-utils";
 
 export function MoneyTab() {
-    const { t } = useTranslation();
-    const { trip } = useTripDetail();
+	const { t } = useTranslation();
+	const { trip } = useTripDetail();
+	const { data: expenses = [] } = useQuery(expensesQueryOptions(trip.id));
 
-    return (
-        <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={tabContentVariants}
-            transition={{ duration: 0.2 }}
-            className="space-y-6"
-        >
-            <TabHeader
-                icon={Wallet}
-                title={t("trips.detail.money_summary", "Money Summary")}
-                actionLabel={t("trips.detail.view_details", "View Details")}
-                onAction={() => { }}
-            />
+	// Calculate totals
+	const totalBudget = trip.budget ? parseFloat(trip.budget) : 0;
+	const totalSpent = expenses
+		.filter(
+			(ex) => ex.category !== "settlement" && ex.payerId !== CENTRAL_FUND_ID
+		)
+		.reduce((sum, ex) => sum + ex.thbAmount, 0);
 
-            <div className="bg-card rounded-3xl border border-border shadow-sm overflow-hidden">
-                <BudgetSummaryStats trip={trip} />
-                <BudgetProgressBar />
-                <ExpenseCategoriesPreview tripId={trip.id} currency={trip.currency} />
-            </div>
-        </motion.div>
-    );
+	const remaining = totalBudget - totalSpent;
+	const currency = trip.currency || "THB";
+
+	return (
+		<motion.div
+			initial="hidden"
+			animate="visible"
+			variants={tabContentVariants}
+			transition={{ duration: 0.2 }}
+			className="space-y-8"
+		>
+			<TabHeader
+				icon={Wallet}
+				title={t("trips.detail.money_summary", "Money Manager")}
+			/>
+
+			{/* Summary Cards */}
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+				<SummaryCard
+					label="Trip Budget"
+					value={formatMoney(totalBudget, currency as any)}
+					icon={DollarSign}
+					color="text-primary"
+					bgColor="bg-primary/10"
+				/>
+				<SummaryCard
+					label="Spent so far"
+					value={formatMoney(totalSpent, currency as any)}
+					icon={TrendingDown}
+					color="text-destructive"
+					bgColor="bg-destructive/10"
+				/>
+				<SummaryCard
+					label="Remaining"
+					value={formatMoney(remaining, currency as any)}
+					icon={TrendingUp}
+					color="text-emerald-500"
+					bgColor="bg-emerald-500/10"
+				/>
+			</div>
+
+			{/* CTA Section */}
+			<div className="relative group overflow-hidden bg-card/50 backdrop-blur-xl rounded-[2.5rem] p-10 border border-border/50 shadow-sm text-center space-y-6">
+				<div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-50 group-hover:scale-110 transition-transform duration-700" />
+
+				<div className="relative z-10 space-y-4">
+					<div className="bg-primary/10 p-5 rounded-3xl w-fit mx-auto ring-8 ring-primary/5 transition-transform duration-500 group-hover:rotate-[10deg]">
+						<Wallet className="size-10 text-primary" />
+					</div>
+					<div className="space-y-2">
+						<h3 className="text-2xl font-[800] tracking-tight text-foreground">
+							Complete Finance Manager
+						</h3>
+						<p className="text-muted-foreground max-w-md mx-auto leading-relaxed">
+							Split bills, record places, track daily averages and manage debts
+							with your group in one place.
+						</p>
+					</div>
+					<Link
+						to={`/trips/${trip.id}/money` as any}
+						className="inline-block pt-2"
+					>
+						<Button
+							size="lg"
+							className="rounded-full font-black text-base px-8 py-7 shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 transition-all gap-3 active:scale-95"
+						>
+							Manage Finances <ArrowRight className="size-5" />
+						</Button>
+					</Link>
+				</div>
+			</div>
+		</motion.div>
+	);
 }
 
-interface BudgetSummaryStatsProps {
-    trip: {
-        budget: string | null;
-        currency?: string;
-    };
-}
-
-function BudgetSummaryStats({ trip }: BudgetSummaryStatsProps) {
-    const { t } = useTranslation();
-    const currency = trip.currency || "USD";
-    const budget = trip.budget ? Number(trip.budget).toLocaleString() : null;
-
-    const stats = [
-        {
-            icon: DollarSign,
-            iconBgClass: "bg-primary/10",
-            iconClass: "text-primary",
-            label: t("trips.detail.total_budget", "Total Budget"),
-            value: budget ? `${currency} ${budget}` : "-",
-            valueClass: "text-foreground",
-        },
-        {
-            icon: TrendingDown,
-            iconBgClass: "bg-destructive/10",
-            iconClass: "text-destructive",
-            label: t("trips.detail.total_spent", "Total Spent"),
-            value: `${currency} 0`,
-            valueClass: "text-destructive",
-        },
-        {
-            icon: TrendingUp,
-            iconBgClass: "bg-emerald-500/10",
-            iconClass: "text-emerald-500",
-            label: t("trips.detail.remaining", "Remaining"),
-            value: budget ? `${currency} ${budget}` : "-",
-            valueClass: "text-emerald-500",
-        },
-    ];
-
-    return (
-        <div className="grid grid-cols-3 divide-x divide-border">
-            {stats.map((stat, index) => (
-                <div key={index} className="p-6 text-center">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                        <div className={`p-2 rounded-full ${stat.iconBgClass}`}>
-                            <stat.icon className={`size-4 ${stat.iconClass}`} />
-                        </div>
-                    </div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                        {stat.label}
-                    </p>
-                    <p className={`text-xl font-bold ${stat.valueClass}`}>{stat.value}</p>
-                </div>
-            ))}
-        </div>
-    );
-}
-
-function BudgetProgressBar() {
-    const { t } = useTranslation();
-    const percentUsed = 0; // TODO: Calculate from actual expenses
-
-    return (
-        <div className="px-6 pb-6">
-            <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-                <span>{t("trips.detail.budget_used", "Budget Used")}</span>
-                <span>{percentUsed}%</span>
-            </div>
-            <div className="h-3 bg-muted rounded-full overflow-hidden">
-                <div
-                    className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full transition-all duration-500"
-                    style={{ width: `${percentUsed}%` }}
-                />
-            </div>
-        </div>
-    );
-}
-
-interface ExpenseCategoriesPreviewProps {
-    tripId: string;
-    currency?: string;
-}
-
-function ExpenseCategoriesPreview({ tripId }: ExpenseCategoriesPreviewProps) {
-    const { t } = useTranslation();
-
-    return (
-        <div className="border-t border-border p-6">
-            <div className="flex items-center justify-between mb-4">
-                <p className="text-sm font-semibold flex items-center gap-2">
-                    <PieChart className="size-4 text-muted-foreground" />
-                    {t("trips.detail.expense_categories", "Expense Categories")}
-                </p>
-            </div>
-            <div className="flex items-center justify-center py-8 text-muted-foreground">
-                <div className="text-center space-y-2">
-                    <div className="bg-muted/50 p-4 rounded-full mx-auto w-fit">
-                        <Wallet className="size-6 text-muted-foreground/50" />
-                    </div>
-                    <p className="text-sm">
-                        {t("trips.detail.no_expenses", "No expenses recorded yet")}
-                    </p>
-                    <Link to={`/trips/${tripId}/money` as any}>
-                        <Button size="sm" className="rounded-full mt-2">
-                            {t("trips.detail.add_expense", "Add Expense")}
-                        </Button>
-                    </Link>
-                </div>
-            </div>
-        </div>
-    );
+function SummaryCard({ label, value, icon: Icon, color, bgColor }: any) {
+	return (
+		<div className="bg-card/50 backdrop-blur-sm p-8 rounded-3xl border border-border/50 shadow-sm flex flex-col items-center justify-center text-center space-y-3 group hover:border-primary/30 transition-all duration-300">
+			<div
+				className={`p-4 rounded-2xl ${bgColor} transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[-5deg]`}
+			>
+				<Icon className={`size-6 ${color}`} />
+			</div>
+			<div className="space-y-1">
+				<span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+					{label}
+				</span>
+				<p className={`text-2xl font-black tracking-tighter ${color}`}>
+					{value}
+				</p>
+			</div>
+		</div>
+	);
 }

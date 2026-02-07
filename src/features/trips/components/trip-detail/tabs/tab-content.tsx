@@ -4,14 +4,14 @@ import { PlacesTab } from "./places-tab";
 import { MoneyTab } from "./money-tab";
 
 const TAB_COMPONENTS = {
-    itinerary: ItineraryTab,
-    places: PlacesTab,
-    money: MoneyTab,
+	itinerary: ItineraryTab,
+	places: PlacesTab,
+	money: MoneyTab,
 } as const;
 
 export function TabContent() {
-    const { activeTab } = useTripDetail();
-    const TabComponent = TAB_COMPONENTS[activeTab];
+	const { activeTab } = useTripDetail();
+	const TabComponent = TAB_COMPONENTS[activeTab];
 
-    return <TabComponent />;
+	return <TabComponent />;
 }

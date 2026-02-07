@@ -455,6 +455,21 @@
   .hover\:bg-muted\/80:hover {
     background-color: oklch(from var(--primary) l c h / 0.08) !important;
   }
+
+  .no-scrollbar::-webkit-scrollbar,
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar,
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Prevent horizontal scroll on mobile */
+  body {
+    overflow-x: hidden;
+  }
 }
 
 /* ============================================
