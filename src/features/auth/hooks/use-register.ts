@@ -8,6 +8,7 @@ import {
 	type RegisterFormValues,
 	registerSchema,
 } from "../schemas/register-schema";
+import { getAuthErrorMessage } from "../utils/auth-utils";
 
 export function useRegister() {
 	const navigate = useNavigate();
@@ -57,7 +58,7 @@ export function useRegister() {
 	};
 
 	const error = registerMutation.error || socialRegisterMutation.error;
-	const errorMessage = error ? getErrorMessage(error.message as any) : null;
+	const errorMessage = error ? getAuthErrorMessage(error.message as any) : null;
 
 	return {
 		form,
@@ -70,19 +71,4 @@ export function useRegister() {
 			socialRegisterMutation.reset();
 		},
 	};
-}
-
-function getErrorMessage(code?: string): string {
-	switch (code) {
-		case "USER_ALREADY_EXISTS":
-			return "An account with this email already exists.";
-		case "INVALID_EMAIL":
-			return "Please enter a valid email address.";
-		case "WEAK_PASSWORD":
-			return "Password is too weak. Please choose a stronger password.";
-		case "TOO_MANY_REQUESTS":
-			return "Too many registration attempts. Please try again later.";
-		default:
-			return "Failed to create account. Please try again.";
-	}
 }

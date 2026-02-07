@@ -6,6 +6,7 @@ import {
 	ForgotPasswordFormValues,
 	forgotPasswordSchema,
 } from "../schemas/forgot-password-schema";
+import { getAuthErrorMessage } from "../utils/auth-utils";
 
 export function useForgotPassword() {
 	const form = useForm<ForgotPasswordFormValues>({
@@ -38,7 +39,7 @@ export function useForgotPassword() {
 		form,
 		isLoading: forgotPasswordMutation.isPending,
 		error: forgotPasswordMutation.error
-			? forgotPasswordMutation.error.message
+			? getAuthErrorMessage(forgotPasswordMutation.error.message as any)
 			: null,
 		isSuccess: forgotPasswordMutation.isSuccess,
 		onSubmit,

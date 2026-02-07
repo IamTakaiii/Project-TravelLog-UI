@@ -18,8 +18,8 @@ const item: Variants = {
 		y: 0,
 		transition: {
 			type: "spring",
-			stiffness: 50
-		}
+			stiffness: 50,
+		},
 	},
 };
 
@@ -31,7 +31,6 @@ function ModernStatsCard({
 	color,
 	bgColor,
 }: StatsCardProps) {
-
 	return (
 		<motion.div variants={item}>
 			<Card className="border-border/40 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 bg-background/60 backdrop-blur-sm group cursor-default h-full">

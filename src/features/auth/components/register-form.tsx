@@ -10,12 +10,10 @@ import {
 import { Link } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import { useRegister } from "../hooks/use-register";
 import { useTranslation } from "react-i18next";
 import { useTranslateError } from "@/hooks/use-translate-error";
+import { AuthFormField } from "./auth-form-field";
 
 export function RegisterForm() {
 	const { t } = useTranslation();
@@ -32,124 +30,55 @@ export function RegisterForm() {
 		<div className="grid gap-6">
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className="grid gap-5">
-					{/* Name Field */}
-					<div className="grid gap-2">
-						<Label htmlFor="name" className="text-sm font-medium">
-							{t("auth.fields.name")}
-						</Label>
-						<div className="relative">
-							<User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-							<Input
-								id="name"
-								placeholder={t("auth.placeholders.name")}
-								type="text"
-								autoCapitalize="none"
-								autoCorrect="off"
-								disabled={isLoading}
-								{...register("name")}
-								className={cn(
-									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
-									errors.name &&
-										"border-destructive focus-visible:ring-destructive/30"
-								)}
-							/>
-						</div>
-						{errors.name?.message && (
-							<p className="text-sm text-destructive flex items-center gap-1.5">
-								<span className="inline-block w-1 h-1 rounded-full bg-destructive" />
-								{translateError(errors.name.message)}
-							</p>
-						)}
-					</div>
+					<AuthFormField
+						label={t("auth.fields.name")}
+						name="name"
+						register={register}
+						errors={errors}
+						icon={User}
+						placeholder={t("auth.placeholders.name")}
+						autoCapitalize="none"
+						autoCorrect="off"
+						isLoading={isLoading}
+					/>
 
-					{/* Email Field */}
-					<div className="grid gap-2">
-						<Label htmlFor="email" className="text-sm font-medium">
-							{t("auth.fields.email")}
-						</Label>
-						<div className="relative">
-							<Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-							<Input
-								id="email"
-								placeholder={t("auth.placeholders.email")}
-								type="email"
-								autoCapitalize="none"
-								autoComplete="email"
-								autoCorrect="off"
-								disabled={isLoading}
-								{...register("email")}
-								className={cn(
-									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
-									errors.email &&
-										"border-destructive focus-visible:ring-destructive/30"
-								)}
-							/>
-						</div>
-						{errors.email?.message && (
-							<p className="text-sm text-destructive flex items-center gap-1.5">
-								<span className="inline-block w-1 h-1 rounded-full bg-destructive" />
-								{translateError(errors.email.message)}
-							</p>
-						)}
-					</div>
+					<AuthFormField
+						label={t("auth.fields.email")}
+						name="email"
+						register={register}
+						errors={errors}
+						icon={Mail}
+						placeholder={t("auth.placeholders.email")}
+						type="email"
+						autoCapitalize="none"
+						autoCorrect="off"
+						autoComplete="email"
+						isLoading={isLoading}
+					/>
 
-					{/* Password Field */}
-					<div className="grid gap-2">
-						<Label htmlFor="password" className="text-sm font-medium">
-							{t("auth.fields.password")}
-						</Label>
-						<div className="relative">
-							<Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-							<Input
-								id="password"
-								placeholder={t("auth.placeholders.password")}
-								type="password"
-								autoComplete="new-password"
-								disabled={isLoading}
-								{...register("password")}
-								className={cn(
-									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
-									errors.password &&
-										"border-destructive focus-visible:ring-destructive/30"
-								)}
-							/>
-						</div>
-						{errors.password?.message && (
-							<p className="text-sm text-destructive flex items-center gap-1.5">
-								<span className="inline-block w-1 h-1 rounded-full bg-destructive" />
-								{translateError(errors.password.message)}
-							</p>
-						)}
-					</div>
+					<AuthFormField
+						label={t("auth.fields.password")}
+						name="password"
+						register={register}
+						errors={errors}
+						icon={Lock}
+						placeholder={t("auth.placeholders.password")}
+						type="password"
+						autoComplete="new-password"
+						isLoading={isLoading}
+					/>
 
-					{/* Confirm Password Field */}
-					<div className="grid gap-2">
-						<Label htmlFor="confirmPassword" className="text-sm font-medium">
-							{t("auth.fields.confirm_password")}
-						</Label>
-						<div className="relative">
-							<ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-							<Input
-								id="confirmPassword"
-								placeholder={t("auth.placeholders.password")}
-								type="password"
-								autoComplete="new-password"
-								disabled={isLoading}
-								{...register("confirmPassword")}
-								className={cn(
-									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
-									errors.confirmPassword &&
-										"border-destructive focus-visible:ring-destructive/30"
-								)}
-							/>
-						</div>
-						{errors.confirmPassword?.message && (
-							<p className="text-sm text-destructive flex items-center gap-1.5">
-								<span className="inline-block w-1 h-1 rounded-full bg-destructive" />
-								{translateError(errors.confirmPassword.message)}
-							</p>
-						)}
-					</div>
+					<AuthFormField
+						label={t("auth.fields.confirm_password")}
+						name="confirmPassword"
+						register={register}
+						errors={errors}
+						icon={ShieldCheck}
+						placeholder={t("auth.placeholders.password")}
+						type="password"
+						autoComplete="new-password"
+						isLoading={isLoading}
+					/>
 
 					{/* Error Message */}
 					{error && (

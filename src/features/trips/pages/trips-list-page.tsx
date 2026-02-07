@@ -191,14 +191,14 @@ const containerVariants: Variants = {
 	show: {
 		opacity: 1,
 		transition: {
-			staggerChildren: 0.1
-		}
-	}
+			staggerChildren: 0.1,
+		},
+	},
 };
 
 const itemVariants: Variants = {
 	hidden: { opacity: 0, y: 20 },
-	show: { opacity: 1, y: 0 }
+	show: { opacity: 1, y: 0 },
 };
 
 export function TripsListPage() {
@@ -320,7 +320,10 @@ export function TripsListPage() {
 
 			{/* Stats Footer */}
 			{trips.length > 0 && (
-				<motion.div variants={itemVariants} className="mt-12 text-center text-sm text-muted-foreground">
+				<motion.div
+					variants={itemVariants}
+					className="mt-12 text-center text-sm text-muted-foreground"
+				>
 					{searchQuery
 						? `Showing ${filteredTrips.length} of ${trips.length} trips`
 						: `You have ${trips.length} trip${trips.length !== 1 ? "s" : ""}`}

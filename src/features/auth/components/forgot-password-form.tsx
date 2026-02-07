@@ -1,13 +1,11 @@
 import { Loader2, ArrowLeft, Mail, CheckCircle2, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import { useForgotPassword } from "../hooks/use-forgot-password";
 import { useTranslation } from "react-i18next";
 import { useTranslateError } from "@/hooks/use-translate-error";
 import { Link } from "@tanstack/react-router";
+import { AuthFormField } from "./auth-form-field";
 
 export function ForgotPasswordForm() {
 	const { t } = useTranslation();
@@ -78,35 +76,19 @@ export function ForgotPasswordForm() {
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className="grid gap-5">
 					{/* Email Field */}
-					<div className="grid gap-2">
-						<Label htmlFor="email" className="text-sm font-medium">
-							{t("auth.fields.email")}
-						</Label>
-						<div className="relative">
-							<Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-							<Input
-								id="email"
-								placeholder={t("auth.placeholders.email")}
-								type="email"
-								autoCapitalize="none"
-								autoComplete="email"
-								autoCorrect="off"
-								disabled={isLoading}
-								{...register("email")}
-								className={cn(
-									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
-									errors.email &&
-										"border-destructive focus-visible:ring-destructive/30"
-								)}
-							/>
-						</div>
-						{errors.email?.message && (
-							<p className="text-sm text-destructive flex items-center gap-1.5">
-								<span className="inline-block w-1 h-1 rounded-full bg-destructive" />
-								{translateError(errors.email.message)}
-							</p>
-						)}
-					</div>
+					<AuthFormField
+						label={t("auth.fields.email")}
+						name="email"
+						register={register}
+						errors={errors}
+						icon={Mail}
+						placeholder={t("auth.placeholders.email")}
+						type="email"
+						autoCapitalize="none"
+						autoComplete="email"
+						autoCorrect="off"
+						isLoading={isLoading}
+					/>
 
 					{/* Error Message */}
 					{error && (

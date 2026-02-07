@@ -4,6 +4,7 @@ import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { ThemeSwitcher } from "@/components/ui/theme-switcher";
 import { AuthVisuals } from "./auth-visuals";
 import { AuthTerms } from "./auth-terms";
+import { motion } from "framer-motion";
 
 interface AuthLayoutProps {
 	children: ReactNode;
@@ -54,7 +55,13 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
 				{/* Form content */}
 				<div className="relative z-10 mx-auto w-full max-w-md space-y-8 py-16 lg:py-0">
-					{children}
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.5, ease: "easeOut" }}
+					>
+						{children}
+					</motion.div>
 					<AuthTerms />
 				</div>
 			</div>

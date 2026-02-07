@@ -67,6 +67,31 @@
             "company": "Acme Inc."
         }
     },
+    "menu": {
+        "dashboard": "แดชบอร์ด",
+        "trips": "การเดินทางของฉัน",
+        "invitations": "คำเชิญ",
+        "communities": {
+            "title": "ชุมชน",
+            "travelers": "นักเดินทาง",
+            "guides": "ไกด์ท้องถิ่น",
+            "events": "กิจกรรม"
+        },
+        "profile": "โปรไฟล์",
+        "settings": "การตั้งค่า",
+        "sections": {
+            "travel_log": "บันทึกการเดินทาง",
+            "account": "บัญชีผู้ใช้"
+        },
+        "badges": {
+            "new": "ใหม่"
+        },
+        "pro_features": {
+            "title": "ฟีเจอร์โปร",
+            "description": "ใช้งานแผนที่ออฟไลน์ วางแผนทริปไม่จำกัด และรับคำแนะนำจาก AI",
+            "upgrade": "อัปเกรดแผน"
+        }
+    },
     "trips": {
         "validation": {
             "title_min_length": "ชื่อทริปต้องมีความยาวอย่างน้อย 3 ตัวอักษร",

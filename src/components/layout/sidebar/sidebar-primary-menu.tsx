@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import {
 	AccordionMenu,
 	AccordionMenuGroup,
@@ -14,6 +15,7 @@ import { MENU_SIDEBAR_MAIN, type MenuItem } from "../layout-config"; // Import M
 
 export function SidebarPrimaryMenu() {
 	const { pathname } = useLocation();
+	const { t } = useTranslation();
 
 	// Memoize matchPath to prevent unnecessary re-renders
 	const matchPath = useCallback(
@@ -24,25 +26,28 @@ export function SidebarPrimaryMenu() {
 	);
 
 	const renderMenuItem = (item: MenuItem, index: number) => {
+		const title = item.titleKey ? t(item.titleKey) : item.title;
+		const badge = item.badgeKey ? t(item.badgeKey) : item.badge;
+
 		if (item.children && item.children.length > 0) {
 			return (
-				<AccordionMenuSub key={index} value={item.title || `item-${index}`}>
+				<AccordionMenuSub key={index} value={title || `item-${index}`}>
 					<AccordionMenuSubTrigger className="h-11 px-3 text-sm font-medium text-muted-foreground rounded-xl transition-all duration-200 hover:text-primary hover:bg-primary/5 data-[state=open]:text-primary data-[state=open]:bg-primary/5 [&_svg]:transition-colors">
 						{item.icon && <item.icon />}
-						<span>{item.title}</span>
-						{item.badge && (
+						<span>{title}</span>
+						{badge && (
 							<Badge
 								size="sm"
 								variant="destructive"
 								appearance="light"
 								className="ml-auto"
 							>
-								{item.badge}
+								{badge}
 							</Badge>
 						)}
 					</AccordionMenuSubTrigger>
 					<AccordionMenuSubContent
-						parentValue={item.title || `item-${index}`}
+						parentValue={title || `item-${index}`}
 						type="multiple"
 						className="relative border-l border-primary/20 ml-7 pl-0 my-1 space-y-1"
 					>
@@ -58,15 +63,15 @@ export function SidebarPrimaryMenu() {
 			<AccordionMenuItem key={index} value={item.path || "#"}>
 				<Link to={item.path || "#"} className="flex items-center gap-3 w-full">
 					{item.icon && <item.icon className="size-4" />}
-					<span>{item.title}</span>
-					{item.badge && (
+					<span>{title}</span>
+					{badge && (
 						<Badge
 							size="sm"
 							variant="destructive"
 							appearance="light"
 							className="ml-auto"
 						>
-							{item.badge}
+							{badge}
 						</Badge>
 					)}
 				</Link>
@@ -88,9 +93,10 @@ export function SidebarPrimaryMenu() {
 			}}
 		>
 			{MENU_SIDEBAR_MAIN.map((item, index) => {
+				const sectionTitle = item.titleKey ? t(item.titleKey) : item.title;
 				return (
 					<AccordionMenuGroup key={index}>
-						<AccordionMenuLabel>{item.title}</AccordionMenuLabel>
+						<AccordionMenuLabel>{sectionTitle}</AccordionMenuLabel>
 						{item.children?.map((child, childIndex) =>
 							renderMenuItem(child, childIndex)
 						)}

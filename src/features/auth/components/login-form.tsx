@@ -2,12 +2,10 @@ import { Loader2, Github, Mail, Lock, ArrowRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import { useLogin } from "../hooks/use-login";
 import { useTranslation } from "react-i18next";
 import { useTranslateError } from "@/hooks/use-translate-error";
+import { AuthFormField } from "./auth-form-field";
 
 export function LoginForm() {
 	const { t } = useTranslation();
@@ -24,72 +22,40 @@ export function LoginForm() {
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className="grid gap-5">
 					{/* Email Field */}
-					<div className="grid gap-2">
-						<Label htmlFor="email" className="text-sm font-medium">
-							{t("auth.fields.email")}
-						</Label>
-						<div className="relative">
-							<Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-							<Input
-								id="email"
-								placeholder={t("auth.placeholders.email")}
-								type="email"
-								autoCapitalize="none"
-								autoComplete="email"
-								autoCorrect="off"
-								disabled={isLoading}
-								{...register("email")}
-								className={cn(
-									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
-									errors.email &&
-										"border-destructive focus-visible:ring-destructive/30"
-								)}
-							/>
-						</div>
-						{errors.email?.message && (
-							<p className="text-sm text-destructive flex items-center gap-1.5">
-								<span className="inline-block w-1 h-1 rounded-full bg-destructive" />
-								{translateError(errors.email.message)}
-							</p>
-						)}
-					</div>
+					<AuthFormField
+						label={t("auth.fields.email")}
+						name="email"
+						register={register}
+						errors={errors}
+						icon={Mail}
+						placeholder={t("auth.placeholders.email")}
+						type="email"
+						autoCapitalize="none"
+						autoCorrect="off"
+						autoComplete="email"
+						isLoading={isLoading}
+					/>
 
 					{/* Password Field */}
-					<div className="grid gap-2">
-						<div className="flex items-center">
-							<Label htmlFor="password" className="text-sm font-medium">
-								{t("auth.fields.password")}
-							</Label>
+					<AuthFormField
+						label={t("auth.fields.password")}
+						name="password"
+						register={register}
+						errors={errors}
+						icon={Lock}
+						placeholder={t("auth.placeholders.password")}
+						type="password"
+						autoComplete="current-password"
+						isLoading={isLoading}
+						labelRight={
 							<Link
 								to="/forgot-password"
-								className="ml-auto inline-block text-sm text-primary hover:text-primary/80 underline-offset-4 hover:underline transition-colors"
+								className="text-sm text-primary hover:text-primary/80 underline-offset-4 hover:underline transition-colors"
 							>
 								{t("auth.login.forgot_password")}
 							</Link>
-						</div>
-						<div className="relative">
-							<Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-							<Input
-								id="password"
-								placeholder={t("auth.placeholders.password")}
-								type="password"
-								autoComplete="current-password"
-								disabled={isLoading}
-								{...register("password")}
-								className={cn(
-									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
-									errors.password &&
-										"border-destructive focus-visible:ring-destructive/30"
-								)}
-							/>
-						</div>
-						{errors.password?.message && (
-							<p className="text-sm text-destructive flex items-center gap-1.5">
-								<span className="inline-block w-1 h-1 rounded-full bg-destructive" />
-								{translateError(errors.password.message)}
-							</p>
-						)}
-					</div>
+						}
+					/>
 
 					{/* Error Message */}
 					{error && (

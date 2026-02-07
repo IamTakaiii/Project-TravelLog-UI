@@ -2,8 +2,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarPrimaryMenu } from "./sidebar-primary-menu";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Map } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function Sidebar() {
+	const { t } = useTranslation();
+
 	return (
 		<aside className="fixed top-(--header-height) start-0 bottom-0 transition-all duration-300 flex flex-col items-stretch flex-shrink-0 w-(--sidebar-width) in-data-[sidebar-open=false]:-start-full border-e border-border/60 bg-background/50 backdrop-blur-md">
 			<ScrollArea className="grow mt-2 lg:mt-4">
@@ -22,17 +25,19 @@ export function Sidebar() {
 							<div className="p-1.5 rounded-lg bg-background/80 shadow-sm text-primary">
 								<Sparkles className="size-4" />
 							</div>
-							<span className="font-semibold text-sm">Pro Features</span>
+							<span className="font-semibold text-sm">
+								{t("menu.pro_features.title")}
+							</span>
 						</div>
 						<p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-							Get offline maps, unlimited trip planning, and AI suggestions.
+							{t("menu.pro_features.description")}
 						</p>
 						<Button
 							size="sm"
 							className="w-full text-xs font-semibold shadow-sm rounded-lg"
 							variant="outline"
 						>
-							Upgrade Plan
+							{t("menu.pro_features.upgrade")}
 						</Button>
 					</div>
 				</div>

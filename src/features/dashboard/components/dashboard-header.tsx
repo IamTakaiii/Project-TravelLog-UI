@@ -2,10 +2,35 @@ import { Link } from "@tanstack/react-router";
 import { Map as MapIcon, Plane, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { User } from "better-auth";
+import { motion, type Variants } from "framer-motion";
 
 interface DashboardHeaderProps {
 	user: User | undefined;
 }
+
+const fadeInUp: Variants = {
+	hidden: { opacity: 0, y: 20 },
+	show: {
+		opacity: 1,
+		y: 0,
+		transition: {
+			type: "spring" as const,
+			stiffness: 100,
+			damping: 20,
+		},
+	},
+};
+
+const staggerContainer: Variants = {
+	hidden: { opacity: 0 },
+	show: {
+		opacity: 1,
+		transition: {
+			staggerChildren: 0.1,
+			delayChildren: 0.2,
+		},
+	},
+};
 
 export function DashboardHeader({ user }: DashboardHeaderProps) {
 	return (
@@ -14,24 +39,40 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
 			<div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
 			<div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-accent/20 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 pointer-events-none" />
 
-			<div className="relative z-10 p-8 md:p-12 lg:flex justify-between items-center gap-10">
+			<motion.div
+				className="relative z-10 p-8 md:p-12 lg:flex justify-between items-center gap-10"
+				variants={staggerContainer}
+				initial="hidden"
+				animate="show"
+			>
 				<div className="space-y-4 max-w-2xl">
-					<div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-background/50 backdrop-blur-sm border border-primary/20 text-primary text-xs font-medium uppercase tracking-wider animate-in slide-in-from-left-4 duration-500 delay-150">
+					<motion.div
+						variants={fadeInUp}
+						className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-background/50 backdrop-blur-sm border border-primary/20 text-primary text-xs font-medium uppercase tracking-wider"
+					>
 						<Plane className="size-3" /> Travel Log Dashboard
-					</div>
-					<h1 className="text-4xl md:text-5xl lg:text-6xl font-[800] tracking-tight text-foreground leading-[1.1] animate-in slide-in-from-bottom-4 duration-500 delay-200">
+					</motion.div>
+
+					<motion.h1
+						variants={fadeInUp}
+						className="text-4xl md:text-5xl lg:text-6xl font-[800] tracking-tight text-foreground leading-[1.1]"
+					>
 						Hello,{" "}
 						<span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
 							{user?.name || "Traveler"}
 						</span>
 						! 🌍
-					</h1>
-					<p className="text-lg md:text-xl text-muted-foreground font-light leading-relaxed animate-in slide-in-from-bottom-4 duration-500 delay-300">
+					</motion.h1>
+
+					<motion.p
+						variants={fadeInUp}
+						className="text-lg md:text-xl text-muted-foreground font-light leading-relaxed"
+					>
 						Your journey isn't just a trip; it's a story waiting to be written.
 						Where shall we go next?
-					</p>
+					</motion.p>
 
-					<div className="pt-4 flex flex-wrap gap-4 animate-in slide-in-from-bottom-4 duration-500 delay-400">
+					<motion.div variants={fadeInUp} className="pt-4 flex flex-wrap gap-4">
 						<Link to="/trips/create">
 							<Button
 								size="lg"
@@ -47,11 +88,11 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
 						>
 							<Search className="mr-2 size-4" /> Explore Destinations
 						</Button>
-					</div>
+					</motion.div>
 				</div>
 
 				{/* Hero Image / Illustration Placeholder */}
-				<div className="hidden lg:block relative animate-in zoom-in-95 duration-700 delay-500">
+				<motion.div variants={fadeInUp} className="hidden lg:block relative">
 					<div className="relative z-10 bg-gradient-to-br from-background/80 to-background/40 backdrop-blur-md p-6 rounded-2xl border border-white/20 shadow-xl w-[320px] rotate-3 hover:rotate-0 transition-transform duration-500">
 						<div className="flex items-center gap-3 mb-4">
 							<div className="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
@@ -86,8 +127,8 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
 
 					{/* Decorative Elements behind card */}
 					<div className="absolute top-10 -right-4 w-20 h-20 bg-accent rounded-full opacity-20 blur-xl animate-pulse" />
-				</div>
-			</div>
+				</motion.div>
+			</motion.div>
 		</section>
 	);
 }

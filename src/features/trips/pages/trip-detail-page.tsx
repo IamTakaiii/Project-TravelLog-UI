@@ -13,68 +13,28 @@ import {
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { tripQueryOptions } from "../queries/trips-queries";
+import { motion, type Variants } from "framer-motion";
+import {
+	formatDate,
+	formatDateRange,
+	calculateDuration,
+	getStatusConfig,
+} from "../utils/trip-utils";
 
-function formatDate(dateString: string): string {
-	const date = new Date(dateString);
-	return date.toLocaleDateString("en-US", {
-		weekday: "long",
-		month: "long",
-		day: "numeric",
-		year: "numeric",
-	});
-}
+const containerVariants: Variants = {
+	hidden: { opacity: 0 },
+	show: {
+		opacity: 1,
+		transition: {
+			staggerChildren: 0.1,
+		},
+	},
+};
 
-function formatDateRange(startDate: string, endDate: string): string {
-	const start = new Date(startDate);
-	const end = new Date(endDate);
-
-	const startMonth = start.toLocaleDateString("en-US", { month: "short" });
-	const startDay = start.getDate();
-	const endMonth = end.toLocaleDateString("en-US", { month: "short" });
-	const endDay = end.getDate();
-	const year = end.getFullYear();
-
-	if (startMonth === endMonth) {
-		return `${startMonth} ${startDay} - ${endDay}, ${year}`;
-	}
-	return `${startMonth} ${startDay} - ${endMonth} ${endDay}, ${year}`;
-}
-
-function calculateDuration(startDate: string, endDate: string): number {
-	const start = new Date(startDate);
-	const end = new Date(endDate);
-	const diffTime = Math.abs(end.getTime() - start.getTime());
-	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-	return diffDays + 1; // Include both start and end day
-}
-
-function getStatusConfig(status: "active" | "inactive" | "completed") {
-	switch (status) {
-		case "active":
-			return {
-				label: "Active",
-				className:
-					"border-emerald-500/50 text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10",
-			};
-		case "completed":
-			return {
-				label: "Completed",
-				className:
-					"border-blue-500/50 text-blue-600 bg-blue-50 dark:bg-blue-500/10",
-			};
-		case "inactive":
-			return {
-				label: "Inactive",
-				className:
-					"border-gray-500/50 text-gray-600 bg-gray-50 dark:bg-gray-500/10",
-			};
-		default:
-			return {
-				label: status,
-				className: "border-border text-muted-foreground bg-muted",
-			};
-	}
-}
+const itemVariants: Variants = {
+	hidden: { opacity: 0, y: 20 },
+	show: { opacity: 1, y: 0 },
+};
 
 export function TripDetailPage() {
 	const { t } = useTranslation();
@@ -90,9 +50,17 @@ export function TripDetailPage() {
 		"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&auto=format&fit=crop&q=80";
 
 	return (
-		<div className="min-h-screen bg-background animate-in fade-in duration-700">
+		<motion.div
+			variants={containerVariants}
+			initial="hidden"
+			animate="show"
+			className="min-h-screen bg-background"
+		>
 			{/* Hero Section with Cover Image */}
-			<div className="relative h-[300px] md:h-[400px] overflow-hidden">
+			<motion.div
+				variants={itemVariants}
+				className="relative h-[300px] md:h-[400px] overflow-hidden"
+			>
 				<img
 					src={coverImage}
 					alt={trip.title}
@@ -158,12 +126,15 @@ export function TripDetailPage() {
 						)}
 					</div>
 				</div>
-			</div>
+			</motion.div>
 
 			{/* Content */}
 			<div className="p-6 lg:p-10 max-w-4xl">
 				{/* Trip Info Cards */}
-				<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+				<motion.div
+					variants={itemVariants}
+					className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8"
+				>
 					{/* Date Card */}
 					<div className="bg-muted/30 rounded-2xl p-5 border border-border/50">
 						<div className="flex items-center gap-3 mb-3">
@@ -208,36 +179,42 @@ export function TripDetailPage() {
 							<p className="font-semibold text-foreground">{trip.budget}</p>
 						</div>
 					)}
-				</div>
+				</motion.div>
 
 				{/* Description */}
 				{trip.description && (
-					<div className="mb-8">
+					<motion.div variants={itemVariants} className="mb-8">
 						<h2 className="text-xl font-bold mb-4">About this trip</h2>
 						<p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
 							{trip.description}
 						</p>
-					</div>
+					</motion.div>
 				)}
 
 				{/* Timeline/Details Section Placeholder */}
-				<div className="border border-dashed border-border rounded-2xl p-8 text-center">
+				<motion.div
+					variants={itemVariants}
+					className="border border-dashed border-border rounded-2xl p-8 text-center"
+				>
 					<p className="text-muted-foreground mb-2">
 						Itinerary and activities coming soon
 					</p>
 					<p className="text-sm text-muted-foreground/70">
 						You'll be able to add daily plans, activities, and notes here.
 					</p>
-				</div>
+				</motion.div>
 
 				{/* Meta Info */}
-				<div className="mt-8 pt-6 border-t border-border/50 text-sm text-muted-foreground">
+				<motion.div
+					variants={itemVariants}
+					className="mt-8 pt-6 border-t border-border/50 text-sm text-muted-foreground"
+				>
 					<p>Created: {formatDate(trip.createdAt)}</p>
 					{trip.updatedAt !== trip.createdAt && (
 						<p>Last updated: {formatDate(trip.updatedAt)}</p>
 					)}
-				</div>
+				</motion.div>
 			</div>
-		</div>
+		</motion.div>
 	);
 }

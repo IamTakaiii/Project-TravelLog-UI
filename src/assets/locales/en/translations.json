@@ -66,6 +66,31 @@
             "company": "Acme Inc."
         }
     },
+    "menu": {
+        "dashboard": "Dashboard",
+        "trips": "My Trips",
+        "invitations": "Invitations",
+        "communities": {
+            "title": "Communities",
+            "travelers": "Travelers",
+            "guides": "Local Guides",
+            "events": "Events"
+        },
+        "profile": "Profile",
+        "settings": "Settings",
+        "sections": {
+            "travel_log": "Travel Log",
+            "account": "Account"
+        },
+        "badges": {
+            "new": "New"
+        },
+        "pro_features": {
+            "title": "Pro Features",
+            "description": "Get offline maps, unlimited trip planning, and AI suggestions.",
+            "upgrade": "Upgrade Plan"
+        }
+    },
     "trips": {
         "validation": {
             "title_min_length": "Trip title must be at least 3 characters",
