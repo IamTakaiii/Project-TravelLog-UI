@@ -1,12 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import {
-	MapPin,
-	Plus,
-	Search,
-	Plane,
-	DollarSign,
-} from "lucide-react";
+import { MapPin, Plus, Search, Plane, DollarSign } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,7 +79,9 @@ function TripCard({ trip }: TripCardProps) {
 					{/* Date Badge */}
 					<div className="flex flex-col items-center justify-center rounded-xl bg-background/95 backdrop-blur-md px-3 py-1.5 shadow-sm text-xs font-bold ring-1 ring-black/5">
 						<span className="text-primary uppercase text-[10px] leading-tight">
-							{new Date(trip.startDate).toLocaleString('default', { month: 'short' })}
+							{new Date(trip.startDate).toLocaleString("default", {
+								month: "short",
+							})}
 						</span>
 						<span className="text-foreground text-lg leading-none">
 							{new Date(trip.startDate).getDate()}
@@ -129,7 +125,9 @@ function TripCard({ trip }: TripCardProps) {
 							<DollarSign className="size-4" />
 						</div>
 						<span className="font-medium">
-							{trip.budget ? `${trip.currency || "USD"} ${trip.budget}` : "No budget set"}
+							{trip.budget
+								? `${trip.currency || "USD"} ${trip.budget}`
+								: "No budget set"}
 						</span>
 					</div>
 				</div>

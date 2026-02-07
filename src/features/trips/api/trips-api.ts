@@ -4,6 +4,13 @@ import type { CreateTripFormValues } from "../schemas/create-trip-schema";
 const API_URL =
 	import.meta.env["VITE_API_URL"] || "http://localhost:3000/api/v1";
 
+export interface TripUser {
+	id: string;
+	name: string;
+	email: string;
+	image?: string | null;
+}
+
 export interface Trip {
 	id: string;
 	title: string;
@@ -17,7 +24,7 @@ export interface Trip {
 	endDate: string;
 	status: "active" | "inactive" | "completed";
 	createdBy: string;
-	updatedBy: string;
+	updatedBy: TripUser | null;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -84,8 +91,8 @@ export const tripsApi = {
 			};
 			throw new Error(
 				errorData.error?.code ||
-				errorData.message ||
-				"trips.errors.create_failed"
+					errorData.message ||
+					"trips.errors.create_failed"
 			);
 		}
 
@@ -132,7 +139,9 @@ export const tripsApi = {
 
 		const payload: Partial<CreateTripPayload> = {
 			...data,
-			startDate: data.startDate ? new Date(data.startDate).toISOString() : undefined,
+			startDate: data.startDate
+				? new Date(data.startDate).toISOString()
+				: undefined,
 			endDate: data.endDate ? new Date(data.endDate).toISOString() : undefined,
 		};
 
@@ -150,8 +159,8 @@ export const tripsApi = {
 			};
 			throw new Error(
 				errorData.error?.code ||
-				errorData.message ||
-				"trips.errors.update_failed"
+					errorData.message ||
+					"trips.errors.update_failed"
 			);
 		}
 

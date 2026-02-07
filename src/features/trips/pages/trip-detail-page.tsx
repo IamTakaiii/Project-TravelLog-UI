@@ -1,5 +1,9 @@
 import { Link, useParams, useNavigate } from "@tanstack/react-router";
-import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+	useSuspenseQuery,
+	useMutation,
+	useQueryClient,
+} from "@tanstack/react-query";
 import {
 	ArrowLeft,
 	Calendar,
@@ -12,7 +16,7 @@ import {
 	Loader2,
 	Globe,
 	Users,
-	Plane
+	Plane,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -75,7 +79,7 @@ export function TripDetailPage() {
 		},
 		onError: (error) => {
 			toast.error(translateError(error.message));
-		}
+		},
 	});
 
 	const handleDelete = () => {
@@ -113,12 +117,12 @@ export function TripDetailPage() {
 						<Button
 							variant="ghost"
 							size="sm"
-							className="bg-black/20 backdrop-blur-md hover:bg-black/40 text-white border border-white/10 rounded-full gap-2 pl-2 pr-4 transition-all hover:scale-105"
+							className="bg-black/20 backdrop-blur-md hover:bg-white/90 text-white hover:text-gray-900 border border-white/10 hover:border-white/50 rounded-full gap-2 pl-2 pr-4 transition-all duration-200 hover:scale-105"
 						>
 							<div className="bg-white/20 p-1 rounded-full">
 								<ArrowLeft className="size-4" />
 							</div>
-							{t("trips.create.back_button")}
+							{t("trips.edit.back_to_trip")}
 						</Button>
 					</Link>
 
@@ -126,7 +130,7 @@ export function TripDetailPage() {
 						<Button
 							variant="ghost"
 							size="icon"
-							className="bg-black/30 backdrop-blur-md hover:bg-sky-500 text-white/80 hover:text-white border border-white/20 hover:border-sky-400 rounded-full transition-all duration-200 hover:scale-110 hover:shadow-lg hover:shadow-sky-500/30"
+							className="bg-black/20 backdrop-blur-md hover:bg-white/90 text-white hover:text-sky-600 border border-white/10 hover:border-white/50 rounded-full transition-all duration-200 hover:scale-110"
 							onClick={() => toast.info("Sharing coming soon!")}
 						>
 							<Share2 className="size-4" />
@@ -136,18 +140,21 @@ export function TripDetailPage() {
 							<Button
 								variant="ghost"
 								size="icon"
-								className="bg-black/30 backdrop-blur-md hover:bg-amber-500 text-white/80 hover:text-white border border-white/20 hover:border-amber-400 rounded-full transition-all duration-200 hover:scale-110 hover:shadow-lg hover:shadow-amber-500/30"
+								className="bg-black/20 backdrop-blur-md hover:bg-white/90 text-white hover:text-amber-600 border border-white/10 hover:border-white/50 rounded-full transition-all duration-200 hover:scale-110"
 							>
 								<Edit className="size-4" />
 							</Button>
 						</Link>
 
-						<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+						<AlertDialog
+							open={isDeleteDialogOpen}
+							onOpenChange={setIsDeleteDialogOpen}
+						>
 							<AlertDialogTrigger asChild>
 								<Button
 									variant="ghost"
 									size="icon"
-									className="bg-black/30 backdrop-blur-md hover:bg-rose-500 text-white/80 hover:text-white border border-white/20 hover:border-rose-400 rounded-full transition-all duration-200 hover:scale-110 hover:shadow-lg hover:shadow-rose-500/30"
+									className="bg-black/20 backdrop-blur-md hover:bg-white/90 text-white hover:text-rose-600 border border-white/10 hover:border-white/50 rounded-full transition-all duration-200 hover:scale-110"
 								>
 									<Trash2 className="size-4" />
 								</Button>
@@ -156,14 +163,21 @@ export function TripDetailPage() {
 								<AlertDialogHeader>
 									<AlertDialogTitle>Are you sure?</AlertDialogTitle>
 									<AlertDialogDescription>
-										This action cannot be undone. This will permanently delete your trip
-										and remove your data from our servers.
+										This action cannot be undone. This will permanently delete
+										your trip and remove your data from our servers.
 									</AlertDialogDescription>
 								</AlertDialogHeader>
 								<AlertDialogFooter>
 									<AlertDialogCancel>Cancel</AlertDialogCancel>
-									<AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-										{deleteTripMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
+									<AlertDialogAction
+										onClick={handleDelete}
+										className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+									>
+										{deleteTripMutation.isPending ? (
+											<Loader2 className="h-4 w-4 animate-spin" />
+										) : (
+											"Delete"
+										)}
 									</AlertDialogAction>
 								</AlertDialogFooter>
 							</AlertDialogContent>
@@ -180,22 +194,33 @@ export function TripDetailPage() {
 									<span
 										className={cn(
 											"inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 shadow-sm",
-											statusConfig.className.replace("bg-", "bg-opacity-80 bg-").replace("border-", "border-opacity-50 border-")
+											statusConfig.className
+												.replace("bg-", "bg-opacity-80 bg-")
+												.replace("border-", "border-opacity-50 border-")
 										)}
 									>
-										<div className={cn("size-1.5 rounded-full animate-pulse",
-											trip.status === 'active' ? "bg-emerald-400" :
-												trip.status === 'completed' ? "bg-blue-400" : "bg-gray-400"
-										)} />
+										<div
+											className={cn(
+												"size-1.5 rounded-full animate-pulse",
+												trip.status === "active"
+													? "bg-emerald-400"
+													: trip.status === "completed"
+														? "bg-blue-400"
+														: "bg-gray-400"
+											)}
+										/>
 										{statusConfig.label}
 									</span>
 
-									{trip.destinationType && trip.destinationType !== 'unknown' && (
-										<span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-black/40 text-white backdrop-blur-md border border-white/10 text-[11px] font-bold uppercase tracking-wider shadow-sm">
-											<Globe className="size-3" />
-											{t(`trips.destination_types.${trip.destinationType}`, { defaultValue: trip.destinationType })}
-										</span>
-									)}
+									{trip.destinationType &&
+										trip.destinationType !== "unknown" && (
+											<span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-black/40 text-white backdrop-blur-md border border-white/10 text-[11px] font-bold uppercase tracking-wider shadow-sm">
+												<Globe className="size-3" />
+												{t(`trips.destination_types.${trip.destinationType}`, {
+													defaultValue: trip.destinationType,
+												})}
+											</span>
+										)}
 								</div>
 
 								<h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white tracking-tight drop-shadow-lg leading-tight">
@@ -213,14 +238,19 @@ export function TripDetailPage() {
 							{/* Author/Collaborators Placeholder */}
 							<div className="hidden md:flex items-center gap-3 bg-black/30 backdrop-blur-md rounded-full px-4 py-2 border border-white/10">
 								<div className="flex -space-x-2">
-									<div className="size-8 rounded-full border-2 border-white/20 bg-white/20 flex items-center justify-center text-[10px] font-bold text-white" title="You">
+									<div
+										className="size-8 rounded-full border-2 border-white/20 bg-white/20 flex items-center justify-center text-[10px] font-bold text-white"
+										title="You"
+									>
 										ME
 									</div>
 									<div className="size-8 rounded-full border-2 border-white/20 bg-white/10 flex items-center justify-center text-xs text-white/70 hover:bg-white/20 transition-colors cursor-pointer">
 										+
 									</div>
 								</div>
-								<span className="text-xs text-white/70 font-medium">Members</span>
+								<span className="text-xs text-white/70 font-medium">
+									Members
+								</span>
 							</div>
 						</div>
 					</div>
@@ -229,7 +259,6 @@ export function TripDetailPage() {
 
 			{/* Main Content Layout */}
 			<div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
-
 				{/* Stats Grid */}
 				<motion.div
 					variants={itemVariants}
@@ -257,7 +286,10 @@ export function TripDetailPage() {
 							{t("trips.detail.duration", "Duration")}
 						</span>
 						<p className="font-bold text-foreground text-sm">
-							{duration} {duration === 1 ? t("trips.detail.day", "Day") : t("trips.detail.days", "Days")}
+							{duration}{" "}
+							{duration === 1
+								? t("trips.detail.day", "Day")
+								: t("trips.detail.days", "Days")}
 						</p>
 					</div>
 
@@ -270,8 +302,10 @@ export function TripDetailPage() {
 							{t("trips.detail.type")}
 						</span>
 						<p className="font-bold text-foreground text-sm">
-							{trip.destinationType && trip.destinationType !== 'unknown'
-								? t(`trips.destination_types.${trip.destinationType}`, { defaultValue: trip.destinationType })
+							{trip.destinationType && trip.destinationType !== "unknown"
+								? t(`trips.destination_types.${trip.destinationType}`, {
+										defaultValue: trip.destinationType,
+									})
 								: t("trips.detail.trip")}
 						</p>
 					</div>
@@ -285,7 +319,9 @@ export function TripDetailPage() {
 							{t("trips.detail.budget", "Budget")}
 						</span>
 						<p className="font-bold text-foreground text-sm">
-							{trip.budget ? `${trip.currency || 'USD'} ${trip.budget.toLocaleString()}` : "-"}
+							{trip.budget
+								? `${trip.currency || "USD"} ${trip.budget.toLocaleString()}`
+								: "-"}
 						</p>
 					</div>
 				</motion.div>
@@ -328,12 +364,11 @@ export function TripDetailPage() {
 								<div className="space-y-1">
 									<h3 className="text-lg font-semibold">No itinerary yet</h3>
 									<p className="text-muted-foreground max-w-md mx-auto">
-										Start planning your trip by adding daily activities, places to visit, and reservations.
+										Start planning your trip by adding daily activities, places
+										to visit, and reservations.
 									</p>
 								</div>
-								<Button className="rounded-full mt-2">
-									Create Itinerary
-								</Button>
+								<Button className="rounded-full mt-2">Create Itinerary</Button>
 							</div>
 						</motion.div>
 					</div>
@@ -341,7 +376,10 @@ export function TripDetailPage() {
 					{/* Right Column - Sidebar */}
 					<div className="space-y-8">
 						{/* Map Placeholder */}
-						<motion.div variants={itemVariants} className="bg-card rounded-3xl overflow-hidden border border-border shadow-sm">
+						<motion.div
+							variants={itemVariants}
+							className="bg-card rounded-3xl overflow-hidden border border-border shadow-sm"
+						>
 							<div className="p-4 border-b border-border/50 font-semibold flex items-center gap-2">
 								<MapPin className="size-4 text-primary" />
 								Location
@@ -358,7 +396,10 @@ export function TripDetailPage() {
 						</motion.div>
 
 						{/* Collaborators */}
-						<motion.div variants={itemVariants} className="bg-card rounded-3xl p-6 border border-border shadow-sm space-y-4">
+						<motion.div
+							variants={itemVariants}
+							className="bg-card rounded-3xl p-6 border border-border shadow-sm space-y-4"
+						>
 							<h3 className="font-semibold flex items-center gap-2">
 								<Users className="size-4 text-primary" />
 								Companions
@@ -370,7 +411,11 @@ export function TripDetailPage() {
 									</div>
 									<span className="text-sm font-medium">You</span>
 								</div>
-								<Button variant="outline" size="sm" className="rounded-full h-12 px-4 border-dashed border-2">
+								<Button
+									variant="outline"
+									size="sm"
+									className="rounded-full h-12 px-4 border-dashed border-2"
+								>
 									<Plus className="size-4 mr-2" />
 									Invite
 								</Button>
@@ -381,13 +426,40 @@ export function TripDetailPage() {
 						<div className="pt-6 border-t border-border/50 text-xs text-muted-foreground space-y-2">
 							<p className="flex justify-between">
 								<span>Created</span>
-								<span className="font-medium text-foreground">{formatDate(trip.createdAt)}</span>
+								<span className="font-medium text-foreground">
+									{formatDate(trip.createdAt)}
+								</span>
 							</p>
 							{trip.updatedAt !== trip.createdAt && (
-								<p className="flex justify-between">
-									<span>Last Updated</span>
-									<span className="font-medium text-foreground">{formatDate(trip.updatedAt)}</span>
-								</p>
+								<>
+									<p className="flex justify-between">
+										<span>Last Updated</span>
+										<span className="font-medium text-foreground">
+											{formatDate(trip.updatedAt)}
+										</span>
+									</p>
+									{trip.updatedBy && (
+										<div className="space-y-1.5">
+											<p className="flex justify-between items-center">
+												<span>Updated By</span>
+												<span className="font-medium text-foreground flex items-center gap-1.5">
+													{trip.updatedBy.image ? (
+														<img
+															src={trip.updatedBy.image}
+															alt={trip.updatedBy.name}
+															className="size-4 rounded-full object-cover"
+														/>
+													) : (
+														<span className="size-4 rounded-full bg-primary/20 flex items-center justify-center text-[8px] font-bold text-primary">
+															{trip.updatedBy.name?.charAt(0).toUpperCase()}
+														</span>
+													)}
+													{trip.updatedBy.name}
+												</span>
+											</p>
+										</div>
+									)}
+								</>
 							)}
 						</div>
 					</div>
@@ -413,5 +485,5 @@ function Plus({ className }: { className?: string }) {
 			<path d="M5 12h14" />
 			<path d="M12 5v14" />
 		</svg>
-	)
+	);
 }

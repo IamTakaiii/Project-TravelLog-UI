@@ -7,6 +7,8 @@ export function formatDate(dateString: string): string {
 		month: "long",
 		day: "numeric",
 		year: "numeric",
+		hour: "numeric",
+		minute: "numeric",
 	});
 }
 
