@@ -126,7 +126,7 @@ export function TripDetailPage() {
 						<Button
 							variant="ghost"
 							size="icon"
-							className="bg-black/20 backdrop-blur-md hover:bg-black/40 text-white border border-white/10 rounded-full transition-all hover:scale-110"
+							className="bg-black/30 backdrop-blur-md hover:bg-sky-500 text-white/80 hover:text-white border border-white/20 hover:border-sky-400 rounded-full transition-all duration-200 hover:scale-110 hover:shadow-lg hover:shadow-sky-500/30"
 							onClick={() => toast.info("Sharing coming soon!")}
 						>
 							<Share2 className="size-4" />
@@ -136,7 +136,7 @@ export function TripDetailPage() {
 							<Button
 								variant="ghost"
 								size="icon"
-								className="bg-black/20 backdrop-blur-md hover:bg-black/40 text-white border border-white/10 rounded-full transition-all hover:scale-110"
+								className="bg-black/30 backdrop-blur-md hover:bg-amber-500 text-white/80 hover:text-white border border-white/20 hover:border-amber-400 rounded-full transition-all duration-200 hover:scale-110 hover:shadow-lg hover:shadow-amber-500/30"
 							>
 								<Edit className="size-4" />
 							</Button>
@@ -147,7 +147,7 @@ export function TripDetailPage() {
 								<Button
 									variant="ghost"
 									size="icon"
-									className="bg-black/20 backdrop-blur-md hover:bg-destructive/80 text-white border border-white/10 rounded-full transition-all hover:scale-110 hover:border-destructive"
+									className="bg-black/30 backdrop-blur-md hover:bg-rose-500 text-white/80 hover:text-white border border-white/20 hover:border-rose-400 rounded-full transition-all duration-200 hover:scale-110 hover:shadow-lg hover:shadow-rose-500/30"
 								>
 									<Trash2 className="size-4" />
 								</Button>
