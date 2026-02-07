@@ -204,28 +204,64 @@ export function TripForm({ form, onSubmit, isLoading, error, isEditMode = false 
                     </div>
                 </div>
 
-                {/* Budget */}
-                <div className="space-y-2">
-                    <Label
-                        htmlFor="budget"
-                        className="text-sm font-semibold flex items-center gap-2"
-                    >
-                        <DollarSign className="size-4 text-muted-foreground" />
-                        {t("trips.fields.budget")}{" "}
-                        <span className="text-xs font-normal text-muted-foreground">
-                            ({t("trips.create.optional")})
-                        </span>
-                    </Label>
-                    <div className="relative">
-                        <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                        <Input
-                            id="budget"
-                            placeholder={t("trips.placeholders.budget")}
-                            type="text"
-                            disabled={isLoading}
-                            {...register("budget")}
-                            className="pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors"
+                {/* Budget & Currency */}
+                <div className="flex flex-col md:flex-row gap-4">
+                    <div className="w-full md:w-1/3 space-y-2">
+                        <Label
+                            className="text-sm font-semibold flex items-center gap-2"
+                        >
+                            <DollarSign className="size-4 text-primary" />
+                            Currency
+                        </Label>
+                        <Controller
+                            control={control}
+                            name="currency"
+                            defaultValue="USD"
+                            render={({ field }) => (
+                                <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    value={field.value}
+                                    disabled={isLoading}
+                                >
+                                    <SelectTrigger className="h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors">
+                                        <SelectValue placeholder="Select Currency" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="USD">USD ($)</SelectItem>
+                                        <SelectItem value="THB">THB (฿)</SelectItem>
+                                        <SelectItem value="EUR">EUR (€)</SelectItem>
+                                        <SelectItem value="GBP">GBP (£)</SelectItem>
+                                        <SelectItem value="JPY">JPY (¥)</SelectItem>
+                                        <SelectItem value="CNY">CNY (¥)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            )}
                         />
+                    </div>
+
+                    <div className="w-full md:w-2/3 space-y-2">
+                        <Label
+                            htmlFor="budget"
+                            className="text-sm font-semibold flex items-center gap-2"
+                        >
+                            <DollarSign className="size-4 text-muted-foreground" />
+                            {t("trips.fields.budget")}{" "}
+                            <span className="text-xs font-normal text-muted-foreground">
+                                ({t("trips.create.optional")})
+                            </span>
+                        </Label>
+                        <div className="relative">
+                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                            <Input
+                                id="budget"
+                                placeholder={t("trips.placeholders.budget")}
+                                type="text"
+                                disabled={isLoading}
+                                {...register("budget")}
+                                className="pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors"
+                            />
+                        </div>
                     </div>
                 </div>
 

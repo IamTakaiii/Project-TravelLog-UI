@@ -129,7 +129,7 @@ function TripCard({ trip }: TripCardProps) {
 							<DollarSign className="size-4" />
 						</div>
 						<span className="font-medium">
-							{trip.budget ? `$${trip.budget}` : "No budget set"}
+							{trip.budget ? `${trip.currency || "USD"} ${trip.budget}` : "No budget set"}
 						</span>
 					</div>
 				</div>

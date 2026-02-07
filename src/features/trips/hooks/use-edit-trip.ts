@@ -22,6 +22,7 @@ export function useEditTrip(trip: Trip) {
             title: trip.title,
             destination: trip.destination || "",
             destinationType: trip.destinationType || "unknown",
+            currency: trip.currency || "USD",
             startDate: trip.startDate.split("T")[0],
             endDate: trip.endDate.split("T")[0],
             description: trip.description || "",

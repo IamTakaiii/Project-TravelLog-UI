@@ -11,6 +11,7 @@ export interface Trip {
 	coverImage: string | null;
 	destination: string | null;
 	destinationType?: string;
+	currency?: string;
 	budget: string | null;
 	startDate: string;
 	endDate: string;
@@ -33,6 +34,7 @@ export interface CreateTripPayload {
 	coverImage?: string;
 	destination?: string;
 	destinationType?: string;
+	currency?: string;
 	budget?: string;
 	startDate: string;
 	endDate: string;
@@ -65,6 +67,7 @@ export const tripsApi = {
 		if (data.coverImage) payload.coverImage = data.coverImage;
 		if (data.destination) payload.destination = data.destination;
 		if (data.destinationType) payload.destinationType = data.destinationType;
+		if (data.currency) payload.currency = data.currency;
 		if (data.budget) payload.budget = data.budget;
 
 		const response = await fetch(`${API_URL}/api/v1/trips`, {

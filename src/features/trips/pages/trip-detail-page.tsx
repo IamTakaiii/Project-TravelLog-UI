@@ -10,6 +10,9 @@ import {
 	Trash2,
 	Share2,
 	Loader2,
+	Globe,
+	Users,
+	Plane
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -35,7 +38,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { useTranslateError } from "@/hooks/use-translate-error";
-import { toast } from "sonner"; // Assuming sonner is used for toasts, or replace with appropriate toast lib
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const containerVariants: Variants = {
 	hidden: { opacity: 0 },
@@ -60,13 +64,12 @@ export function TripDetailPage() {
 	const params = useParams({ from: "/_layout/trips/$tripId" });
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-	// Data is already prefetched by the route loader, so this will be instant
 	const { data: trip } = useSuspenseQuery(tripQueryOptions(params.tripId));
 
 	const deleteTripMutation = useMutation({
 		mutationFn: (id: string) => tripsApi.delete(id),
 		onSuccess: () => {
-			toast.success(t("Trip deleted successfully")); // Add translation key if needed
+			toast.success(t("Trip deleted successfully"));
 			queryClient.invalidateQueries({ queryKey: tripsQueryOptions.queryKey });
 			navigate({ to: "/trips" });
 		},
@@ -90,189 +93,323 @@ export function TripDetailPage() {
 			variants={containerVariants}
 			initial="hidden"
 			animate="show"
-			className="min-h-screen bg-background"
+			className="min-h-screen bg-background pb-20"
 		>
 			{/* Hero Section with Cover Image */}
 			<motion.div
 				variants={itemVariants}
-				className="relative h-[300px] md:h-[400px] overflow-hidden"
+				className="relative h-[40vh] min-h-[400px] lg:h-[50vh] w-full overflow-hidden"
 			>
 				<img
 					src={coverImage}
 					alt={trip.title}
 					className="w-full h-full object-cover"
 				/>
-				<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+				<div className="absolute inset-0 bg-gradient-to-t from-background via-black/40 to-black/30" />
 
-				{/* Back Button */}
-				<div className="absolute top-6 left-6">
+				{/* Navigation Bar */}
+				<div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-10">
 					<Link to="/trips">
 						<Button
-							variant="outline"
+							variant="ghost"
 							size="sm"
-							className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 hover:text-white gap-2"
+							className="bg-black/20 backdrop-blur-md hover:bg-black/40 text-white border border-white/10 rounded-full gap-2 pl-2 pr-4 transition-all hover:scale-105"
 						>
-							<ArrowLeft className="size-4" />
+							<div className="bg-white/20 p-1 rounded-full">
+								<ArrowLeft className="size-4" />
+							</div>
 							{t("trips.create.back_button")}
 						</Button>
 					</Link>
-				</div>
 
-				{/* Action Buttons */}
-				<div className="absolute top-6 right-6 flex gap-2">
-					<Button
-						variant="outline"
-						size="icon"
-						className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 hover:text-white"
-					>
-						<Share2 className="size-4" />
-					</Button>
-					<Link to={`/trips/${trip.id}/edit` as any}>
+					<div className="flex gap-2">
 						<Button
-							variant="outline"
+							variant="ghost"
 							size="icon"
-							className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 hover:text-white"
+							className="bg-black/20 backdrop-blur-md hover:bg-black/40 text-white border border-white/10 rounded-full transition-all hover:scale-110"
+							onClick={() => toast.info("Sharing coming soon!")}
 						>
-							<Edit className="size-4" />
+							<Share2 className="size-4" />
 						</Button>
-					</Link>
 
-					<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-						<AlertDialogTrigger asChild>
+						<Link to={`/trips/${trip.id}/edit` as any}>
 							<Button
-								variant="outline"
+								variant="ghost"
 								size="icon"
-								className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-destructive/80 hover:text-white hover:border-destructive"
+								className="bg-black/20 backdrop-blur-md hover:bg-black/40 text-white border border-white/10 rounded-full transition-all hover:scale-110"
 							>
-								<Trash2 className="size-4" />
+								<Edit className="size-4" />
 							</Button>
-						</AlertDialogTrigger>
-						<AlertDialogContent>
-							<AlertDialogHeader>
-								<AlertDialogTitle>Are you sure?</AlertDialogTitle>
-								<AlertDialogDescription>
-									This action cannot be undone. This will permanently delete your trip
-									and remove your data from our servers.
-								</AlertDialogDescription>
-							</AlertDialogHeader>
-							<AlertDialogFooter>
-								<AlertDialogCancel>Cancel</AlertDialogCancel>
-								<AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-									{deleteTripMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
-								</AlertDialogAction>
-							</AlertDialogFooter>
-						</AlertDialogContent>
-					</AlertDialog>
+						</Link>
+
+						<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+							<AlertDialogTrigger asChild>
+								<Button
+									variant="ghost"
+									size="icon"
+									className="bg-black/20 backdrop-blur-md hover:bg-destructive/80 text-white border border-white/10 rounded-full transition-all hover:scale-110 hover:border-destructive"
+								>
+									<Trash2 className="size-4" />
+								</Button>
+							</AlertDialogTrigger>
+							<AlertDialogContent>
+								<AlertDialogHeader>
+									<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+									<AlertDialogDescription>
+										This action cannot be undone. This will permanently delete your trip
+										and remove your data from our servers.
+									</AlertDialogDescription>
+								</AlertDialogHeader>
+								<AlertDialogFooter>
+									<AlertDialogCancel>Cancel</AlertDialogCancel>
+									<AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+										{deleteTripMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
+									</AlertDialogAction>
+								</AlertDialogFooter>
+							</AlertDialogContent>
+						</AlertDialog>
+					</div>
 				</div>
 
-				{/* Title Overlay */}
-				<div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
-					<div className="max-w-4xl">
-						<span
-							className={`inline-flex text-xs uppercase font-bold px-3 py-1 rounded-full border backdrop-blur-sm mb-4 ${statusConfig.className}`}
-						>
-							{statusConfig.label}
-						</span>
-						<h1 className="text-3xl md:text-5xl font-bold text-white mb-2">
-							{trip.title}
-						</h1>
-						{trip.destination && (
-							<div className="flex items-center gap-2 text-white/80">
-								<MapPin className="size-5" />
-								<span className="text-lg">{trip.destination}</span>
+				{/* Title & Metadata Overlay */}
+				<div className="absolute bottom-0 left-0 right-0 p-6 lg:p-12">
+					<div className="max-w-7xl mx-auto w-full">
+						<div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+							<div className="space-y-4 max-w-3xl">
+								<div className="flex flex-wrap items-center gap-3">
+									<span
+										className={cn(
+											"inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 shadow-sm",
+											statusConfig.className.replace("bg-", "bg-opacity-80 bg-").replace("border-", "border-opacity-50 border-")
+										)}
+									>
+										<div className={cn("size-1.5 rounded-full animate-pulse",
+											trip.status === 'active' ? "bg-emerald-400" :
+												trip.status === 'completed' ? "bg-blue-400" : "bg-gray-400"
+										)} />
+										{statusConfig.label}
+									</span>
+
+									{trip.destinationType && trip.destinationType !== 'unknown' && (
+										<span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/40 text-white backdrop-blur-md border border-white/10 text-xs font-bold uppercase tracking-wider shadow-sm">
+											<Globe className="size-3" />
+											{trip.destinationType}
+										</span>
+									)}
+								</div>
+
+								<h1 className="text-4xl md:text-6xl lg:text-7xl font-[800] text-white tracking-tight drop-shadow-lg leading-tight">
+									{trip.title}
+								</h1>
+
+								{trip.destination && (
+									<div className="flex items-center gap-2 text-white/90 text-lg md:text-xl font-medium drop-shadow-md">
+										<MapPin className="size-5 text-primary" />
+										<span>{trip.destination}</span>
+									</div>
+								)}
 							</div>
-						)}
+
+							{/* Author/Collaborators Placeholder */}
+							<div className="hidden md:flex flex-col items-end gap-2">
+								<div className="flex -space-x-3">
+									<div className="size-10 rounded-full border-2 border-background bg-muted flex items-center justify-center text-xs font-bold" title="You">
+										ME
+									</div>
+									<div className="size-10 rounded-full border-2 border-background bg-muted/80 flex items-center justify-center text-xs">
+										+
+									</div>
+								</div>
+								<span className="text-xs text-white/70 font-medium">Trip Members</span>
+							</div>
+						</div>
 					</div>
 				</div>
 			</motion.div>
 
-			{/* Content */}
-			<div className="p-6 lg:p-10 max-w-4xl">
-				{/* Trip Info Cards */}
+			{/* Main Content Layout */}
+			<div className="max-w-7xl mx-auto px-6 lg:px-12 -mt-12 relative z-10">
+
+				{/* Stats Grid */}
 				<motion.div
 					variants={itemVariants}
-					className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8"
+					className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12 shadow-xl shadow-black/5 rounded-3xl"
 				>
 					{/* Date Card */}
-					<div className="bg-muted/30 rounded-2xl p-5 border border-border/50">
-						<div className="flex items-center gap-3 mb-3">
-							<div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-								<Calendar className="size-5 text-primary" />
-							</div>
-							<span className="text-sm font-medium text-muted-foreground">
-								Travel Dates
-							</span>
+					<div className="bg-card hover:bg-accent/5 transition-colors rounded-2xl lg:rounded-l-3xl lg:rounded-r-none p-6 border border-border/50 flex flex-col items-center text-center justify-center group">
+						<div className="mb-3 p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+							<Calendar className="size-6 text-primary" />
 						</div>
-						<p className="font-semibold text-foreground">
+						<span className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-1">
+							Travel Dates
+						</span>
+						<p className="font-bold text-foreground text-lg">
 							{formatDateRange(trip.startDate, trip.endDate)}
 						</p>
 					</div>
 
 					{/* Duration Card */}
-					<div className="bg-muted/30 rounded-2xl p-5 border border-border/50">
-						<div className="flex items-center gap-3 mb-3">
-							<div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-								<Clock className="size-5 text-accent" />
-							</div>
-							<span className="text-sm font-medium text-muted-foreground">
-								Duration
-							</span>
+					<div className="bg-card hover:bg-accent/5 transition-colors rounded-2xl lg:rounded-none p-6 border border-border/50 lg:border-l-0 flex flex-col items-center text-center justify-center group">
+						<div className="mb-3 p-3 rounded-full bg-orange-500/10 group-hover:bg-orange-500/20 transition-colors">
+							<Clock className="size-6 text-orange-600" />
 						</div>
-						<p className="font-semibold text-foreground">
-							{duration} {duration === 1 ? "day" : "days"}
+						<span className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-1">
+							Duration
+						</span>
+						<p className="font-bold text-foreground text-lg">
+							{duration} {duration === 1 ? "Day" : "Days"}
+						</p>
+					</div>
+
+					{/* Destination/Type Card */}
+					<div className="bg-card hover:bg-accent/5 transition-colors rounded-2xl lg:rounded-none p-6 border border-border/50 lg:border-l-0 flex flex-col items-center text-center justify-center group">
+						<div className="mb-3 p-3 rounded-full bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
+							<Plane className="size-6 text-blue-600" />
+						</div>
+						<span className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-1">
+							Type
+						</span>
+						<p className="font-bold text-foreground text-lg capitalize">
+							{trip.destinationType !== 'unknown' ? trip.destinationType : 'Trip'}
 						</p>
 					</div>
 
 					{/* Budget Card */}
-					{trip.budget && (
-						<div className="bg-muted/30 rounded-2xl p-5 border border-border/50">
-							<div className="flex items-center gap-3 mb-3">
-								<div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-									<DollarSign className="size-5 text-emerald-500" />
-								</div>
-								<span className="text-sm font-medium text-muted-foreground">
-									Budget
-								</span>
-							</div>
-							<p className="font-semibold text-foreground">{trip.budget}</p>
+					<div className="bg-card hover:bg-accent/5 transition-colors rounded-2xl lg:rounded-l-none lg:rounded-r-3xl p-6 border border-border/50 lg:border-l-0 flex flex-col items-center text-center justify-center group">
+						<div className="mb-3 p-3 rounded-full bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-colors">
+							<DollarSign className="size-6 text-emerald-600" />
 						</div>
-					)}
-				</motion.div>
-
-				{/* Description */}
-				{trip.description && (
-					<motion.div variants={itemVariants} className="mb-8">
-						<h2 className="text-xl font-bold mb-4">About this trip</h2>
-						<p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-							{trip.description}
+						<span className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-1">
+							Budget
+						</span>
+						<p className="font-bold text-foreground text-lg">
+							{trip.budget ? `${trip.currency || 'USD'} ${trip.budget}` : "-"}
 						</p>
-					</motion.div>
-				)}
-
-				{/* Timeline/Details Section Placeholder */}
-				<motion.div
-					variants={itemVariants}
-					className="border border-dashed border-border rounded-2xl p-8 text-center"
-				>
-					<p className="text-muted-foreground mb-2">
-						Itinerary and activities coming soon
-					</p>
-					<p className="text-sm text-muted-foreground/70">
-						You'll be able to add daily plans, activities, and notes here.
-					</p>
+					</div>
 				</motion.div>
 
-				{/* Meta Info */}
-				<motion.div
-					variants={itemVariants}
-					className="mt-8 pt-6 border-t border-border/50 text-sm text-muted-foreground"
-				>
-					<p>Created: {formatDate(trip.createdAt)}</p>
-					{trip.updatedAt !== trip.createdAt && (
-						<p>Last updated: {formatDate(trip.updatedAt)}</p>
-					)}
-				</motion.div>
+				{/* Two Column Layout for Details */}
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+					{/* Left Column - Main Details */}
+					<div className="lg:col-span-2 space-y-12">
+						{/* Description Section */}
+						<motion.div variants={itemVariants} className="space-y-4">
+							<h2 className="text-2xl font-bold flex items-center gap-2">
+								About this trip
+							</h2>
+							<div className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground leading-relaxed">
+								{trip.description ? (
+									<p className="whitespace-pre-wrap">{trip.description}</p>
+								) : (
+									<div className="italic text-muted-foreground/60 p-6 bg-muted/20 rounded-xl border border-dashed border-border text-center">
+										No description provided yet.
+									</div>
+								)}
+							</div>
+						</motion.div>
+
+						{/* Itinerary Sections Placeholder */}
+						<motion.div variants={itemVariants} className="space-y-6">
+							<div className="flex items-center justify-between">
+								<h2 className="text-2xl font-bold">Itinerary</h2>
+								<Button variant="outline" size="sm" className="gap-2">
+									<Plus className="size-4" />
+									Add Activity
+								</Button>
+							</div>
+
+							{/* Empty State for Itinerary */}
+							<div className="bg-muted/20 border border-dashed border-border rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-4">
+								<div className="bg-background p-4 rounded-full shadow-sm">
+									<MapPin className="size-8 text-muted-foreground/50" />
+								</div>
+								<div className="space-y-1">
+									<h3 className="text-lg font-semibold">No itinerary yet</h3>
+									<p className="text-muted-foreground max-w-md mx-auto">
+										Start planning your trip by adding daily activities, places to visit, and reservations.
+									</p>
+								</div>
+								<Button className="rounded-full mt-2">
+									Create Itinerary
+								</Button>
+							</div>
+						</motion.div>
+					</div>
+
+					{/* Right Column - Sidebar */}
+					<div className="space-y-8">
+						{/* Map Placeholder */}
+						<motion.div variants={itemVariants} className="bg-card rounded-3xl overflow-hidden border border-border shadow-sm">
+							<div className="p-4 border-b border-border/50 font-semibold flex items-center gap-2">
+								<MapPin className="size-4 text-primary" />
+								Location
+							</div>
+							<div className="aspect-square bg-muted/50 relative flex items-center justify-center group overflow-hidden cursor-pointer">
+								{/* Simulated Map background */}
+								<div className="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/100.5018,13.7563,10,0/600x600@2x?access_token=YOUR_ACCESS_TOKEN')] bg-cover bg-center opacity-50 grayscale group-hover:grayscale-0 transition-all duration-500 scale-100 group-hover:scale-110" />
+
+								<div className="z-10 bg-background/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg text-center transform transition-transform group-hover:scale-105">
+									<MapPin className="size-8 text-primary mx-auto mb-2" />
+									<p className="font-bold text-sm">View on Map</p>
+								</div>
+							</div>
+						</motion.div>
+
+						{/* Collaborators */}
+						<motion.div variants={itemVariants} className="bg-card rounded-3xl p-6 border border-border shadow-sm space-y-4">
+							<h3 className="font-semibold flex items-center gap-2">
+								<Users className="size-4 text-primary" />
+								Companions
+							</h3>
+							<div className="flex flex-wrap gap-2">
+								<div className="flex items-center gap-3 p-2 pr-4 rounded-full bg-muted/50 border border-border/50">
+									<div className="size-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
+										ME
+									</div>
+									<span className="text-sm font-medium">You</span>
+								</div>
+								<Button variant="outline" size="sm" className="rounded-full h-12 px-4 border-dashed border-2">
+									<Plus className="size-4 mr-2" />
+									Invite
+								</Button>
+							</div>
+						</motion.div>
+
+						{/* Metadata */}
+						<div className="pt-6 border-t border-border/50 text-xs text-muted-foreground space-y-2">
+							<p className="flex justify-between">
+								<span>Created</span>
+								<span className="font-medium text-foreground">{formatDate(trip.createdAt)}</span>
+							</p>
+							{trip.updatedAt !== trip.createdAt && (
+								<p className="flex justify-between">
+									<span>Last Updated</span>
+									<span className="font-medium text-foreground">{formatDate(trip.updatedAt)}</span>
+								</p>
+							)}
+						</div>
+					</div>
+				</div>
 			</div>
 		</motion.div>
 	);
+}
+
+// Helper icon component for Itinerary placeholder
+function Plus({ className }: { className?: string }) {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			className={className}
+		>
+			<path d="M5 12h14" />
+			<path d="M12 5v14" />
+		</svg>
+	)
 }

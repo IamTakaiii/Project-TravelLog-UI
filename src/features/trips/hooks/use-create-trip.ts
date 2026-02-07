@@ -18,6 +18,7 @@ export function useCreateTrip() {
 			title: "",
 			destination: "",
 			destinationType: "unknown",
+			currency: "USD",
 			startDate: "",
 			endDate: "",
 			description: "",

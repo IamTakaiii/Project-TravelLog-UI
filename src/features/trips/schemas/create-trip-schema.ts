@@ -5,6 +5,7 @@ export const createTripSchema = z
 		title: z.string().min(3, { message: "trips.validation.title_min_length" }),
 		destination: z.string().optional(),
 		destinationType: z.string().optional(),
+		currency: z.string().optional(),
 		startDate: z
 			.string()
 			.min(1, { message: "trips.validation.start_date_required" }),
