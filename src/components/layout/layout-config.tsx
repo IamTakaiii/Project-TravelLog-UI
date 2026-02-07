@@ -1,10 +1,4 @@
-import {
-	Bolt,
-	Map,
-	Mail,
-	User,
-	Settings,
-} from "lucide-react";
+import { Bolt, Map, Mail, User, Settings } from "lucide-react";
 
 import { type LucideIcon } from "lucide-react";
 

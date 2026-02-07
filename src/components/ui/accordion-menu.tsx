@@ -41,9 +41,9 @@ interface AccordionMenuProps {
 const AccordionMenuContext = React.createContext<AccordionMenuContextValue>({
 	matchPath: () => false,
 	selectedValue: "",
-	setSelectedValue: () => { },
+	setSelectedValue: () => {},
 	nestedStates: {},
-	setNestedStates: () => { },
+	setNestedStates: () => {},
 });
 
 function AccordionMenu({
@@ -339,15 +339,15 @@ function AccordionMenuSubTrigger({
 
 type AccordionMenuSubContentProps = (
 	| (React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content> & {
-		type: "single";
-		collapsible: boolean;
-		defaultValue?: string;
-	})
+			type: "single";
+			collapsible: boolean;
+			defaultValue?: string;
+	  })
 	| (React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content> & {
-		type: "multiple";
-		collapsible?: boolean;
-		defaultValue?: string | string[];
-	})
+			type: "multiple";
+			collapsible?: boolean;
+			defaultValue?: string | string[];
+	  })
 ) & {
 	parentValue: string;
 };

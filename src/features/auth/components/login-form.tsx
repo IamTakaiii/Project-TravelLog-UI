@@ -42,7 +42,7 @@ export function LoginForm() {
 								className={cn(
 									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
 									errors.email &&
-									"border-destructive focus-visible:ring-destructive/30"
+										"border-destructive focus-visible:ring-destructive/30"
 								)}
 							/>
 						</div>
@@ -79,7 +79,7 @@ export function LoginForm() {
 								className={cn(
 									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
 									errors.password &&
-									"border-destructive focus-visible:ring-destructive/30"
+										"border-destructive focus-visible:ring-destructive/30"
 								)}
 							/>
 						</div>

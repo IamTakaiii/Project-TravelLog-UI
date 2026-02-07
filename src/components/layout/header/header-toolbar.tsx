@@ -1,10 +1,4 @@
-import {
-	User,
-	LogOut,
-	Settings,
-	Sun,
-	Moon,
-} from "lucide-react";
+import { User, LogOut, Settings, Sun, Moon } from "lucide-react";
 import { toAbsoluteUrl } from "@/lib/utils";
 import {
 	Avatar,
@@ -104,14 +98,19 @@ export function HeaderToolbar() {
 						<span>Profile</span>
 					</DropdownMenuItem>
 
-					<DropdownMenuItem onClick={() => router.navigate({ to: "/settings" })}>
+					<DropdownMenuItem
+						onClick={() => router.navigate({ to: "/settings" })}
+					>
 						<Settings className="mr-2 size-4" />
 						<span>Settings</span>
 					</DropdownMenuItem>
 
 					<DropdownMenuSeparator />
 
-					<DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+					<DropdownMenuItem
+						onClick={handleSignOut}
+						className="text-destructive focus:text-destructive"
+					>
 						<LogOut className="mr-2 size-4" />
 						<span>Sign out</span>
 					</DropdownMenuItem>

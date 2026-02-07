@@ -17,10 +17,16 @@ export function AuthVisuals() {
 			<div className="absolute top-20 right-20 animate-float opacity-60">
 				<Plane className="w-12 h-12 text-white/40 rotate-[-20deg]" />
 			</div>
-			<div className="absolute top-40 left-16 animate-float opacity-40" style={{ animationDelay: "1s" }}>
+			<div
+				className="absolute top-40 left-16 animate-float opacity-40"
+				style={{ animationDelay: "1s" }}
+			>
 				<Camera className="w-8 h-8 text-white/30" />
 			</div>
-			<div className="absolute bottom-40 right-32 animate-float opacity-50" style={{ animationDelay: "2s" }}>
+			<div
+				className="absolute bottom-40 right-32 animate-float opacity-50"
+				style={{ animationDelay: "2s" }}
+			>
 				<Compass className="w-10 h-10 text-white/35" />
 			</div>
 
@@ -33,7 +39,9 @@ export function AuthVisuals() {
 					<span className="font-heading text-2xl font-bold text-white tracking-tight">
 						TravelLog
 					</span>
-					<p className="text-xs text-white/60 font-medium">Your Journey Awaits</p>
+					<p className="text-xs text-white/60 font-medium">
+						Your Journey Awaits
+					</p>
 				</div>
 			</div>
 
@@ -54,15 +62,21 @@ export function AuthVisuals() {
 				{/* Stats/Features */}
 				<div className="flex gap-8 pt-6">
 					<div className="text-center">
-						<div className="text-2xl font-heading font-bold text-white">50K+</div>
+						<div className="text-2xl font-heading font-bold text-white">
+							50K+
+						</div>
 						<div className="text-xs text-white/60">Travelers</div>
 					</div>
 					<div className="text-center">
-						<div className="text-2xl font-heading font-bold text-white">120+</div>
+						<div className="text-2xl font-heading font-bold text-white">
+							120+
+						</div>
 						<div className="text-xs text-white/60">Countries</div>
 					</div>
 					<div className="text-center">
-						<div className="text-2xl font-heading font-bold text-white">1M+</div>
+						<div className="text-2xl font-heading font-bold text-white">
+							1M+
+						</div>
 						<div className="text-xs text-white/60">Memories</div>
 					</div>
 				</div>

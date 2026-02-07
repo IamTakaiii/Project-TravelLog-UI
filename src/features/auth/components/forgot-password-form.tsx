@@ -10,142 +10,142 @@ import { useTranslateError } from "@/hooks/use-translate-error";
 import { Link } from "@tanstack/react-router";
 
 export function ForgotPasswordForm() {
-    const { t } = useTranslation();
-    const { translateError } = useTranslateError();
-    const { form, isLoading, error, isSuccess, onSubmit, resetForm } =
-        useForgotPassword();
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = form;
+	const { t } = useTranslation();
+	const { translateError } = useTranslateError();
+	const { form, isLoading, error, isSuccess, onSubmit, resetForm } =
+		useForgotPassword();
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = form;
 
-    // Success state - show confirmation message
-    if (isSuccess) {
-        return (
-            <div className="grid gap-6">
-                <div className="flex flex-col items-center justify-center space-y-6 text-center py-8">
-                    {/* Success Animation Container */}
-                    <div className="relative">
-                        <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
-                        <div className="relative rounded-full bg-gradient-to-br from-primary/20 to-primary/10 p-6 border border-primary/20">
-                            <CheckCircle2 className="h-12 w-12 text-primary" />
-                        </div>
-                    </div>
+	// Success state - show confirmation message
+	if (isSuccess) {
+		return (
+			<div className="grid gap-6">
+				<div className="flex flex-col items-center justify-center space-y-6 text-center py-8">
+					{/* Success Animation Container */}
+					<div className="relative">
+						<div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
+						<div className="relative rounded-full bg-gradient-to-br from-primary/20 to-primary/10 p-6 border border-primary/20">
+							<CheckCircle2 className="h-12 w-12 text-primary" />
+						</div>
+					</div>
 
-                    <div className="space-y-3 max-w-sm">
-                        <h3 className="text-2xl font-heading font-bold text-foreground">
-                            {t("auth.forgot_password.success_title")}
-                        </h3>
-                        <p className="text-muted-foreground leading-relaxed">
-                            {t("auth.forgot_password.success_description")}
-                        </p>
-                    </div>
+					<div className="space-y-3 max-w-sm">
+						<h3 className="text-2xl font-heading font-bold text-foreground">
+							{t("auth.forgot_password.success_title")}
+						</h3>
+						<p className="text-muted-foreground leading-relaxed">
+							{t("auth.forgot_password.success_description")}
+						</p>
+					</div>
 
-                    {/* Email Icon Animation */}
-                    <div className="flex items-center gap-2 text-primary/60 text-sm">
-                        <Mail className="h-4 w-4 animate-bounce" />
-                        <span>Check your inbox</span>
-                    </div>
-                </div>
+					{/* Email Icon Animation */}
+					<div className="flex items-center gap-2 text-primary/60 text-sm">
+						<Mail className="h-4 w-4 animate-bounce" />
+						<span>Check your inbox</span>
+					</div>
+				</div>
 
-                <div className="flex flex-col gap-3">
-                    <Button
-                        variant="outline"
-                        onClick={resetForm}
-                        className="w-full h-12 border-border/50 hover:bg-muted/50 transition-colors"
-                    >
-                        <Mail className="mr-2 h-4 w-4" />
-                        {t("auth.forgot_password.try_another_email")}
-                    </Button>
+				<div className="flex flex-col gap-3">
+					<Button
+						variant="outline"
+						onClick={resetForm}
+						className="w-full h-12 border-border/50 hover:bg-muted/50 transition-colors"
+					>
+						<Mail className="mr-2 h-4 w-4" />
+						{t("auth.forgot_password.try_another_email")}
+					</Button>
 
-                    <Link to="/login" className="w-full">
-                        <Button
-                            variant="ghost"
-                            className="w-full h-12 text-muted-foreground hover:text-foreground group"
-                        >
-                            <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-                            {t("auth.forgot_password.back_to_login")}
-                        </Button>
-                    </Link>
-                </div>
-            </div>
-        );
-    }
+					<Link to="/login" className="w-full">
+						<Button
+							variant="ghost"
+							className="w-full h-12 text-muted-foreground hover:text-foreground group"
+						>
+							<ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+							{t("auth.forgot_password.back_to_login")}
+						</Button>
+					</Link>
+				</div>
+			</div>
+		);
+	}
 
-    return (
-        <div className="grid gap-6">
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="grid gap-5">
-                    {/* Email Field */}
-                    <div className="grid gap-2">
-                        <Label htmlFor="email" className="text-sm font-medium">
-                            {t("auth.fields.email")}
-                        </Label>
-                        <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                id="email"
-                                placeholder={t("auth.placeholders.email")}
-                                type="email"
-                                autoCapitalize="none"
-                                autoComplete="email"
-                                autoCorrect="off"
-                                disabled={isLoading}
-                                {...register("email")}
-                                className={cn(
-                                    "pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
-                                    errors.email &&
-                                    "border-destructive focus-visible:ring-destructive/30"
-                                )}
-                            />
-                        </div>
-                        {errors.email?.message && (
-                            <p className="text-sm text-destructive flex items-center gap-1.5">
-                                <span className="inline-block w-1 h-1 rounded-full bg-destructive" />
-                                {translateError(errors.email.message)}
-                            </p>
-                        )}
-                    </div>
+	return (
+		<div className="grid gap-6">
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<div className="grid gap-5">
+					{/* Email Field */}
+					<div className="grid gap-2">
+						<Label htmlFor="email" className="text-sm font-medium">
+							{t("auth.fields.email")}
+						</Label>
+						<div className="relative">
+							<Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+							<Input
+								id="email"
+								placeholder={t("auth.placeholders.email")}
+								type="email"
+								autoCapitalize="none"
+								autoComplete="email"
+								autoCorrect="off"
+								disabled={isLoading}
+								{...register("email")}
+								className={cn(
+									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
+									errors.email &&
+										"border-destructive focus-visible:ring-destructive/30"
+								)}
+							/>
+						</div>
+						{errors.email?.message && (
+							<p className="text-sm text-destructive flex items-center gap-1.5">
+								<span className="inline-block w-1 h-1 rounded-full bg-destructive" />
+								{translateError(errors.email.message)}
+							</p>
+						)}
+					</div>
 
-                    {/* Error Message */}
-                    {error && (
-                        <div className="bg-destructive/10 text-destructive text-sm p-4 rounded-xl border border-destructive/20 flex items-start gap-3">
-                            <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center shrink-0 mt-0.5">
-                                <span className="text-xs">!</span>
-                            </div>
-                            <span>{translateError(error) || error}</span>
-                        </div>
-                    )}
+					{/* Error Message */}
+					{error && (
+						<div className="bg-destructive/10 text-destructive text-sm p-4 rounded-xl border border-destructive/20 flex items-start gap-3">
+							<div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center shrink-0 mt-0.5">
+								<span className="text-xs">!</span>
+							</div>
+							<span>{translateError(error) || error}</span>
+						</div>
+					)}
 
-                    {/* Submit Button */}
-                    <Button
-                        disabled={isLoading}
-                        className="w-full h-12 mt-2 text-base font-semibold shadow-travel hover:shadow-travel-lg transition-all duration-300 group"
-                        size="lg"
-                    >
-                        {isLoading ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                            <>
-                                <Send className="mr-2 h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                                {t("auth.forgot_password.submit")}
-                            </>
-                        )}
-                    </Button>
-                </div>
-            </form>
+					{/* Submit Button */}
+					<Button
+						disabled={isLoading}
+						className="w-full h-12 mt-2 text-base font-semibold shadow-travel hover:shadow-travel-lg transition-all duration-300 group"
+						size="lg"
+					>
+						{isLoading ? (
+							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+						) : (
+							<>
+								<Send className="mr-2 h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+								{t("auth.forgot_password.submit")}
+							</>
+						)}
+					</Button>
+				</div>
+			</form>
 
-            {/* Back to Login */}
-            <Link to="/login" className="w-full">
-                <Button
-                    variant="ghost"
-                    className="w-full h-12 text-muted-foreground hover:bg-gray-500/40 group"
-                >
-                    <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-                    {t("auth.forgot_password.back_to_login")}
-                </Button>
-            </Link>
-        </div>
-    );
+			{/* Back to Login */}
+			<Link to="/login" className="w-full">
+				<Button
+					variant="ghost"
+					className="w-full h-12 text-muted-foreground hover:bg-gray-500/40 group"
+				>
+					<ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+					{t("auth.forgot_password.back_to_login")}
+				</Button>
+			</Link>
+		</div>
+	);
 }

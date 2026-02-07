@@ -18,19 +18,27 @@ export const Home = () => {
 				</h1>
 
 				<p className="text-xl text-muted-foreground">
-					Plan your trips, collaborate with friends, and keep track of your expenses all in one place.
+					Plan your trips, collaborate with friends, and keep track of your
+					expenses all in one place.
 				</p>
 			</div>
 
 			<div className="flex flex-wrap items-center justify-center gap-4 pt-8 animate-in slide-in-from-bottom-4 duration-700 fade-in fill-mode-backwards delay-200">
 				<Link to="/trips">
-					<Button size="lg" className="rounded-full px-8 h-12 text-base shadow-lg shadow-primary/20 transition-transform hover:scale-105">
+					<Button
+						size="lg"
+						className="rounded-full px-8 h-12 text-base shadow-lg shadow-primary/20 transition-transform hover:scale-105"
+					>
 						Start Planning
 						<ArrowRight className="ml-2 w-5 h-5" />
 					</Button>
 				</Link>
 				<Link to="/dashboard">
-					<Button variant="outline" size="lg" className="rounded-full px-8 h-12 text-base hover:bg-muted/50">
+					<Button
+						variant="outline"
+						size="lg"
+						className="rounded-full px-8 h-12 text-base hover:bg-muted/50"
+					>
 						Go to Dashboard
 					</Button>
 				</Link>

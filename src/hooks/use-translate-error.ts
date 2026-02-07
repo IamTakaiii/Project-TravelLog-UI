@@ -13,16 +13,16 @@ import { useTranslation } from "react-i18next";
  * )}
  */
 export function useTranslateError() {
-    const { t } = useTranslation();
+	const { t } = useTranslation();
 
-    /**
-     * Translates an error message key to the localized string.
-     * Returns null if no message is provided.
-     */
-    const translateError = (message: string | undefined): string | null => {
-        if (!message) return null;
-        return t(message as ParseKeys);
-    };
+	/**
+	 * Translates an error message key to the localized string.
+	 * Returns null if no message is provided.
+	 */
+	const translateError = (message: string | undefined): string | null => {
+		if (!message) return null;
+		return t(message as ParseKeys);
+	};
 
-    return { translateError };
+	return { translateError };
 }

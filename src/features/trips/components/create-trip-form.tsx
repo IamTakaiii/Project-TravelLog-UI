@@ -1,12 +1,12 @@
-import { 
-	MapPin, 
-	Calendar, 
-	FileText, 
-	DollarSign, 
-	Users, 
+import {
+	MapPin,
+	Calendar,
+	FileText,
+	DollarSign,
+	Users,
 	Loader2,
 	Sparkles,
-	AlertCircle
+	AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,7 +39,10 @@ export function CreateTripForm() {
 
 				{/* Trip Title */}
 				<div className="space-y-2">
-					<Label htmlFor="title" className="text-sm font-semibold flex items-center gap-2">
+					<Label
+						htmlFor="title"
+						className="text-sm font-semibold flex items-center gap-2"
+					>
 						<Sparkles className="size-4 text-primary" />
 						{t("trips.fields.title")}
 					</Label>
@@ -51,7 +54,8 @@ export function CreateTripForm() {
 						{...register("title")}
 						className={cn(
 							"h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
-							errors.title && "border-destructive focus-visible:ring-destructive/30"
+							errors.title &&
+								"border-destructive focus-visible:ring-destructive/30"
 						)}
 					/>
 					{errors.title?.message && (
@@ -64,7 +68,10 @@ export function CreateTripForm() {
 
 				{/* Destination */}
 				<div className="space-y-2">
-					<Label htmlFor="destination" className="text-sm font-semibold flex items-center gap-2">
+					<Label
+						htmlFor="destination"
+						className="text-sm font-semibold flex items-center gap-2"
+					>
 						<MapPin className="size-4 text-primary" />
 						{t("trips.fields.destination")}
 					</Label>
@@ -78,7 +85,8 @@ export function CreateTripForm() {
 							{...register("destination")}
 							className={cn(
 								"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
-								errors.destination && "border-destructive focus-visible:ring-destructive/30"
+								errors.destination &&
+									"border-destructive focus-visible:ring-destructive/30"
 							)}
 						/>
 					</div>
@@ -94,7 +102,10 @@ export function CreateTripForm() {
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 					{/* Start Date */}
 					<div className="space-y-2">
-						<Label htmlFor="startDate" className="text-sm font-semibold flex items-center gap-2">
+						<Label
+							htmlFor="startDate"
+							className="text-sm font-semibold flex items-center gap-2"
+						>
 							<Calendar className="size-4 text-primary" />
 							{t("trips.fields.start_date")}
 						</Label>
@@ -107,7 +118,8 @@ export function CreateTripForm() {
 								{...register("startDate")}
 								className={cn(
 									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
-									errors.startDate && "border-destructive focus-visible:ring-destructive/30"
+									errors.startDate &&
+										"border-destructive focus-visible:ring-destructive/30"
 								)}
 							/>
 						</div>
@@ -121,7 +133,10 @@ export function CreateTripForm() {
 
 					{/* End Date */}
 					<div className="space-y-2">
-						<Label htmlFor="endDate" className="text-sm font-semibold flex items-center gap-2">
+						<Label
+							htmlFor="endDate"
+							className="text-sm font-semibold flex items-center gap-2"
+						>
 							<Calendar className="size-4 text-primary" />
 							{t("trips.fields.end_date")}
 						</Label>
@@ -134,7 +149,8 @@ export function CreateTripForm() {
 								{...register("endDate")}
 								className={cn(
 									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
-									errors.endDate && "border-destructive focus-visible:ring-destructive/30"
+									errors.endDate &&
+										"border-destructive focus-visible:ring-destructive/30"
 								)}
 							/>
 						</div>
@@ -151,9 +167,15 @@ export function CreateTripForm() {
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 					{/* Budget */}
 					<div className="space-y-2">
-						<Label htmlFor="budget" className="text-sm font-semibold flex items-center gap-2">
+						<Label
+							htmlFor="budget"
+							className="text-sm font-semibold flex items-center gap-2"
+						>
 							<DollarSign className="size-4 text-muted-foreground" />
-							{t("trips.fields.budget")} <span className="text-xs font-normal text-muted-foreground">({t("trips.create.optional")})</span>
+							{t("trips.fields.budget")}{" "}
+							<span className="text-xs font-normal text-muted-foreground">
+								({t("trips.create.optional")})
+							</span>
 						</Label>
 						<div className="relative">
 							<DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -170,9 +192,15 @@ export function CreateTripForm() {
 
 					{/* Number of Travelers */}
 					<div className="space-y-2">
-						<Label htmlFor="travelers" className="text-sm font-semibold flex items-center gap-2">
+						<Label
+							htmlFor="travelers"
+							className="text-sm font-semibold flex items-center gap-2"
+						>
 							<Users className="size-4 text-muted-foreground" />
-							{t("trips.fields.travelers")} <span className="text-xs font-normal text-muted-foreground">({t("trips.create.optional")})</span>
+							{t("trips.fields.travelers")}{" "}
+							<span className="text-xs font-normal text-muted-foreground">
+								({t("trips.create.optional")})
+							</span>
 						</Label>
 						<div className="relative">
 							<Users className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -190,9 +218,15 @@ export function CreateTripForm() {
 
 				{/* Description */}
 				<div className="space-y-2">
-					<Label htmlFor="description" className="text-sm font-semibold flex items-center gap-2">
+					<Label
+						htmlFor="description"
+						className="text-sm font-semibold flex items-center gap-2"
+					>
 						<FileText className="size-4 text-muted-foreground" />
-						{t("trips.fields.description")} <span className="text-xs font-normal text-muted-foreground">({t("trips.create.optional")})</span>
+						{t("trips.fields.description")}{" "}
+						<span className="text-xs font-normal text-muted-foreground">
+							({t("trips.create.optional")})
+						</span>
 					</Label>
 					<textarea
 						id="description"

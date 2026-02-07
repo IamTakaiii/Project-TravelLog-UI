@@ -31,7 +31,12 @@ export function SidebarPrimaryMenu() {
 						{item.icon && <item.icon />}
 						<span>{item.title}</span>
 						{item.badge && (
-							<Badge size="sm" variant="destructive" appearance="light" className="ml-auto">
+							<Badge
+								size="sm"
+								variant="destructive"
+								appearance="light"
+								className="ml-auto"
+							>
 								{item.badge}
 							</Badge>
 						)}
@@ -55,7 +60,12 @@ export function SidebarPrimaryMenu() {
 					{item.icon && <item.icon className="size-4" />}
 					<span>{item.title}</span>
 					{item.badge && (
-						<Badge size="sm" variant="destructive" appearance="light" className="ml-auto">
+						<Badge
+							size="sm"
+							variant="destructive"
+							appearance="light"
+							className="ml-auto"
+						>
 							{item.badge}
 						</Badge>
 					)}
@@ -71,7 +81,8 @@ export function SidebarPrimaryMenu() {
 			type="multiple"
 			className="space-y-6 px-4 py-2"
 			classNames={{
-				label: "text-[0.65rem] uppercase tracking-wider font-bold text-muted-foreground/70 mb-3 px-3",
+				label:
+					"text-[0.65rem] uppercase tracking-wider font-bold text-muted-foreground/70 mb-3 px-3",
 				item: "h-11 px-3 text-sm font-medium text-muted-foreground rounded-xl transition-all duration-200 hover:text-primary hover:bg-primary/5 data-[selected=true]:bg-primary/10 data-[selected=true]:text-primary data-[selected=true]:font-semibold [&_svg]:transition-colors",
 				group: "",
 			}}
@@ -80,7 +91,9 @@ export function SidebarPrimaryMenu() {
 				return (
 					<AccordionMenuGroup key={index}>
 						<AccordionMenuLabel>{item.title}</AccordionMenuLabel>
-						{item.children?.map((child, childIndex) => renderMenuItem(child, childIndex))}
+						{item.children?.map((child, childIndex) =>
+							renderMenuItem(child, childIndex)
+						)}
 					</AccordionMenuGroup>
 				);
 			})}

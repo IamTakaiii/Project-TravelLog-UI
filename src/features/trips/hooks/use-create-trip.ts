@@ -2,7 +2,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { createTripSchema, type CreateTripFormValues } from "../schemas/create-trip-schema";
+import {
+	createTripSchema,
+	type CreateTripFormValues,
+} from "../schemas/create-trip-schema";
 
 export function useCreateTrip() {
 	const navigate = useNavigate();
@@ -36,7 +39,9 @@ export function useCreateTrip() {
 			// Navigate to trips list or trip detail
 			navigate({ to: "/dashboard" });
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "trips.errors.create_failed");
+			setError(
+				err instanceof Error ? err.message : "trips.errors.create_failed"
+			);
 		} finally {
 			setIsLoading(false);
 		}

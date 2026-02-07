@@ -1,4 +1,12 @@
-import { Loader2, Github, Mail, Lock, User, ShieldCheck, ArrowRight } from "lucide-react";
+import {
+	Loader2,
+	Github,
+	Mail,
+	Lock,
+	User,
+	ShieldCheck,
+	ArrowRight,
+} from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
@@ -42,7 +50,7 @@ export function RegisterForm() {
 								className={cn(
 									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
 									errors.name &&
-									"border-destructive focus-visible:ring-destructive/30"
+										"border-destructive focus-visible:ring-destructive/30"
 								)}
 							/>
 						</div>
@@ -73,7 +81,7 @@ export function RegisterForm() {
 								className={cn(
 									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
 									errors.email &&
-									"border-destructive focus-visible:ring-destructive/30"
+										"border-destructive focus-visible:ring-destructive/30"
 								)}
 							/>
 						</div>
@@ -102,7 +110,7 @@ export function RegisterForm() {
 								className={cn(
 									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
 									errors.password &&
-									"border-destructive focus-visible:ring-destructive/30"
+										"border-destructive focus-visible:ring-destructive/30"
 								)}
 							/>
 						</div>
@@ -131,7 +139,7 @@ export function RegisterForm() {
 								className={cn(
 									"pl-10 h-12 bg-muted/30 border-border/50 focus:bg-background transition-colors",
 									errors.confirmPassword &&
-									"border-destructive focus-visible:ring-destructive/30"
+										"border-destructive focus-visible:ring-destructive/30"
 								)}
 							/>
 						</div>

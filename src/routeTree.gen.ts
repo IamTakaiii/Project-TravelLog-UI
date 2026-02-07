@@ -8,318 +8,320 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as RegisterRouteImport } from './routes/register'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as LayoutRouteImport } from './routes/_layout'
-import { Route as SplatRouteImport } from './routes/$'
-import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as RegisterRouteImport } from "./routes/register";
+import { Route as LoginRouteImport } from "./routes/login";
+import { Route as ForgotPasswordRouteImport } from "./routes/forgot-password";
+import { Route as LayoutRouteImport } from "./routes/_layout";
+import { Route as SplatRouteImport } from "./routes/$";
+import { Route as LayoutIndexRouteImport } from "./routes/_layout.index";
 
-const LayoutTripsLazyRouteImport = createFileRoute('/_layout/trips')()
-const LayoutSettingsLazyRouteImport = createFileRoute('/_layout/settings')()
-const LayoutProfileLazyRouteImport = createFileRoute('/_layout/profile')()
+const LayoutTripsLazyRouteImport = createFileRoute("/_layout/trips")();
+const LayoutSettingsLazyRouteImport = createFileRoute("/_layout/settings")();
+const LayoutProfileLazyRouteImport = createFileRoute("/_layout/profile")();
 const LayoutInvitationsLazyRouteImport = createFileRoute(
-  '/_layout/invitations',
-)()
-const LayoutDashboardLazyRouteImport = createFileRoute('/_layout/dashboard')()
+	"/_layout/invitations"
+)();
+const LayoutDashboardLazyRouteImport = createFileRoute("/_layout/dashboard")();
 const LayoutTripsCreateLazyRouteImport = createFileRoute(
-  '/_layout/trips/create',
-)()
+	"/_layout/trips/create"
+)();
 
 const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/register",
+	path: "/register",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/login",
+	path: "/login",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/forgot-password",
+	path: "/forgot-password",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const LayoutRoute = LayoutRouteImport.update({
-  id: '/_layout',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/_layout",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const SplatRoute = SplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/$",
+	path: "/$",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const LayoutIndexRoute = LayoutIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => LayoutRoute,
-} as any)
+	id: "/",
+	path: "/",
+	getParentRoute: () => LayoutRoute,
+} as any);
 const LayoutTripsLazyRoute = LayoutTripsLazyRouteImport.update({
-  id: '/trips',
-  path: '/trips',
-  getParentRoute: () => LayoutRoute,
-} as any).lazy(() => import('./routes/_layout.trips.lazy').then((d) => d.Route))
+	id: "/trips",
+	path: "/trips",
+	getParentRoute: () => LayoutRoute,
+} as any).lazy(() =>
+	import("./routes/_layout.trips.lazy").then((d) => d.Route)
+);
 const LayoutSettingsLazyRoute = LayoutSettingsLazyRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => LayoutRoute,
+	id: "/settings",
+	path: "/settings",
+	getParentRoute: () => LayoutRoute,
 } as any).lazy(() =>
-  import('./routes/_layout.settings.lazy').then((d) => d.Route),
-)
+	import("./routes/_layout.settings.lazy").then((d) => d.Route)
+);
 const LayoutProfileLazyRoute = LayoutProfileLazyRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => LayoutRoute,
+	id: "/profile",
+	path: "/profile",
+	getParentRoute: () => LayoutRoute,
 } as any).lazy(() =>
-  import('./routes/_layout.profile.lazy').then((d) => d.Route),
-)
+	import("./routes/_layout.profile.lazy").then((d) => d.Route)
+);
 const LayoutInvitationsLazyRoute = LayoutInvitationsLazyRouteImport.update({
-  id: '/invitations',
-  path: '/invitations',
-  getParentRoute: () => LayoutRoute,
+	id: "/invitations",
+	path: "/invitations",
+	getParentRoute: () => LayoutRoute,
 } as any).lazy(() =>
-  import('./routes/_layout.invitations.lazy').then((d) => d.Route),
-)
+	import("./routes/_layout.invitations.lazy").then((d) => d.Route)
+);
 const LayoutDashboardLazyRoute = LayoutDashboardLazyRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => LayoutRoute,
+	id: "/dashboard",
+	path: "/dashboard",
+	getParentRoute: () => LayoutRoute,
 } as any).lazy(() =>
-  import('./routes/_layout.dashboard.lazy').then((d) => d.Route),
-)
+	import("./routes/_layout.dashboard.lazy").then((d) => d.Route)
+);
 const LayoutTripsCreateLazyRoute = LayoutTripsCreateLazyRouteImport.update({
-  id: '/create',
-  path: '/create',
-  getParentRoute: () => LayoutTripsLazyRoute,
+	id: "/create",
+	path: "/create",
+	getParentRoute: () => LayoutTripsLazyRoute,
 } as any).lazy(() =>
-  import('./routes/_layout.trips.create.lazy').then((d) => d.Route),
-)
+	import("./routes/_layout.trips.create.lazy").then((d) => d.Route)
+);
 
 export interface FileRoutesByFullPath {
-  '/$': typeof SplatRoute
-  '/': typeof LayoutIndexRoute
-  '/forgot-password': typeof ForgotPasswordRoute
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
-  '/dashboard': typeof LayoutDashboardLazyRoute
-  '/invitations': typeof LayoutInvitationsLazyRoute
-  '/profile': typeof LayoutProfileLazyRoute
-  '/settings': typeof LayoutSettingsLazyRoute
-  '/trips': typeof LayoutTripsLazyRouteWithChildren
-  '/trips/create': typeof LayoutTripsCreateLazyRoute
+	"/$": typeof SplatRoute;
+	"/": typeof LayoutIndexRoute;
+	"/forgot-password": typeof ForgotPasswordRoute;
+	"/login": typeof LoginRoute;
+	"/register": typeof RegisterRoute;
+	"/dashboard": typeof LayoutDashboardLazyRoute;
+	"/invitations": typeof LayoutInvitationsLazyRoute;
+	"/profile": typeof LayoutProfileLazyRoute;
+	"/settings": typeof LayoutSettingsLazyRoute;
+	"/trips": typeof LayoutTripsLazyRouteWithChildren;
+	"/trips/create": typeof LayoutTripsCreateLazyRoute;
 }
 export interface FileRoutesByTo {
-  '/$': typeof SplatRoute
-  '/forgot-password': typeof ForgotPasswordRoute
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
-  '/dashboard': typeof LayoutDashboardLazyRoute
-  '/invitations': typeof LayoutInvitationsLazyRoute
-  '/profile': typeof LayoutProfileLazyRoute
-  '/settings': typeof LayoutSettingsLazyRoute
-  '/trips': typeof LayoutTripsLazyRouteWithChildren
-  '/': typeof LayoutIndexRoute
-  '/trips/create': typeof LayoutTripsCreateLazyRoute
+	"/$": typeof SplatRoute;
+	"/forgot-password": typeof ForgotPasswordRoute;
+	"/login": typeof LoginRoute;
+	"/register": typeof RegisterRoute;
+	"/dashboard": typeof LayoutDashboardLazyRoute;
+	"/invitations": typeof LayoutInvitationsLazyRoute;
+	"/profile": typeof LayoutProfileLazyRoute;
+	"/settings": typeof LayoutSettingsLazyRoute;
+	"/trips": typeof LayoutTripsLazyRouteWithChildren;
+	"/": typeof LayoutIndexRoute;
+	"/trips/create": typeof LayoutTripsCreateLazyRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/$': typeof SplatRoute
-  '/_layout': typeof LayoutRouteWithChildren
-  '/forgot-password': typeof ForgotPasswordRoute
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
-  '/_layout/dashboard': typeof LayoutDashboardLazyRoute
-  '/_layout/invitations': typeof LayoutInvitationsLazyRoute
-  '/_layout/profile': typeof LayoutProfileLazyRoute
-  '/_layout/settings': typeof LayoutSettingsLazyRoute
-  '/_layout/trips': typeof LayoutTripsLazyRouteWithChildren
-  '/_layout/': typeof LayoutIndexRoute
-  '/_layout/trips/create': typeof LayoutTripsCreateLazyRoute
+	__root__: typeof rootRouteImport;
+	"/$": typeof SplatRoute;
+	"/_layout": typeof LayoutRouteWithChildren;
+	"/forgot-password": typeof ForgotPasswordRoute;
+	"/login": typeof LoginRoute;
+	"/register": typeof RegisterRoute;
+	"/_layout/dashboard": typeof LayoutDashboardLazyRoute;
+	"/_layout/invitations": typeof LayoutInvitationsLazyRoute;
+	"/_layout/profile": typeof LayoutProfileLazyRoute;
+	"/_layout/settings": typeof LayoutSettingsLazyRoute;
+	"/_layout/trips": typeof LayoutTripsLazyRouteWithChildren;
+	"/_layout/": typeof LayoutIndexRoute;
+	"/_layout/trips/create": typeof LayoutTripsCreateLazyRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/$'
-    | '/'
-    | '/forgot-password'
-    | '/login'
-    | '/register'
-    | '/dashboard'
-    | '/invitations'
-    | '/profile'
-    | '/settings'
-    | '/trips'
-    | '/trips/create'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/$'
-    | '/forgot-password'
-    | '/login'
-    | '/register'
-    | '/dashboard'
-    | '/invitations'
-    | '/profile'
-    | '/settings'
-    | '/trips'
-    | '/'
-    | '/trips/create'
-  id:
-    | '__root__'
-    | '/$'
-    | '/_layout'
-    | '/forgot-password'
-    | '/login'
-    | '/register'
-    | '/_layout/dashboard'
-    | '/_layout/invitations'
-    | '/_layout/profile'
-    | '/_layout/settings'
-    | '/_layout/trips'
-    | '/_layout/'
-    | '/_layout/trips/create'
-  fileRoutesById: FileRoutesById
+	fileRoutesByFullPath: FileRoutesByFullPath;
+	fullPaths:
+		| "/$"
+		| "/"
+		| "/forgot-password"
+		| "/login"
+		| "/register"
+		| "/dashboard"
+		| "/invitations"
+		| "/profile"
+		| "/settings"
+		| "/trips"
+		| "/trips/create";
+	fileRoutesByTo: FileRoutesByTo;
+	to:
+		| "/$"
+		| "/forgot-password"
+		| "/login"
+		| "/register"
+		| "/dashboard"
+		| "/invitations"
+		| "/profile"
+		| "/settings"
+		| "/trips"
+		| "/"
+		| "/trips/create";
+	id:
+		| "__root__"
+		| "/$"
+		| "/_layout"
+		| "/forgot-password"
+		| "/login"
+		| "/register"
+		| "/_layout/dashboard"
+		| "/_layout/invitations"
+		| "/_layout/profile"
+		| "/_layout/settings"
+		| "/_layout/trips"
+		| "/_layout/"
+		| "/_layout/trips/create";
+	fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  SplatRoute: typeof SplatRoute
-  LayoutRoute: typeof LayoutRouteWithChildren
-  ForgotPasswordRoute: typeof ForgotPasswordRoute
-  LoginRoute: typeof LoginRoute
-  RegisterRoute: typeof RegisterRoute
+	SplatRoute: typeof SplatRoute;
+	LayoutRoute: typeof LayoutRouteWithChildren;
+	ForgotPasswordRoute: typeof ForgotPasswordRoute;
+	LoginRoute: typeof LoginRoute;
+	RegisterRoute: typeof RegisterRoute;
 }
 
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/forgot-password': {
-      id: '/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof ForgotPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_layout': {
-      id: '/_layout'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof LayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/$': {
-      id: '/$'
-      path: '/$'
-      fullPath: '/$'
-      preLoaderRoute: typeof SplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_layout/': {
-      id: '/_layout/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof LayoutIndexRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/trips': {
-      id: '/_layout/trips'
-      path: '/trips'
-      fullPath: '/trips'
-      preLoaderRoute: typeof LayoutTripsLazyRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/settings': {
-      id: '/_layout/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof LayoutSettingsLazyRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/profile': {
-      id: '/_layout/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof LayoutProfileLazyRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/invitations': {
-      id: '/_layout/invitations'
-      path: '/invitations'
-      fullPath: '/invitations'
-      preLoaderRoute: typeof LayoutInvitationsLazyRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/dashboard': {
-      id: '/_layout/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof LayoutDashboardLazyRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/trips/create': {
-      id: '/_layout/trips/create'
-      path: '/create'
-      fullPath: '/trips/create'
-      preLoaderRoute: typeof LayoutTripsCreateLazyRouteImport
-      parentRoute: typeof LayoutTripsLazyRoute
-    }
-  }
+declare module "@tanstack/react-router" {
+	interface FileRoutesByPath {
+		"/register": {
+			id: "/register";
+			path: "/register";
+			fullPath: "/register";
+			preLoaderRoute: typeof RegisterRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/login": {
+			id: "/login";
+			path: "/login";
+			fullPath: "/login";
+			preLoaderRoute: typeof LoginRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/forgot-password": {
+			id: "/forgot-password";
+			path: "/forgot-password";
+			fullPath: "/forgot-password";
+			preLoaderRoute: typeof ForgotPasswordRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/_layout": {
+			id: "/_layout";
+			path: "";
+			fullPath: "/";
+			preLoaderRoute: typeof LayoutRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/$": {
+			id: "/$";
+			path: "/$";
+			fullPath: "/$";
+			preLoaderRoute: typeof SplatRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/_layout/": {
+			id: "/_layout/";
+			path: "/";
+			fullPath: "/";
+			preLoaderRoute: typeof LayoutIndexRouteImport;
+			parentRoute: typeof LayoutRoute;
+		};
+		"/_layout/trips": {
+			id: "/_layout/trips";
+			path: "/trips";
+			fullPath: "/trips";
+			preLoaderRoute: typeof LayoutTripsLazyRouteImport;
+			parentRoute: typeof LayoutRoute;
+		};
+		"/_layout/settings": {
+			id: "/_layout/settings";
+			path: "/settings";
+			fullPath: "/settings";
+			preLoaderRoute: typeof LayoutSettingsLazyRouteImport;
+			parentRoute: typeof LayoutRoute;
+		};
+		"/_layout/profile": {
+			id: "/_layout/profile";
+			path: "/profile";
+			fullPath: "/profile";
+			preLoaderRoute: typeof LayoutProfileLazyRouteImport;
+			parentRoute: typeof LayoutRoute;
+		};
+		"/_layout/invitations": {
+			id: "/_layout/invitations";
+			path: "/invitations";
+			fullPath: "/invitations";
+			preLoaderRoute: typeof LayoutInvitationsLazyRouteImport;
+			parentRoute: typeof LayoutRoute;
+		};
+		"/_layout/dashboard": {
+			id: "/_layout/dashboard";
+			path: "/dashboard";
+			fullPath: "/dashboard";
+			preLoaderRoute: typeof LayoutDashboardLazyRouteImport;
+			parentRoute: typeof LayoutRoute;
+		};
+		"/_layout/trips/create": {
+			id: "/_layout/trips/create";
+			path: "/create";
+			fullPath: "/trips/create";
+			preLoaderRoute: typeof LayoutTripsCreateLazyRouteImport;
+			parentRoute: typeof LayoutTripsLazyRoute;
+		};
+	}
 }
 
 interface LayoutTripsLazyRouteChildren {
-  LayoutTripsCreateLazyRoute: typeof LayoutTripsCreateLazyRoute
+	LayoutTripsCreateLazyRoute: typeof LayoutTripsCreateLazyRoute;
 }
 
 const LayoutTripsLazyRouteChildren: LayoutTripsLazyRouteChildren = {
-  LayoutTripsCreateLazyRoute: LayoutTripsCreateLazyRoute,
-}
+	LayoutTripsCreateLazyRoute: LayoutTripsCreateLazyRoute,
+};
 
 const LayoutTripsLazyRouteWithChildren = LayoutTripsLazyRoute._addFileChildren(
-  LayoutTripsLazyRouteChildren,
-)
+	LayoutTripsLazyRouteChildren
+);
 
 interface LayoutRouteChildren {
-  LayoutDashboardLazyRoute: typeof LayoutDashboardLazyRoute
-  LayoutInvitationsLazyRoute: typeof LayoutInvitationsLazyRoute
-  LayoutProfileLazyRoute: typeof LayoutProfileLazyRoute
-  LayoutSettingsLazyRoute: typeof LayoutSettingsLazyRoute
-  LayoutTripsLazyRoute: typeof LayoutTripsLazyRouteWithChildren
-  LayoutIndexRoute: typeof LayoutIndexRoute
+	LayoutDashboardLazyRoute: typeof LayoutDashboardLazyRoute;
+	LayoutInvitationsLazyRoute: typeof LayoutInvitationsLazyRoute;
+	LayoutProfileLazyRoute: typeof LayoutProfileLazyRoute;
+	LayoutSettingsLazyRoute: typeof LayoutSettingsLazyRoute;
+	LayoutTripsLazyRoute: typeof LayoutTripsLazyRouteWithChildren;
+	LayoutIndexRoute: typeof LayoutIndexRoute;
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
-  LayoutDashboardLazyRoute: LayoutDashboardLazyRoute,
-  LayoutInvitationsLazyRoute: LayoutInvitationsLazyRoute,
-  LayoutProfileLazyRoute: LayoutProfileLazyRoute,
-  LayoutSettingsLazyRoute: LayoutSettingsLazyRoute,
-  LayoutTripsLazyRoute: LayoutTripsLazyRouteWithChildren,
-  LayoutIndexRoute: LayoutIndexRoute,
-}
+	LayoutDashboardLazyRoute: LayoutDashboardLazyRoute,
+	LayoutInvitationsLazyRoute: LayoutInvitationsLazyRoute,
+	LayoutProfileLazyRoute: LayoutProfileLazyRoute,
+	LayoutSettingsLazyRoute: LayoutSettingsLazyRoute,
+	LayoutTripsLazyRoute: LayoutTripsLazyRouteWithChildren,
+	LayoutIndexRoute: LayoutIndexRoute,
+};
 
 const LayoutRouteWithChildren =
-  LayoutRoute._addFileChildren(LayoutRouteChildren)
+	LayoutRoute._addFileChildren(LayoutRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
-  SplatRoute: SplatRoute,
-  LayoutRoute: LayoutRouteWithChildren,
-  ForgotPasswordRoute: ForgotPasswordRoute,
-  LoginRoute: LoginRoute,
-  RegisterRoute: RegisterRoute,
-}
+	SplatRoute: SplatRoute,
+	LayoutRoute: LayoutRouteWithChildren,
+	ForgotPasswordRoute: ForgotPasswordRoute,
+	LoginRoute: LoginRoute,
+	RegisterRoute: RegisterRoute,
+};
 export const routeTree = rootRouteImport
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+	._addFileChildren(rootRouteChildren)
+	._addFileTypes<FileRouteTypes>();
