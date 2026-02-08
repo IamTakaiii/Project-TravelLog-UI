@@ -12,7 +12,7 @@ export { ExpenseCard } from "./expense-card";
 export { ExpenseList } from "./expense-list";
 export { ExpenseSearch } from "./expense-search";
 export { ExpenseDetailSheet } from "./expense-detail-sheet";
-export { CreateExpenseSheet } from "./create-expense-sheet";
+export { ExpenseFormSheet } from "./expense-form-sheet";
 
 // Filter Components
 export { CategoryFilter } from "./category-filter";

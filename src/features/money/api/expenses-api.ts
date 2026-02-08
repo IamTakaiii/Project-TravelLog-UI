@@ -87,4 +87,43 @@ export const expensesApi = {
 		await new Promise((resolve) => setTimeout(resolve, 300));
 		MOCK_EXPENSES = MOCK_EXPENSES.filter((e) => e.id !== id);
 	},
+
+	async update(id: string, data: ExpenseFormValues): Promise<Expense> {
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const index = MOCK_EXPENSES.findIndex((e) => e.id === id);
+		if (index === -1) throw new Error("Expense not found");
+
+		const rate =
+			DEFAULT_CURRENCIES[data.currency as keyof typeof DEFAULT_CURRENCIES].rate;
+
+		const splitDetails: Expense["splitDetails"] =
+			data.splitType === "exact" && data.exactAmounts
+				? {
+						type: "exact",
+						involvedUserIds: data.involvedUserIds,
+						amounts: data.exactAmounts,
+				  }
+				: {
+						type: "equal",
+						involvedUserIds: data.involvedUserIds,
+				  };
+
+		const updatedExpense: Expense = {
+			...MOCK_EXPENSES[index],
+			description: data.description,
+			amount: data.amount,
+			currency: data.currency as any,
+			exchangeRate: rate,
+			thbAmount: data.amount * rate,
+			date: new Date(data.date).toISOString(),
+			payerId: data.payerId,
+			category: data.category,
+			splitDetails,
+			place: data.placeName ? { name: data.placeName } : undefined,
+		};
+
+		MOCK_EXPENSES[index] = updatedExpense;
+		return updatedExpense;
+	},
 };

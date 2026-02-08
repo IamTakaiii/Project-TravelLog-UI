@@ -14,7 +14,14 @@ export default defineConfig({
 		inspectorServer() as PluginOption,
 		react({
 			babel: {
-				plugins: ["@react-dev-inspector/babel-plugin"],
+				plugins: [
+					[
+						"@react-dev-inspector/babel-plugin",
+						{
+							excludes: ["src/components/ui/form.tsx"],
+						},
+					],
+				],
 			},
 		}),
 		tailwindcss(),

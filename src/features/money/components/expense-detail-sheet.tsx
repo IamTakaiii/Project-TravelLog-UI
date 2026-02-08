@@ -6,17 +6,22 @@ import {
 	CENTRAL_FUND_ID,
 } from "../utils/money-utils";
 import { CategoryIcon } from "./category-icon";
-import { MapPin, Calendar, User, Users, Receipt } from "lucide-react";
+import { MapPin, Calendar, User, Users, Receipt, Pencil, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface ExpenseDetailSheetProps {
 	expense: Expense | null;
 	onClose: () => void;
+	onEdit?: (expense: Expense) => void;
+	onDelete?: (expense: Expense) => void;
 }
 
 export function ExpenseDetailSheet({
 	expense,
 	onClose,
+	onEdit,
+	onDelete,
 }: ExpenseDetailSheetProps) {
 	if (!expense) return null;
 
@@ -38,6 +43,28 @@ export function ExpenseDetailSheet({
 						category.color.replace("text-", "bg-").replace("0", "00/20")
 					)}
 				>
+					<div className="absolute top-4 left-4 flex gap-2">
+						{onEdit && (
+							<Button
+								variant="primary"
+								size="icon"
+								onClick={() => onEdit(expense)}
+								className="rounded-full shadow-lg hover:scale-110 transition-transform"
+							>
+								<Pencil className="size-4 text-primary-foreground" />
+							</Button>
+						)}
+						{onDelete && (
+							<Button
+								variant="destructive"
+								size="icon"
+								onClick={() => onDelete(expense)}
+								className="rounded-full shadow-lg hover:scale-110 transition-transform"
+							>
+								<Trash2 className="size-4 text-primary-foreground" />
+							</Button>
+						)}
+					</div>
 					<div
 						className={cn(
 							"size-16 sm:size-20 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-sm ring-8 ring-background",
@@ -165,7 +192,7 @@ export function ExpenseDetailSheet({
 											<p className="text-[10px] text-muted-foreground">
 												{formatMoney(
 													expense.thbAmount /
-														expense.splitDetails.involvedUserIds.length
+													expense.splitDetails.involvedUserIds.length
 												)}
 											</p>
 										</div>

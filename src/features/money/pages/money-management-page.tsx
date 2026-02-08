@@ -1,10 +1,10 @@
 import { useState, useCallback } from "react";
 import { useParams } from "@tanstack/react-router";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { expensesQueryOptions } from "../queries/money-queries";
 import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
-import { CreateExpenseSheet } from "../components/create-expense-sheet";
+import { ExpenseFormSheet } from "../components/expense-form-sheet";
 import { ExpenseDetailSheet } from "../components/expense-detail-sheet";
 import { MoneyHeader } from "../components/money-header";
 import { BudgetSummaryCard } from "../components/budget-summary-card";
@@ -16,14 +16,22 @@ import { useExpenseFilters } from "../hooks/use-expense-filters";
 import { useBudgetStats } from "../hooks/use-budget-stats";
 import { Expense, CurrencyCode } from "../types";
 import { TABS, TabType, ANIMATION_VARIANTS, MOCK_USER_IDS } from "../constants";
+import { expensesApi } from "../api/expenses-api";
+import { toast } from "sonner";
+
+import { ConfirmDialog } from "@/components/confirm-dialog";
+import { Trash2 } from "lucide-react";
 
 export function MoneyManagementPage() {
 	const params = useParams({ from: "/_layout/trips/$tripId/money" });
 	const { data: trip } = useSuspenseQuery(tripQueryOptions(params.tripId));
 	const { data: expenses = [] } = useQuery(expensesQueryOptions(trip.id));
+	const queryClient = useQueryClient();
 
 	const [activeTab, setActiveTab] = useState<TabType>(TABS.EXPENSES);
 	const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+	const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
 	const totalBudget = trip.budget ? parseFloat(trip.budget) : 0;
 	const budgetStats = useBudgetStats({ expenses, totalBudget });
@@ -39,6 +47,26 @@ export function MoneyManagementPage() {
 
 	const handleExpenseClick = useCallback((expense: Expense) => {
 		setSelectedExpense(expense);
+	}, []);
+
+	const handleEditExpense = useCallback((expense: Expense) => {
+		setSelectedExpense(expense);
+		setIsEditFormOpen(true);
+	}, []);
+
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => expensesApi.delete(id),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["expenses", trip.id] });
+			toast.success("Expense deleted");
+			setSelectedExpense(null);
+			setIsDeleteDialogOpen(false);
+		},
+	});
+
+	const handleDeleteExpense = useCallback((expense: Expense) => {
+		setSelectedExpense(expense);
+		setIsDeleteDialogOpen(true);
 	}, []);
 
 	const handleTabChange = useCallback((tab: TabType) => {
@@ -97,15 +125,49 @@ export function MoneyManagementPage() {
 
 			{/* Floating Action Button */}
 			<div className="fixed bottom-6 right-6 z-50">
-				<CreateExpenseSheet
+				<ExpenseFormSheet
 					tripId={trip.id}
 					currency={trip.currency || "THB"}
 				/>
 			</div>
 
 			<ExpenseDetailSheet
-				expense={selectedExpense}
+				expense={isEditFormOpen || isDeleteDialogOpen ? null : selectedExpense}
 				onClose={() => setSelectedExpense(null)}
+				onEdit={handleEditExpense}
+				onDelete={handleDeleteExpense}
+			/>
+
+			<ExpenseFormSheet
+				tripId={trip.id}
+				currency={trip.currency || "THB"}
+				expense={selectedExpense || undefined}
+				open={isEditFormOpen}
+				onOpenChange={(open) => {
+					setIsEditFormOpen(open);
+					if (!open && !isDeleteDialogOpen) setSelectedExpense(null);
+				}}
+			/>
+
+			<ConfirmDialog
+				open={isDeleteDialogOpen}
+				onOpenChange={setIsDeleteDialogOpen}
+				title="Delete Expense?"
+				description={
+					<>
+						You're about to remove{" "}
+						<span className="text-foreground font-bold italic">
+							"{selectedExpense?.description}"
+						</span>
+						. This action is permanent and cannot be undone.
+					</>
+				}
+				confirmText="Delete Permanently"
+				cancelText="Keep Expense"
+				onConfirm={() => selectedExpense && deleteMutation.mutate(selectedExpense.id)}
+				isLoading={deleteMutation.isPending}
+				variant="destructive"
+				icon={<Trash2 className="size-7 text-destructive" />}
 			/>
 		</motion.div>
 	);
