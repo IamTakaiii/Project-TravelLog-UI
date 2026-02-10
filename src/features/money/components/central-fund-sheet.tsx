@@ -22,8 +22,9 @@ import {
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { fundsQueryOptions, useFundMutations } from "@/features/money/queries/fund-queries";
 import { centralFundSchema, CentralFundFormValues } from "@/features/money/schemas/central-fund-schema";
-import { DEFAULT_CURRENCIES } from "@/features/money/utils/money-utils";
-import { Fund } from "@/features/money/types";
+import { DEFAULT_CURRENCIES } from "@/features/money/constants/currencies";
+import { getCurrencySymbol } from "@/features/money/services/money-formatter";
+import { Fund, CurrencyCode } from "@/features/money/types";
 
 interface CentralFundSheetProps {
     tripId: string;
@@ -168,7 +169,7 @@ export function CentralFundSheet({
                                     />
                                     <div className="flex gap-3">
                                         <div className="h-12 w-24 bg-background shadow-sm rounded-xl font-bold flex items-center justify-center gap-1.5 text-sm text-muted-foreground select-none">
-                                            {(DEFAULT_CURRENCIES as any)[defaultCurrency]?.flag} {defaultCurrency}
+                                            {DEFAULT_CURRENCIES[defaultCurrency as CurrencyCode]?.flag} {defaultCurrency}
                                         </div>
                                         <FormField
                                             control={form.control}
@@ -178,7 +179,7 @@ export function CentralFundSheet({
                                                     <FormControl>
                                                         <div className="relative group">
                                                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-black text-xl">
-                                                                {(DEFAULT_CURRENCIES as any)[defaultCurrency]?.symbol}
+                                                            {getCurrencySymbol(defaultCurrency as CurrencyCode)}
                                                             </span>
                                                             <Input
                                                                 type="number"
@@ -229,7 +230,7 @@ export function CentralFundSheet({
                                             <div className="flex items-start gap-4 min-w-0">
                                                 <div className="size-12 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-50 dark:from-amber-900/40 dark:to-orange-900/20 border border-amber-100/50 dark:border-amber-800/30 flex items-center justify-center shrink-0 shadow-sm">
                                                     <span className="text-xl filter drop-shadow-sm">
-                                                        {(DEFAULT_CURRENCIES as any)[fund.currency]?.flag}
+                                                        {DEFAULT_CURRENCIES[fund.currency as CurrencyCode]?.flag}
                                                     </span>
                                                 </div>
                                                 <div className="space-y-1 min-w-0">
@@ -241,7 +242,7 @@ export function CentralFundSheet({
                                                             {fund.currency}
                                                         </span>
                                                         <span className="font-bold text-amber-600 dark:text-amber-500 font-mono text-sm">
-                                                            {(DEFAULT_CURRENCIES as any)[fund.currency]?.symbol}
+                                                            {getCurrencySymbol(fund.currency as CurrencyCode)}
                                                             {fund.amount.toLocaleString(undefined, {
                                                                 minimumFractionDigits: 2,
                                                                 maximumFractionDigits: 2,

@@ -1,6 +1,7 @@
 import { Receipt, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { TabType, TABS } from "../constants";
+import { TABS } from "../constants/tabs";
+import type { TabType } from "../constants/tabs";
 
 interface TabSwitcherProps {
 	activeTab: TabType;

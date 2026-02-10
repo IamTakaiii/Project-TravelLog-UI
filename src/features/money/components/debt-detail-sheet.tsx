@@ -1,5 +1,5 @@
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { formatMoney } from "../utils/money-utils";
+import { formatMoney } from "../services/money-formatter";
 import { DebtBreakdown } from "../hooks/use-debt-calculator";
 import { ExpenseCard } from "./expense-card";
 import { CheckCircle2, Receipt } from "lucide-react";
@@ -46,7 +46,7 @@ export function DebtDetailSheet({
 							color
 						)}
 					>
-						{formatMoney(Math.abs(debt.amount))}
+						{formatMoney(Math.abs(debt.amount), "THB")}
 					</span>
 
 					<Button

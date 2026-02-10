@@ -1,10 +1,8 @@
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Expense } from "../types";
-import {
-	formatMoney,
-	DEFAULT_CATEGORIES,
-	CENTRAL_FUND_ID,
-} from "../utils/money-utils";
+import { formatMoney } from "../services/money-formatter";
+import { getCategoryById } from "../utils/category-lookup";
+import { CENTRAL_FUND_ID } from "../constants/thresholds";
 import { CategoryIcon } from "./category-icon";
 import { MapPin, Calendar, User, Users, Receipt, Pencil, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -26,8 +24,8 @@ export function ExpenseDetailSheet({
 	if (!expense) return null;
 
 	const category =
-		DEFAULT_CATEGORIES.find((c) => c.id === expense.category) ||
-		DEFAULT_CATEGORIES[5];
+		getCategoryById(expense.category) ||
+		getCategoryById("other");
 	const isCentral = expense.payerId === CENTRAL_FUND_ID;
 	const dateObj = new Date(expense.date);
 
@@ -81,7 +79,7 @@ export function ExpenseDetailSheet({
 					</h2>
 					<div className="flex flex-col sm:flex-row items-center sm:items-baseline gap-1 sm:gap-2 mt-2">
 						<span className="text-3xl sm:text-4xl font-black font-mono tracking-tighter">
-							{formatMoney(expense.thbAmount)}
+							{formatMoney(expense.thbAmount, "THB")}
 						</span>
 						{expense.currency !== "THB" && (
 							<span className="text-xs sm:text-sm font-bold opacity-60">
@@ -192,7 +190,8 @@ export function ExpenseDetailSheet({
 											<p className="text-[10px] text-muted-foreground">
 												{formatMoney(
 													expense.thbAmount /
-													expense.splitDetails.involvedUserIds.length
+													expense.splitDetails.involvedUserIds.length,
+													"THB"
 												)}
 											</p>
 										</div>

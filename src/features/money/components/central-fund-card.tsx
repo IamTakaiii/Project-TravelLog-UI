@@ -3,7 +3,8 @@ import { Wallet } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { CentralFundSheet } from "./central-fund-sheet";
 import { fundsQueryOptions } from "../queries/fund-queries";
-import { DEFAULT_CURRENCIES } from "../utils/money-utils";
+import { getCurrencySymbol } from "../services/money-formatter";
+import { CurrencyCode } from "../types";
 
 import { Progress } from "@/components/ui/progress";
 
@@ -45,7 +46,7 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 							</p>
 							<div className="flex items-baseline gap-2">
 								<p className="text-3xl font-[800] tracking-tighter text-foreground">
-									{(DEFAULT_CURRENCIES as any)[currency]?.symbol}
+									{getCurrencySymbol(currency as CurrencyCode)}
 									{totalAmount.toLocaleString()}
 								</p>
 								{funds.length > 0 && (
@@ -75,7 +76,7 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 								Remaining
 							</p>
 							<p className="text-sm font-black text-emerald-500 truncate">
-								{(DEFAULT_CURRENCIES as any)[currency]?.symbol}
+								{getCurrencySymbol(currency as CurrencyCode)}
 								{mockRemaining.toLocaleString()}
 							</p>
 						</div>
@@ -84,7 +85,7 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 								Spent
 							</p>
 							<p className="text-sm font-black text-foreground truncate">
-								{(DEFAULT_CURRENCIES as any)[currency]?.symbol}
+								{getCurrencySymbol(currency as CurrencyCode)}
 								{mockSpent.toLocaleString()}
 							</p>
 						</div>

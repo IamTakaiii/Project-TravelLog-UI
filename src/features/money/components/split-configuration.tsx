@@ -1,27 +1,31 @@
-import { useState, useEffect } from "react";
 import { Users, DollarSign } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-import { formatMoney } from "../utils/money-utils";
+import { formatMoney } from "../services/money-formatter";
+import { CurrencyCode } from "../types";
+
+export interface SplitUser {
+	id: string;
+	name: string;
+	avatar: string;
+}
 
 interface SplitConfigurationProps {
 	totalAmount: number;
-	currency: string;
+	currency: CurrencyCode;
 	splitType: "equal" | "exact";
 	onSplitTypeChange: (type: "equal" | "exact") => void;
 	involvedUserIds: string[];
 	onInvolvedUsersChange: (userIds: string[]) => void;
-	exactAmounts?: Record<string, number>;
-	onExactAmountsChange?: (amounts: Record<string, number>) => void;
+	exactAmounts: Record<string, number>;
+	onExactAmountChange: (userId: string, amount: number) => void;
+	users: SplitUser[];
+	equalSplitAmount: number;
+	exactTotal: number;
+	isExactValid: boolean;
 }
-
-const MOCK_USERS = [
-	{ id: "u1", name: "Me", avatar: "👤" },
-	{ id: "u2", name: "Ploy", avatar: "👩" },
-	{ id: "u3", name: "Non", avatar: "👨" },
-];
 
 export function SplitConfiguration({
 	totalAmount,
@@ -30,48 +34,13 @@ export function SplitConfiguration({
 	onSplitTypeChange,
 	involvedUserIds,
 	onInvolvedUsersChange,
-	exactAmounts = {},
-	onExactAmountsChange,
+	exactAmounts,
+	onExactAmountChange,
+	users,
+	equalSplitAmount,
+	exactTotal,
+	isExactValid,
 }: SplitConfigurationProps) {
-	const [localAmounts, setLocalAmounts] = useState<Record<string, number>>(
-		exactAmounts
-	);
-
-	// Calculate equal split amount
-	const equalSplitAmount =
-		involvedUserIds.length > 0 ? totalAmount / involvedUserIds.length : 0;
-
-	// Calculate total of exact amounts
-	const exactTotal = Object.values(localAmounts).reduce(
-		(sum, amt) => sum + (amt || 0),
-		0
-	);
-	const isExactValid = Math.abs(exactTotal - totalAmount) < 0.01;
-
-	// Initialize amounts when switching to exact mode
-	useEffect(() => {
-		if (splitType === "exact") {
-			const newAmounts: Record<string, number> = {};
-			involvedUserIds.forEach((userId) => {
-				newAmounts[userId] = exactAmounts[userId] || 0;
-			});
-			setLocalAmounts(newAmounts);
-		}
-	}, [splitType]); // Only run when splitType changes
-
-	// Update amounts when users are added/removed in exact mode
-	useEffect(() => {
-		if (splitType === "exact") {
-			setLocalAmounts((prev) => {
-				const newAmounts: Record<string, number> = {};
-				involvedUserIds.forEach((userId) => {
-					newAmounts[userId] = prev[userId] || 0;
-				});
-				return newAmounts;
-			});
-		}
-	}, [involvedUserIds.join(","), splitType]); // Use join to avoid array reference issues
-
 	const toggleUser = (userId: string) => {
 		if (involvedUserIds.includes(userId)) {
 			if (involvedUserIds.length > 1) {
@@ -79,20 +48,6 @@ export function SplitConfiguration({
 			}
 		} else {
 			onInvolvedUsersChange([...involvedUserIds, userId]);
-		}
-	};
-
-	const handleExactAmountChange = (userId: string, value: string) => {
-		const amount = parseFloat(value) || 0;
-		const newAmounts = {
-			...localAmounts,
-			[userId]: amount,
-		};
-		setLocalAmounts(newAmounts);
-		
-		// Notify parent immediately
-		if (onExactAmountsChange) {
-			onExactAmountsChange(newAmounts);
 		}
 	};
 
@@ -158,12 +113,12 @@ export function SplitConfiguration({
 					Who's Involved?
 				</Label>
 				<div className="space-y-2">
-					{MOCK_USERS.map((user) => {
+					{users.map((user) => {
 						const isSelected = involvedUserIds.includes(user.id);
 						const userAmount =
 							splitType === "equal"
 								? equalSplitAmount
-								: localAmounts[user.id] || 0;
+								: exactAmounts[user.id] || 0;
 
 						return (
 							<div
@@ -208,7 +163,7 @@ export function SplitConfiguration({
 									<p className="font-bold text-sm">{user.name}</p>
 									{isSelected && splitType === "equal" && (
 										<p className="text-xs text-muted-foreground">
-											{formatMoney(userAmount, currency as any)}
+											{formatMoney(userAmount, currency)}
 										</p>
 									)}
 								</div>
@@ -222,9 +177,9 @@ export function SplitConfiguration({
 											type="number"
 											step="0.01"
 											placeholder="0.00"
-											value={localAmounts[user.id] || ""}
+											value={exactAmounts[user.id] || ""}
 											onChange={(e) =>
-												handleExactAmountChange(user.id, e.target.value)
+												onExactAmountChange(user.id, parseFloat(e.target.value) || 0)
 											}
 											className="h-9 pl-12 text-sm font-bold rounded-xl"
 										/>
@@ -256,7 +211,7 @@ export function SplitConfiguration({
 								isExactValid ? "text-emerald-500" : "text-destructive"
 							)}
 						>
-							{formatMoney(exactTotal, currency as any)}
+							{formatMoney(exactTotal, currency)}
 						</span>
 					</div>
 					<div className="flex items-center justify-between">
@@ -264,7 +219,7 @@ export function SplitConfiguration({
 							Expense Total
 						</span>
 						<span className="text-sm font-black text-foreground">
-							{formatMoney(totalAmount, currency as any)}
+							{formatMoney(totalAmount, currency)}
 						</span>
 					</div>
 					{!isExactValid && (
@@ -283,7 +238,7 @@ export function SplitConfiguration({
 							Each Person Pays
 						</span>
 						<span className="text-lg font-black text-primary">
-							{formatMoney(equalSplitAmount, currency as any)}
+							{formatMoney(equalSplitAmount, currency)}
 						</span>
 					</div>
 				</div>

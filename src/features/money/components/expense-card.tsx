@@ -1,10 +1,8 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import {
-	formatMoney,
-	DEFAULT_CATEGORIES,
-	CENTRAL_FUND_ID,
-} from "../utils/money-utils";
+import { formatMoney } from "../services/money-formatter";
+import { getCategoryById } from "../utils/category-lookup";
+import { CENTRAL_FUND_ID } from "../constants/thresholds";
 import { CategoryIcon } from "./category-icon";
 import { Expense } from "../types";
 import { cn } from "@/lib/utils";
@@ -20,8 +18,8 @@ export const ExpenseCard = memo(function ExpenseCard({
 	onClick,
 }: ExpenseCardProps) {
 	const category =
-		DEFAULT_CATEGORIES.find((c) => c.id === expense.category) ||
-		DEFAULT_CATEGORIES[5];
+		getCategoryById(expense.category) ||
+		getCategoryById("other");
 	const isCentral = expense.payerId === CENTRAL_FUND_ID;
 
 	if (!category) return null;
@@ -69,7 +67,7 @@ export const ExpenseCard = memo(function ExpenseCard({
 
 			<div className="text-right shrink-0">
 				<p className="font-black text-base tracking-tight">
-					{formatMoney(expense.thbAmount)}
+					{formatMoney(expense.thbAmount, "THB")}
 				</p>
 				{expense.currency !== "THB" && (
 					<p className="text-[10px] text-muted-foreground">

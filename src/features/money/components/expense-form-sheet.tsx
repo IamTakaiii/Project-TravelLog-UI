@@ -1,5 +1,3 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Loader2, Save, MapPin, Zap, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,20 +24,17 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { expenseSchema, ExpenseFormValues } from "../schemas/expense-schema";
-import {
-	DEFAULT_CURRENCIES,
-	DEFAULT_CATEGORIES,
-	CENTRAL_FUND_ID,
-} from "../utils/money-utils";
+import { DEFAULT_CURRENCIES } from "../constants/currencies";
+import { DEFAULT_CATEGORIES } from "../constants/categories";
+import { CENTRAL_FUND_ID } from "../constants/thresholds";
 import { CategoryIcon } from "./category-icon";
 import { SplitConfiguration } from "./split-configuration";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { expensesApi } from "../api/expenses-api";
-import { toast } from "sonner";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Expense } from "../types";
+import { CurrencyCode, Expense } from "../types";
+import { useExpenseForm, FormMode } from "../hooks/use-expense-form";
+import { MOCK_USERS } from "../mock/mock-users";
+import { calculateEqualSplit, validateExactSplit } from "../services/split-calculator";
 
 interface ExpenseFormSheetProps {
 	tripId: string;
@@ -49,8 +44,6 @@ interface ExpenseFormSheetProps {
 	onOpenChange?: (open: boolean) => void;
 	open?: boolean;
 }
-
-type FormMode = "quick" | "standard";
 
 export function ExpenseFormSheet({
 	tripId,
@@ -64,76 +57,13 @@ export function ExpenseFormSheet({
 	const open = controlledOpen ?? internalOpen;
 	const setOpen = onOpenChange ?? setInternalOpen;
 
-	const [mode, setMode] = useState<FormMode>(expense ? "standard" : "quick");
-	const queryClient = useQueryClient();
-
-	const isEditing = !!expense;
-
-	const form = useForm<ExpenseFormValues>({
-		resolver: zodResolver(expenseSchema),
-		defaultValues: {
-			description: expense?.description || "",
-			amount: expense?.amount || 0,
-			currency: expense?.currency || currency || "THB",
-			date: expense?.date ? new Date(expense.date).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
-			category: expense?.category || "food",
-			payerId: expense?.payerId || "u1",
-			splitType: expense?.splitDetails.type || "equal",
-			involvedUserIds: expense?.splitDetails.involvedUserIds || ["u1", "u2", "u3"],
-			exactAmounts: expense?.splitDetails.amounts || {},
-			placeName: expense?.place?.name || "",
-		},
-	});
-
-	// Reset form when expense changes
-	useEffect(() => {
-		if (expense) {
-			form.reset({
-				description: expense.description,
-				amount: expense.amount,
-				currency: expense.currency,
-				date: new Date(expense.date).toISOString().slice(0, 16),
-				category: expense.category,
-				payerId: expense.payerId,
-				splitType: expense.splitDetails.type,
-				involvedUserIds: expense.splitDetails.involvedUserIds,
-				exactAmounts: expense.splitDetails.amounts || {},
-				placeName: expense.place?.name || "",
-			});
-			setMode("standard");
-		} else {
-			form.reset({
-				description: "",
-				amount: 0,
-				currency: currency || "THB",
-				date: new Date().toISOString().slice(0, 16),
-				category: "food",
-				payerId: "u1",
-				splitType: "equal",
-				involvedUserIds: ["u1", "u2", "u3"],
-				exactAmounts: {},
-				placeName: "",
-			});
-			setMode("quick");
-		}
-	}, [expense, currency, form]);
-
-	const mutation = useMutation({
-		mutationFn: (data: ExpenseFormValues) =>
-			isEditing && expense
-				? expensesApi.update(expense.id, data)
-				: expensesApi.create(tripId, data),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["expenses", tripId] });
-			toast.success(isEditing ? "Expense updated" : "Expense added");
-			setOpen(false);
-			if (!isEditing) form.reset();
-		},
-	});
-
-	function onSubmit(data: ExpenseFormValues) {
-		mutation.mutate(data);
-	}
+	const { form, mode, setMode, isEditing, isPending, onSubmit } =
+		useExpenseForm({
+			tripId,
+			currency,
+			expense,
+			onSuccess: () => setOpen(false),
+		});
 
 	return (
 		<Sheet open={open} onOpenChange={setOpen}>
@@ -385,31 +315,49 @@ export function ExpenseFormSheet({
 								<FormField
 									control={form.control}
 									name="splitType"
-									render={({ field }) => (
-										<FormItem>
-											<SplitConfiguration
-												totalAmount={form.watch("amount") || 0}
-												currency={form.watch("currency")}
-												splitType={field.value}
-												onSplitTypeChange={(type) => {
-													field.onChange(type);
-													// Clear exact amounts when switching to equal
-													if (type === "equal") {
-														form.setValue("exactAmounts", {});
+									render={({ field }) => {
+										const amount = form.watch("amount") || 0;
+										const watchedCurrency = form.watch("currency") as CurrencyCode;
+										const involvedUserIds = form.watch("involvedUserIds");
+										const watchedExactAmounts = form.watch("exactAmounts") ?? {};
+
+										const equalSplit = calculateEqualSplit(amount, involvedUserIds);
+										const exactValidation = validateExactSplit(amount, watchedExactAmounts);
+
+										return (
+											<FormItem>
+												<SplitConfiguration
+													totalAmount={amount}
+													currency={watchedCurrency}
+													splitType={field.value}
+													onSplitTypeChange={(type) => {
+														field.onChange(type);
+														// Clear exact amounts when switching to equal
+														if (type === "equal") {
+															form.setValue("exactAmounts", {});
+														}
+													}}
+													involvedUserIds={involvedUserIds}
+													onInvolvedUsersChange={(userIds) =>
+														form.setValue("involvedUserIds", userIds)
 													}
-												}}
-												involvedUserIds={form.watch("involvedUserIds")}
-												onInvolvedUsersChange={(userIds) =>
-													form.setValue("involvedUserIds", userIds)
-												}
-												exactAmounts={form.watch("exactAmounts")}
-												onExactAmountsChange={(amounts) =>
-													form.setValue("exactAmounts", amounts)
-												}
-											/>
-											<FormMessage />
-										</FormItem>
-									)}
+													exactAmounts={watchedExactAmounts}
+													onExactAmountChange={(userId, value) => {
+														const newAmounts = {
+															...watchedExactAmounts,
+															[userId]: value,
+														};
+														form.setValue("exactAmounts", newAmounts);
+													}}
+													users={MOCK_USERS}
+													equalSplitAmount={equalSplit.perPersonAmount}
+													exactTotal={exactValidation.totalAssigned}
+													isExactValid={exactValidation.isValid}
+												/>
+												<FormMessage />
+											</FormItem>
+										);
+									}}
 								/>
 							</>
 						)}
@@ -418,9 +366,9 @@ export function ExpenseFormSheet({
 							variant="primary"
 							type="submit"
 							className="w-full h-14 rounded-3xl text-lg font-black shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 transition-all active:scale-95"
-							disabled={mutation.isPending}
+							disabled={isPending}
 						>
-							{mutation.isPending ? (
+							{isPending ? (
 								<Loader2 className="animate-spin mr-2" />
 							) : (
 								<Save className="mr-2 size-5 text-primary-foreground" />

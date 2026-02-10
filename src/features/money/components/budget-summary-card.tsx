@@ -1,6 +1,7 @@
 import { Wallet, TrendingUp, AlertCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { formatMoney } from "../utils/money-utils";
+import { formatMoney } from "../services/money-formatter";
+import { BUDGET_WARNING_PERCENT, BUDGET_CRITICAL_PERCENT } from "../constants/thresholds";
 import { CurrencyCode } from "../types";
 
 interface BudgetSummaryCardProps {
@@ -8,6 +9,7 @@ interface BudgetSummaryCardProps {
 	totalBudget: number;
 	remaining: number;
 	percentage: number;
+	dailyAverage: number;
 	currency: CurrencyCode;
 }
 
@@ -16,16 +18,17 @@ export function BudgetSummaryCard({
 	totalBudget,
 	remaining,
 	percentage,
+	dailyAverage,
 	currency,
 }: BudgetSummaryCardProps) {
 	let statusColor = "bg-primary";
 	let bgColor = "bg-primary/10";
 
-	if (percentage > 75) {
+	if (percentage >= BUDGET_WARNING_PERCENT) {
 		statusColor = "bg-yellow-500";
 		bgColor = "bg-yellow-500/10";
 	}
-	if (percentage > 90) {
+	if (percentage >= BUDGET_CRITICAL_PERCENT) {
 		statusColor = "bg-destructive";
 		bgColor = "bg-destructive/10";
 	}
@@ -64,7 +67,7 @@ export function BudgetSummaryCard({
 								{percentage.toFixed(0)}% Used
 							</span>
 						</div>
-						{percentage >= 90 && (
+						{percentage >= BUDGET_CRITICAL_PERCENT && (
 							<div className="text-[9px] font-black text-destructive uppercase flex items-center gap-1 animate-pulse bg-destructive/10 px-2 py-0.5 rounded-full whitespace-nowrap">
 								<AlertCircle className="size-3 shrink-0" /> Alert
 							</div>
@@ -93,7 +96,7 @@ export function BudgetSummaryCard({
 							Daily Avg
 						</p>
 						<p className="text-base font-bold text-foreground truncate">
-							{formatMoney(totalSpent / 3, currency)}
+							{formatMoney(dailyAverage, currency)}
 						</p>
 					</div>
 				</div>

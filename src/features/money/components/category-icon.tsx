@@ -1,4 +1,4 @@
-import { CATEGORY_ICONS } from "../utils/money-utils";
+import { CATEGORY_ICONS } from "../constants/categories";
 import { Receipt } from "lucide-react";
 
 interface CategoryIconProps {

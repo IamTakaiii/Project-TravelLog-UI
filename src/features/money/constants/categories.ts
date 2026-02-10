@@ -1,4 +1,4 @@
-import { CurrencyCode, CurrencyConfig, ExpenseCategory } from "../types";
+import { ExpenseCategory } from "../types";
 import {
 	Utensils,
 	MapPin,
@@ -11,15 +11,6 @@ import {
 	MoreHorizontal,
 	Receipt,
 } from "lucide-react";
-
-export const DEFAULT_CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
-	THB: { code: "THB", symbol: "฿", rate: 1, flag: "🇹🇭" },
-	JPY: { code: "JPY", symbol: "¥", rate: 0.24, flag: "🇯🇵" },
-	USD: { code: "USD", symbol: "$", rate: 35.5, flag: "🇺🇸" },
-	EUR: { code: "EUR", symbol: "€", rate: 38.2, flag: "🇪🇺" },
-	GBP: { code: "GBP", symbol: "£", rate: 43.5, flag: "🇬🇧" },
-	CNY: { code: "CNY", symbol: "¥", rate: 5.0, flag: "🇨🇳" },
-};
 
 export const DEFAULT_CATEGORIES: ExpenseCategory[] = [
 	{
@@ -75,13 +66,3 @@ export const CATEGORY_ICONS: Record<string, any> = {
 	MoreHorizontal,
 	Receipt,
 };
-
-export function formatMoney(
-	amount: number,
-	currency: CurrencyCode = "THB"
-): string {
-	const config = DEFAULT_CURRENCIES[currency] || DEFAULT_CURRENCIES["THB"];
-	return `${config.symbol}${amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-}
-
-export const CENTRAL_FUND_ID = "central_fund";

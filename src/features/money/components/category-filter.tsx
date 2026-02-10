@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { DEFAULT_CATEGORIES } from "../utils/money-utils";
+import { DEFAULT_CATEGORIES } from "../constants/categories";
 
 interface CategoryFilterProps {
 	selectedCategory: string | null;

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useParams } from "@tanstack/react-router";
-import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { expensesQueryOptions } from "../queries/money-queries";
 import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
@@ -14,10 +14,12 @@ import { ExpensesTab } from "../components/expenses-tab";
 import { BalancesTab } from "../components/balances-tab";
 import { useExpenseFilters } from "../hooks/use-expense-filters";
 import { useBudgetStats } from "../hooks/use-budget-stats";
+import { useExpenseMutations } from "../hooks/use-expense-mutations";
 import { Expense, CurrencyCode } from "../types";
-import { TABS, TabType, ANIMATION_VARIANTS, MOCK_USER_IDS } from "../constants";
-import { expensesApi } from "../api/expenses-api";
-import { toast } from "sonner";
+import { TABS, ANIMATION_VARIANTS } from "../constants/tabs";
+import { calculateDuration } from "@/features/trips/utils/trip-utils";
+import type { TabType } from "../constants/tabs";
+import { MOCK_USER_IDS } from "../mock/mock-users";
 
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Trash2 } from "lucide-react";
@@ -26,7 +28,6 @@ export function MoneyManagementPage() {
 	const params = useParams({ from: "/_layout/trips/$tripId/money" });
 	const { data: trip } = useSuspenseQuery(tripQueryOptions(params.tripId));
 	const { data: expenses = [] } = useQuery(expensesQueryOptions(trip.id));
-	const queryClient = useQueryClient();
 
 	const [activeTab, setActiveTab] = useState<TabType>(TABS.EXPENSES);
 	const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
@@ -34,7 +35,10 @@ export function MoneyManagementPage() {
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
 	const totalBudget = trip.budget ? parseFloat(trip.budget) : 0;
-	const budgetStats = useBudgetStats({ expenses, totalBudget });
+	const tripDays = calculateDuration(trip.startDate, trip.endDate);
+	const budgetStats = useBudgetStats({ expenses, totalBudget, tripDays });
+
+	const { deleteExpense } = useExpenseMutations(trip.id);
 
 	const {
 		searchQuery,
@@ -53,16 +57,6 @@ export function MoneyManagementPage() {
 		setSelectedExpense(expense);
 		setIsEditFormOpen(true);
 	}, []);
-
-	const deleteMutation = useMutation({
-		mutationFn: (id: string) => expensesApi.delete(id),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["expenses", trip.id] });
-			toast.success("Expense deleted");
-			setSelectedExpense(null);
-			setIsDeleteDialogOpen(false);
-		},
-	});
 
 	const handleDeleteExpense = useCallback((expense: Expense) => {
 		setSelectedExpense(expense);
@@ -95,6 +89,7 @@ export function MoneyManagementPage() {
 						totalBudget={budgetStats.totalBudget}
 						remaining={budgetStats.remaining}
 						percentage={budgetStats.percentage}
+						dailyAverage={budgetStats.dailyAverage}
 						currency={(trip.currency as CurrencyCode) || "THB"}
 					/>
 
@@ -167,8 +162,16 @@ export function MoneyManagementPage() {
 				}
 				confirmText="Delete Permanently"
 				cancelText="Keep Expense"
-				onConfirm={() => selectedExpense && deleteMutation.mutate(selectedExpense.id)}
-				isLoading={deleteMutation.isPending}
+				onConfirm={() =>
+					selectedExpense &&
+					deleteExpense.mutate(selectedExpense.id, {
+						onSuccess: () => {
+							setSelectedExpense(null);
+							setIsDeleteDialogOpen(false);
+						},
+					})
+				}
+				isLoading={deleteExpense.isPending}
 				variant="destructive"
 				icon={<Trash2 className="size-7 text-destructive" />}
 			/>

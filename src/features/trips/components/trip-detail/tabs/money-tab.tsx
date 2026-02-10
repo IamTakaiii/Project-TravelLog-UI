@@ -14,10 +14,8 @@ import { useTripDetail } from "../trip-detail-context";
 import { tabContentVariants } from "../constants";
 import { TabHeader } from "./tab-header";
 import { expensesQueryOptions } from "@/features/money/queries/money-queries";
-import {
-	formatMoney,
-	CENTRAL_FUND_ID,
-} from "@/features/money/utils/money-utils";
+import { formatMoney } from "@/features/money/services/money-formatter";
+import { CENTRAL_FUND_ID } from "@/features/money/constants/thresholds";
 
 export function MoneyTab() {
 	const { t } = useTranslation();

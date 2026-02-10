@@ -5,7 +5,6 @@ export { TabSwitcher } from "./tab-switcher";
 // Card Components
 export { BudgetSummaryCard } from "./budget-summary-card";
 export { CentralFundCard } from "./central-fund-card";
-export { BudgetOverview } from "./budget-overview";
 
 // Expense Components
 export { ExpenseCard } from "./expense-card";
@@ -28,3 +27,4 @@ export { DebtDetailSheet } from "./debt-detail-sheet";
 
 // Split Components
 export { SplitConfiguration } from "./split-configuration";
+export type { SplitUser } from "./split-configuration";

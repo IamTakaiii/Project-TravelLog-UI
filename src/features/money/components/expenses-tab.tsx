@@ -3,7 +3,7 @@ import { Expense } from "../types";
 import { ExpenseSearch } from "./expense-search";
 import { CategoryFilter } from "./category-filter";
 import { ExpenseList } from "./expense-list";
-import { ANIMATION_VARIANTS } from "../constants";
+import { ANIMATION_VARIANTS } from "../constants/tabs";
 
 interface ExpensesTabProps {
 	searchQuery: string;

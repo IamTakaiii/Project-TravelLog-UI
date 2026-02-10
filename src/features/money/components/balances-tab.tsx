@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Expense } from "../types";
 import { DebtSummary } from "./debt-summary";
-import { ANIMATION_VARIANTS } from "../constants";
+import { ANIMATION_VARIANTS } from "../constants/tabs";
 
 interface BalancesTabProps {
 	expenses: Expense[];

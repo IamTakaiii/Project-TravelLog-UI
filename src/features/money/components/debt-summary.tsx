@@ -1,7 +1,7 @@
 import { useState, memo } from "react";
 import { useDebtCalculator, DebtBreakdown } from "../hooks/use-debt-calculator";
 import { Expense } from "../types";
-import { formatMoney } from "../utils/money-utils";
+import { formatMoney } from "../services/money-formatter";
 import { ArrowRightLeft, Wallet, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { DebtDetailSheet } from "./debt-detail-sheet";
@@ -42,7 +42,7 @@ export function DebtSummary({ expenses, currentUserId }: DebtSummaryProps) {
 						To Receive
 					</p>
 					<p className="text-xl sm:text-2xl font-black text-emerald-600 truncate">
-						{formatMoney(totalReceivable)}
+						{formatMoney(totalReceivable, "THB")}
 					</p>
 				</div>
 				<div className="bg-destructive/10 p-4 sm:p-5 rounded-3xl border border-destructive/20">
@@ -50,7 +50,7 @@ export function DebtSummary({ expenses, currentUserId }: DebtSummaryProps) {
 						To Pay
 					</p>
 					<p className="text-xl sm:text-2xl font-black text-destructive truncate">
-						{formatMoney(totalPayable)}
+						{formatMoney(totalPayable, "THB")}
 					</p>
 				</div>
 			</div>
@@ -159,7 +159,7 @@ const DebtCard = memo(function DebtCard({
 					className={`font-black font-mono text-lg sm:text-xl tracking-tighter ${isPay ? "text-destructive" : "text-emerald-600"}`}
 				>
 					{isPay ? "-" : "+"}
-					{formatMoney(amount)}
+					{formatMoney(amount, "THB")}
 				</p>
 				<div className="flex items-center justify-end gap-1 text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase">
 					Details <ChevronRight className="size-3" />

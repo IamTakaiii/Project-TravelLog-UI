@@ -1,6 +1,6 @@
 import { Expense } from "../types";
 import { ExpenseFormValues } from "../schemas/expense-schema";
-import { DEFAULT_CURRENCIES } from "../utils/money-utils";
+import { DEFAULT_CURRENCIES } from "../constants/currencies";
 
 // Mock Data Store
 let MOCK_EXPENSES: Expense[] = [
@@ -110,7 +110,7 @@ export const expensesApi = {
 				  };
 
 		const updatedExpense: Expense = {
-			...MOCK_EXPENSES[index],
+			...MOCK_EXPENSES[index]!,
 			description: data.description,
 			amount: data.amount,
 			currency: data.currency as any,

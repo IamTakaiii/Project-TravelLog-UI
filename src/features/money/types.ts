@@ -69,3 +69,29 @@ export interface Fund {
 
 export type CreateFundInput = Pick<Fund, "title" | "tripId" | "amount" | "currency">;
 export type UpdateFundInput = Partial<CreateFundInput>;
+
+// Discriminated union for split results (Requirement 3.3)
+export interface EqualSplitResult {
+  type: 'equal';
+  perPersonAmount: number;
+  involvedUserIds: string[];
+  totalAmount: number;
+}
+
+export interface ExactSplitResult {
+  type: 'exact';
+  amounts: Record<string, number>;
+  involvedUserIds: string[];
+  totalAmount: number;
+}
+
+export type SplitResult = EqualSplitResult | ExactSplitResult;
+
+// Split validation result (Requirement 8.4)
+export interface SplitValidation {
+  isValid: boolean;
+  totalAssigned: number;
+  expectedTotal: number;
+  discrepancy: number;
+}
+
