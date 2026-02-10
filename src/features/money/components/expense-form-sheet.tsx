@@ -63,7 +63,7 @@ export function ExpenseFormSheet({
 	const [internalOpen, setInternalOpen] = useState(false);
 	const open = controlledOpen ?? internalOpen;
 	const setOpen = onOpenChange ?? setInternalOpen;
-	
+
 	const [mode, setMode] = useState<FormMode>(expense ? "standard" : "quick");
 	const queryClient = useQueryClient();
 
@@ -119,9 +119,9 @@ export function ExpenseFormSheet({
 	}, [expense, currency, form]);
 
 	const mutation = useMutation({
-		mutationFn: (data: ExpenseFormValues) => 
-			isEditing && expense 
-				? expensesApi.update(expense.id, data) 
+		mutationFn: (data: ExpenseFormValues) =>
+			isEditing && expense
+				? expensesApi.update(expense.id, data)
 				: expensesApi.create(tripId, data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["expenses", tripId] });
@@ -141,7 +141,7 @@ export function ExpenseFormSheet({
 				<SheetTrigger asChild>{trigger}</SheetTrigger>
 			) : !isEditing ? (
 				<SheetTrigger asChild>
-					<Button 
+					<Button
 						variant="primary"
 						className="h-14 w-14 rounded-3xl bg-primary shadow-2xl shadow-primary/40 hover:scale-110 active:scale-95 transition-all p-0 flex items-center justify-center border-4 border-background"
 					>

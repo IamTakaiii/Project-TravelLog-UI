@@ -98,7 +98,10 @@ export function MoneyManagementPage() {
 						currency={(trip.currency as CurrencyCode) || "THB"}
 					/>
 
-					<CentralFundCard />
+					<CentralFundCard
+						tripId={trip.id}
+						currency={(trip.currency as CurrencyCode) || "THB"}
+					/>
 				</div>
 
 				<TabSwitcher activeTab={activeTab} onTabChange={handleTabChange} />

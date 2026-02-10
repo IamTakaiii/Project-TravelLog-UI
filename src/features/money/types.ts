@@ -54,3 +54,18 @@ export interface DebtItem {
 	userId: string;
 	amount: number; // Positive = They owe me, Negative = I owe them
 }
+
+export interface Fund {
+	id: string;
+	tripId: string;
+	title: string;
+	amount: number; // From API as number
+	currency: CurrencyCode;
+	createdAt: string;
+	updatedAt: string;
+	createdBy: string;
+	updatedBy: string;
+}
+
+export type CreateFundInput = Pick<Fund, "title" | "tripId" | "amount" | "currency">;
+export type UpdateFundInput = Partial<CreateFundInput>;
