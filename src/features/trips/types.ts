@@ -5,6 +5,14 @@ export interface TripUser {
 	image?: string | null;
 }
 
+export interface TripMember {
+	tripId: string;
+	userId: string;
+	addedBy: string;
+	addedAt: string;
+	user: TripUser;
+}
+
 export interface Trip {
 	id: string;
 	title: string;
@@ -21,6 +29,7 @@ export interface Trip {
 	updatedBy: TripUser | null;
 	createdAt: string;
 	updatedAt: string;
+	members: TripMember[];
 }
 
 export interface CreateTripPayload {
