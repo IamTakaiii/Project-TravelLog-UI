@@ -18,7 +18,7 @@ export function CompanionsCard() {
 			<div className="flex items-center justify-between">
 				<h3 className="font-semibold flex items-center gap-2">
 					<Users className="size-4 text-primary" />
-					Members
+					Companions
 				</h3>
 				<span className="text-xs font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
 					{members.length}

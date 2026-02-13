@@ -33,10 +33,11 @@ export function TabSwitcher<T extends string>({
 						className={cn(
 							"flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all",
 							isActive
-								? "bg-background text-foreground shadow-sm border border-border/50"
-								: "text-muted-foreground hover:text-foreground"
+								? "bg-white dark:bg-zinc-800 text-foreground shadow-sm border border-border/50"
+								: "text-zinc-500 dark:text-zinc-400 hover:text-foreground hover:bg-white/50 dark:hover:bg-zinc-800/50"
 						)}
 					>
+
 						{Icon && <Icon className="size-4" />}
 						{tab.label}
 					</button>

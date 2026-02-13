@@ -126,8 +126,8 @@ export function CentralFundSheet({
             <SheetContent className="w-full sm:max-w-md overflow-y-auto">
                 <SheetHeader className="mb-6">
                     <SheetTitle className="flex items-center gap-2 text-xl font-bold">
-                        <div className="p-2 bg-amber-100 rounded-xl">
-                            <Wallet className="size-5 text-amber-600" />
+                        <div className="p-2 bg-primary/10 rounded-xl">
+                            <Wallet className="size-5 text-primary" />
                         </div>
                         Central Fund Management
                     </SheetTitle>
@@ -180,7 +180,7 @@ export function CentralFundSheet({
                                                     <FormControl>
                                                         <div className="relative group">
                                                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-black text-xl">
-                                                            {getCurrencySymbol(defaultCurrency as CurrencyCode)}
+                                                                {getCurrencySymbol(defaultCurrency as CurrencyCode)}
                                                             </span>
                                                             <Input
                                                                 type="number"
@@ -229,7 +229,7 @@ export function CentralFundSheet({
                                     >
                                         <div className="flex items-start justify-between gap-4">
                                             <div className="flex items-start gap-4 min-w-0">
-                                                <div className="size-12 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-50 dark:from-amber-900/40 dark:to-orange-900/20 border border-amber-100/50 dark:border-amber-800/30 flex items-center justify-center shrink-0 shadow-sm">
+                                                <div className="size-12 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10 border border-primary/10 dark:border-primary/20 flex items-center justify-center shrink-0 shadow-sm">
                                                     <span className="text-xl filter drop-shadow-sm">
                                                         {DEFAULT_CURRENCIES[fund.currency as CurrencyCode]?.flag}
                                                     </span>
@@ -242,7 +242,7 @@ export function CentralFundSheet({
                                                         <span className="text-xs font-bold text-muted-foreground/70 uppercase tracking-wider bg-muted/50 px-1.5 py-0.5 rounded-md">
                                                             {fund.currency}
                                                         </span>
-                                                        <span className="font-bold text-amber-600 dark:text-amber-500 font-mono text-sm">
+                                                        <span className="font-bold text-primary font-mono text-sm">
                                                             {getCurrencySymbol(fund.currency as CurrencyCode)}
                                                             {fund.amount.toLocaleString(undefined, {
                                                                 minimumFractionDigits: 2,
@@ -257,7 +257,7 @@ export function CentralFundSheet({
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="size-8 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
+                                                    className="size-8 rounded-xl hover:!bg-primary/10 hover:!text-primary transition-colors"
                                                     onClick={() => startEdit(fund)}
                                                 >
                                                     <Edit2 className="size-3.5" />
@@ -265,7 +265,7 @@ export function CentralFundSheet({
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="size-8 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-colors"
+                                                    className="size-8 rounded-xl hover:!bg-destructive/10 hover:!text-destructive transition-colors"
                                                     onClick={() => setDeletingFund(fund)}
                                                 >
                                                     <Trash2 className="size-3.5" />

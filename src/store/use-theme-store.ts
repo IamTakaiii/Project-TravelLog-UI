@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type ThemePreset = "ocean" | "sunset" | "forest" | "lavender";
+export type ThemePreset = "ocean" | "sunset" | "forest" | "lavender" | "midnight" | "sakura";
 
 export interface ThemePresetInfo {
 	id: ThemePreset;
@@ -44,6 +44,22 @@ export const themePresets: ThemePresetInfo[] = [
 		description: "Relaxing spa retreat",
 		primaryColor: "oklch(0.6 0.15 300)",
 		accentColor: "oklch(0.75 0.1 350)",
+	},
+	{
+		id: "midnight",
+		name: "Midnight Blue",
+		emoji: "🌌",
+		description: "Deep night sky",
+		primaryColor: "oklch(0.45 0.15 270)",
+		accentColor: "oklch(0.7 0.15 30)",
+	},
+	{
+		id: "sakura",
+		name: "Sakura Pink",
+		emoji: "💐",
+		description: "Cherry blossom bloom",
+		primaryColor: "oklch(0.65 0.2 340)",
+		accentColor: "oklch(0.7 0.15 150)",
 	},
 ];
 

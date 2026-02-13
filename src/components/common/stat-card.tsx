@@ -54,10 +54,11 @@ export function StatCard({
 						<Icon className="size-6" />
 					</div>
 					{trend && variant === "default" && (
-						<span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-muted px-2 py-1 rounded-full">
+						<span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded-full border border-border/50">
 							{trend}
 						</span>
 					)}
+
 				</div>
 				<div className={cn("space-y-1", variant === "centered" && "mt-2")}>
 					{variant === "centered" && (
