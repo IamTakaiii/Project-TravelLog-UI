@@ -33,9 +33,9 @@ export {
 	ItineraryTab,
 	PlacesTab,
 	MoneyTab,
-	EmptyState,
 	TabHeader,
 } from "./tabs";
+
 export { TabContent } from "./tabs/tab-content";
 
 // Sidebar

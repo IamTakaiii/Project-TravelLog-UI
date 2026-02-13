@@ -16,6 +16,7 @@ import { TabHeader } from "./tab-header";
 import { expensesQueryOptions } from "@/features/money/queries/money-queries";
 import { formatMoney } from "@/features/money/services/money-formatter";
 import { CENTRAL_FUND_ID } from "@/features/money/constants/thresholds";
+import { StatCard } from "@/components/common/stat-card";
 
 export function MoneyTab() {
 	const { t } = useTranslation();
@@ -48,26 +49,29 @@ export function MoneyTab() {
 
 			{/* Summary Cards */}
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-				<SummaryCard
-					label="Trip Budget"
+				<StatCard
+					title="Trip Budget"
 					value={formatMoney(totalBudget, currency as any)}
 					icon={DollarSign}
-					color="text-primary"
-					bgColor="bg-primary/10"
+					colorClassName="text-primary"
+					bgColorClassName="bg-primary/10"
+					variant="centered"
 				/>
-				<SummaryCard
-					label="Spent so far"
+				<StatCard
+					title="Spent so far"
 					value={formatMoney(totalSpent, currency as any)}
 					icon={TrendingDown}
-					color="text-destructive"
-					bgColor="bg-destructive/10"
+					colorClassName="text-destructive"
+					bgColorClassName="bg-destructive/10"
+					variant="centered"
 				/>
-				<SummaryCard
-					label="Remaining"
+				<StatCard
+					title="Remaining"
 					value={formatMoney(remaining, currency as any)}
 					icon={TrendingUp}
-					color="text-emerald-500"
-					bgColor="bg-emerald-500/10"
+					colorClassName="text-emerald-500"
+					bgColorClassName="bg-emerald-500/10"
+					variant="centered"
 				/>
 			</div>
 
@@ -105,22 +109,3 @@ export function MoneyTab() {
 	);
 }
 
-function SummaryCard({ label, value, icon: Icon, color, bgColor }: any) {
-	return (
-		<div className="bg-card/50 backdrop-blur-sm p-8 rounded-3xl border border-border/50 shadow-sm flex flex-col items-center justify-center text-center space-y-3 group hover:border-primary/30 transition-all duration-300">
-			<div
-				className={`p-4 rounded-2xl ${bgColor} transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[-5deg]`}
-			>
-				<Icon className={`size-6 ${color}`} />
-			</div>
-			<div className="space-y-1">
-				<span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
-					{label}
-				</span>
-				<p className={`text-2xl font-black tracking-tighter ${color}`}>
-					{value}
-				</p>
-			</div>
-		</div>
-	);
-}

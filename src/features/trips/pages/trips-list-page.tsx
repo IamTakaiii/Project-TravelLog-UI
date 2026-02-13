@@ -9,6 +9,7 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { TripCard } from "../components/trip-card";
 import { TripListEmptyState } from "../components/trip-list-empty-state";
+import { PageHeader } from "@/components/common/page-header";
 
 const containerVariants: Variants = {
 	hidden: { opacity: 0 },
@@ -58,23 +59,21 @@ export function TripsListPage() {
 			</div>
 
 			{/* Header Section */}
-			<motion.div variants={itemVariants}>
-				{/* Badge */}
-				<div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium uppercase tracking-wider mb-4">
-					<Plane className="size-3" />
-					{t("trips.list.badge")}
-				</div>
-
-				{/* Title Row with Actions */}
-				<div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-2">
-					<h1 className="text-4xl md:text-5xl font-[800] tracking-tight text-foreground">
+			<PageHeader
+				badge={{
+					icon: Plane,
+					text: t("trips.list.badge"),
+				}}
+				title={
+					<>
 						{t("trips.list.title")}{" "}
 						<span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
 							{t("trips.list.subtitle")}
 						</span>
-					</h1>
-
-					{/* Actions - Search + Create Button */}
+					</>
+				}
+				description={t("trips.list.description")}
+				actions={
 					<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
 						{/* Search Bar */}
 						{trips.length > 0 && (
@@ -101,12 +100,8 @@ export function TripsListPage() {
 							</Button>
 						</Link>
 					</div>
-				</div>
-
-				<p className="text-lg text-muted-foreground max-w-2xl">
-					{t("trips.list.description")}
-				</p>
-			</motion.div>
+				}
+			/>
 
 			{/* Content */}
 			<motion.div variants={itemVariants}>
@@ -156,3 +151,4 @@ export function TripsListPage() {
 		</motion.div>
 	);
 }
+

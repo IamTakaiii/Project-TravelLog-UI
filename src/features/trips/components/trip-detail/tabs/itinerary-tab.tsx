@@ -3,7 +3,7 @@ import { Route, MapPin } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { tabContentVariants } from "../constants";
 import { TabHeader } from "./tab-header";
-import { EmptyState } from "./empty-state";
+import { EmptyState } from "@/components/common/empty-state";
 
 export function ItineraryTab() {
 	const { t } = useTranslation();
@@ -30,7 +30,9 @@ export function ItineraryTab() {
 					"Start planning your trip by adding daily activities, places to visit, and reservations."
 				)}
 				actionLabel={t("trips.detail.create_itinerary", "Create Itinerary")}
+				onAction={() => {}}
 			/>
 		</motion.div>
 	);
 }
+
