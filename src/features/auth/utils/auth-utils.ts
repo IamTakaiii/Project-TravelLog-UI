@@ -1,22 +1,22 @@
 export function getAuthErrorMessage(code?: string): string {
 	switch (code) {
 		case "INVALID_EMAIL_OR_PASSWORD":
-			return "Invalid email or password. Please check your credentials.";
+			return "auth.api_errors.INVALID_EMAIL_OR_PASSWORD";
 		case "USER_NOT_FOUND":
-			return "No account found with this email address.";
+			return "auth.api_errors.USER_NOT_FOUND";
 		case "EMAIL_NOT_VERIFIED":
-			return "Please verify your email address before signing in.";
+			return "auth.api_errors.EMAIL_NOT_VERIFIED";
 		case "TOO_MANY_REQUESTS":
-			return "Too many login attempts. Please try again later.";
+			return "auth.api_errors.TOO_MANY_REQUESTS";
 		case "ACCOUNT_LOCKED":
-			return "Your account has been locked. Please contact support.";
+			return "auth.api_errors.ACCOUNT_LOCKED";
 		case "USER_ALREADY_EXISTS":
-			return "An account with this email already exists.";
+			return "auth.api_errors.USER_ALREADY_EXISTS";
 		case "INVALID_EMAIL":
-			return "Please enter a valid email address.";
+			return "auth.api_errors.INVALID_EMAIL";
 		case "WEAK_PASSWORD":
-			return "Password is too weak. Please choose a stronger password.";
+			return "auth.api_errors.WEAK_PASSWORD";
 		default:
-			return "Authentication failed. Please try again.";
+			return "auth.api_errors.DEFAULT";
 	}
 }

@@ -60,6 +60,17 @@
             "unexpected_error": "An unexpected error occurred",
             "social_error": "Failed to connect with social provider"
         },
+        "api_errors": {
+            "INVALID_EMAIL_OR_PASSWORD": "Invalid email or password. Please check your credentials.",
+            "USER_NOT_FOUND": "No account found with this email address.",
+            "EMAIL_NOT_VERIFIED": "Please verify your email address before signing in.",
+            "TOO_MANY_REQUESTS": "Too many login attempts. Please try again later.",
+            "ACCOUNT_LOCKED": "Your account has been locked. Please contact support.",
+            "USER_ALREADY_EXISTS": "An account with this email already exists.",
+            "INVALID_EMAIL": "Please enter a valid email address.",
+            "WEAK_PASSWORD": "Password is too weak. Please choose a stronger password.",
+            "DEFAULT": "Authentication failed. Please try again."
+        },
         "visuals": {
             "quote": "Design is not just what it looks like and feels like. Design is how it works.",
             "author": "Steve Jobs",

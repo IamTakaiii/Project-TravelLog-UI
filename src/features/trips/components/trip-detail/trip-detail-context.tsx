@@ -10,7 +10,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { tripsApi, type Trip } from "../../api/trips-api";
-import { tripsQueryOptions } from "../../queries/trips-queries";
+import { tripQueryKeys } from "../../queries/trips-queries";
 import { useTranslateError } from "@/hooks/use-translate-error";
 import type { TabType, TripDetailContextValue } from "./types";
 
@@ -37,7 +37,7 @@ export function TripDetailProvider({
 		mutationFn: (id: string) => tripsApi.delete(id),
 		onSuccess: () => {
 			toast.success(t("Trip deleted successfully"));
-			queryClient.invalidateQueries({ queryKey: tripsQueryOptions.queryKey });
+			queryClient.invalidateQueries({ queryKey: tripQueryKeys.lists() });
 			navigate({ to: "/trips" });
 		},
 		onError: (error) => {
@@ -73,3 +73,4 @@ export function useTripDetail() {
 	}
 	return context;
 }
+

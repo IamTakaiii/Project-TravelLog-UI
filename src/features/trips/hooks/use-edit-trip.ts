@@ -7,7 +7,8 @@ import {
 	type CreateTripFormValues,
 } from "../schemas/create-trip-schema";
 import { tripsApi, type Trip } from "../api/trips-api";
-import { tripsQueryOptions } from "../queries/trips-queries";
+import { tripQueryKeys } from "../queries/trips-queries";
+
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -39,8 +40,8 @@ export function useEditTrip(trip: Trip) {
 		mutationFn: (data: CreateTripFormValues) => tripsApi.update(trip.id, data),
 		onSuccess: () => {
 			// Invalidate trips list cache so it refetches automatically
-			queryClient.invalidateQueries({ queryKey: tripsQueryOptions.queryKey });
-			queryClient.invalidateQueries({ queryKey: ["trips", trip.id] });
+			queryClient.invalidateQueries({ queryKey: tripQueryKeys.lists() });
+			queryClient.invalidateQueries({ queryKey: tripQueryKeys.detail(trip.id) });
 
 			toast.success(t("Trip updated successfully"));
 
@@ -64,3 +65,4 @@ export function useEditTrip(trip: Trip) {
 		onSubmit,
 	};
 }
+

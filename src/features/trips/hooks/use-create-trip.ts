@@ -7,6 +7,7 @@ import {
 	type CreateTripFormValues,
 } from "../schemas/create-trip-schema";
 import { tripsApi } from "../api/trips-api";
+import { tripQueryKeys } from "../queries/trips-queries";
 
 export function useCreateTrip() {
 	const navigate = useNavigate();
@@ -35,7 +36,7 @@ export function useCreateTrip() {
 		mutationFn: tripsApi.create,
 		onSuccess: () => {
 			// Invalidate trips list cache so it refetches automatically
-			queryClient.invalidateQueries({ queryKey: ["trips"] });
+			queryClient.invalidateQueries({ queryKey: tripQueryKeys.lists() });
 
 			// Navigate to trips list
 			navigate({ to: "/trips" });
@@ -57,3 +58,4 @@ export function useCreateTrip() {
 		onSubmit,
 	};
 }
+

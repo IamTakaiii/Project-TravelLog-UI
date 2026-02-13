@@ -20,6 +20,7 @@ import { TABS, ANIMATION_VARIANTS } from "../constants/tabs";
 import { calculateDuration } from "@/features/trips/utils/trip-utils";
 import type { TabType } from "../constants/tabs";
 import { MOCK_USER_IDS } from "../mock/mock-users";
+import { useCrudUiState } from "@/hooks/use-crud-ui-state";
 
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Trash2 } from "lucide-react";
@@ -30,9 +31,16 @@ export function MoneyManagementPage() {
 	const { data: expenses = [] } = useQuery(expensesQueryOptions(trip.id));
 
 	const [activeTab, setActiveTab] = useState<TabType>(TABS.EXPENSES);
-	const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
-	const [isEditFormOpen, setIsEditFormOpen] = useState(false);
-	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+	const {
+		selectedItem: selectedExpense,
+		setSelectedItem: setSelectedExpense,
+		isEditOpen: isEditFormOpen,
+		setIsEditOpen: setIsEditFormOpen,
+		isDeleteOpen: isDeleteDialogOpen,
+		setIsDeleteOpen: setIsDeleteDialogOpen,
+		openEdit: handleEditExpense,
+		openDelete: handleDeleteExpense,
+	} = useCrudUiState<Expense>();
 
 	const totalBudget = trip.budget ? parseFloat(trip.budget) : 0;
 	const tripDays = calculateDuration(trip.startDate, trip.endDate);
@@ -51,17 +59,7 @@ export function MoneyManagementPage() {
 
 	const handleExpenseClick = useCallback((expense: Expense) => {
 		setSelectedExpense(expense);
-	}, []);
-
-	const handleEditExpense = useCallback((expense: Expense) => {
-		setSelectedExpense(expense);
-		setIsEditFormOpen(true);
-	}, []);
-
-	const handleDeleteExpense = useCallback((expense: Expense) => {
-		setSelectedExpense(expense);
-		setIsDeleteDialogOpen(true);
-	}, []);
+	}, [setSelectedExpense]);
 
 	const handleTabChange = useCallback((tab: TabType) => {
 		setActiveTab(tab);
@@ -178,3 +176,4 @@ export function MoneyManagementPage() {
 		</motion.div>
 	);
 }
+
