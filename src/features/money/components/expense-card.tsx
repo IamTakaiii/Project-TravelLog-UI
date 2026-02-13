@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { formatMoney } from "../services/money-formatter";
+import { formatMoney } from "../utils/money-formatter";
 import { getCategoryById } from "../utils/category-lookup";
 import { CENTRAL_FUND_ID } from "../constants/thresholds";
 import { CategoryIcon } from "./category-icon";

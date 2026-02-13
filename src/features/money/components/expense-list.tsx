@@ -2,13 +2,25 @@ import { Filter } from "lucide-react";
 import { Expense } from "../types";
 import { ExpenseCard } from "./expense-card";
 import { EmptyState } from "@/components/common/empty-state";
+import { ExpenseCardSkeleton } from "@/components/common/skeletons";
 
 interface ExpenseListProps {
 	expenses: Expense[];
 	onExpenseClick: (expense: Expense) => void;
+	isLoading?: boolean;
 }
 
-export function ExpenseList({ expenses, onExpenseClick }: ExpenseListProps) {
+export function ExpenseList({ expenses, onExpenseClick, isLoading }: ExpenseListProps) {
+	if (isLoading) {
+		return (
+			<div className="space-y-2 w-full overflow-hidden">
+				{[...Array(5)].map((_, i) => (
+					<ExpenseCardSkeleton key={i} />
+				))}
+			</div>
+		);
+	}
+
 	if (expenses.length === 0) {
 		return (
 			<EmptyState
@@ -33,4 +45,5 @@ export function ExpenseList({ expenses, onExpenseClick }: ExpenseListProps) {
 		</div>
 	);
 }
+
 

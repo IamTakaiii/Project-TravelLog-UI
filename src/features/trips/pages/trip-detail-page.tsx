@@ -2,6 +2,7 @@ import { useParams } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { tripQueryOptions } from "../queries/trips-queries";
+import { staggerContainer } from "@/lib/animations";
 import {
 	TripDetailProvider,
 	HeroSection,
@@ -9,7 +10,6 @@ import {
 	MainContent,
 	TripSidebar,
 	DeleteTripDialog,
-	containerVariants,
 } from "../components/trip-detail";
 
 export function TripDetailPage() {
@@ -19,11 +19,12 @@ export function TripDetailPage() {
 	return (
 		<TripDetailProvider trip={trip}>
 			<motion.div
-				variants={containerVariants}
+				variants={staggerContainer}
 				initial="hidden"
 				animate="show"
 				className="min-h-screen bg-background pb-20"
 			>
+
 				<HeroSection />
 
 				<div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">

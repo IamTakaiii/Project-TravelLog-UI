@@ -4,7 +4,7 @@ import {
 	calculateDebts,
 	type DebtBreakdown,
 	type DebtSummary,
-} from "../services/debt-calculator";
+} from "../utils/debt-calculator";
 
 export type { DebtBreakdown, DebtSummary };
 

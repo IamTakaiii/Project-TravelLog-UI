@@ -1,7 +1,7 @@
 import { useState, memo } from "react";
 import { useDebtCalculator, DebtBreakdown } from "../hooks/use-debt-calculator";
 import { Expense } from "../types";
-import { formatMoney } from "../services/money-formatter";
+import { formatMoney } from "../utils/money-formatter";
 import { ArrowRightLeft, Wallet, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { DebtDetailSheet } from "./debt-detail-sheet";

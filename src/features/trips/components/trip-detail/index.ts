@@ -8,12 +8,11 @@ export type {
 
 // Constants
 export {
-	containerVariants,
-	itemVariants,
 	tabContentVariants,
 	TAB_CONFIGS,
 	DEFAULT_COVER_IMAGE,
 } from "./constants";
+
 
 // Context
 export { TripDetailProvider, useTripDetail } from "./trip-detail-context";

@@ -19,11 +19,12 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
-import { ConfirmDialog } from "@/components/confirm-dialog";
+import { ConfirmDialog } from "@/components/common/confirm-dialog";
+
 import { fundsQueryOptions, useFundMutations } from "@/features/money/queries/fund-queries";
 import { centralFundSchema, CentralFundFormValues } from "@/features/money/schemas/central-fund-schema";
 import { DEFAULT_CURRENCIES } from "@/features/money/constants/currencies";
-import { getCurrencySymbol } from "@/features/money/services/money-formatter";
+import { getCurrencySymbol } from "@/features/money/utils/money-formatter";
 import { Fund, CurrencyCode } from "@/features/money/types";
 
 interface CentralFundSheetProps {

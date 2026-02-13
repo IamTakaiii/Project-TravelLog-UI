@@ -1,7 +1,8 @@
 import { MapPin, Globe } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
-import { getStatusConfig } from "../../utils/trip-utils";
+import { getStatusConfig } from "../../utils/trip-status";
+
 import { useTripDetail } from "./trip-detail-context";
 
 export function HeroTitleOverlay() {

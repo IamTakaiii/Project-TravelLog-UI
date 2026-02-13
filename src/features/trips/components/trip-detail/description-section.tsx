@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { useTripDetail } from "./trip-detail-context";
-import { itemVariants } from "./constants";
+import { fadeInUp } from "@/lib/animations";
 
 export function DescriptionSection() {
 	const { trip } = useTripDetail();
 
 	return (
-		<motion.div variants={itemVariants} className="space-y-4">
+		<motion.div variants={fadeInUp} className="space-y-4">
 			<h2 className="text-2xl font-bold flex items-center gap-2">
 				About this trip
 			</h2>

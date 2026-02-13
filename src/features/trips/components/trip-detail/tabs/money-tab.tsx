@@ -14,9 +14,10 @@ import { useTripDetail } from "../trip-detail-context";
 import { tabContentVariants } from "../constants";
 import { TabHeader } from "./tab-header";
 import { expensesQueryOptions } from "@/features/money/queries/money-queries";
-import { formatMoney } from "@/features/money/services/money-formatter";
+import { formatMoney } from "@/features/money/utils/money-formatter";
 import { CENTRAL_FUND_ID } from "@/features/money/constants/thresholds";
 import { StatCard } from "@/components/common/stat-card";
+import { CurrencyCode } from "@/features/money/types";
 
 export function MoneyTab() {
 	const { t } = useTranslation();
@@ -32,7 +33,7 @@ export function MoneyTab() {
 		.reduce((sum, ex) => sum + ex.thbAmount, 0);
 
 	const remaining = totalBudget - totalSpent;
-	const currency = trip.currency || "THB";
+	const currency = (trip.currency as CurrencyCode) || "THB";
 
 	return (
 		<motion.div
@@ -51,7 +52,7 @@ export function MoneyTab() {
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 				<StatCard
 					title="Trip Budget"
-					value={formatMoney(totalBudget, currency as any)}
+					value={formatMoney(totalBudget, currency)}
 					icon={DollarSign}
 					colorClassName="text-primary"
 					bgColorClassName="bg-primary/10"
@@ -59,7 +60,7 @@ export function MoneyTab() {
 				/>
 				<StatCard
 					title="Spent so far"
-					value={formatMoney(totalSpent, currency as any)}
+					value={formatMoney(totalSpent, currency)}
 					icon={TrendingDown}
 					colorClassName="text-destructive"
 					bgColorClassName="bg-destructive/10"
@@ -67,13 +68,14 @@ export function MoneyTab() {
 				/>
 				<StatCard
 					title="Remaining"
-					value={formatMoney(remaining, currency as any)}
+					value={formatMoney(remaining, currency)}
 					icon={TrendingUp}
 					colorClassName="text-emerald-500"
 					bgColorClassName="bg-emerald-500/10"
 					variant="centered"
 				/>
 			</div>
+
 
 			{/* CTA Section */}
 			<div className="relative group overflow-hidden bg-card/50 backdrop-blur-xl rounded-[2.5rem] p-10 border border-border/50 shadow-sm text-center space-y-6">

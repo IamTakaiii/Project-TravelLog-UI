@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 import { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { scaleIn } from "@/common/animations";
+import { scaleIn } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 
 interface EmptyStateProps {

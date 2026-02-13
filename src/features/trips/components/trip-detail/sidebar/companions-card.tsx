@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { Users, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { itemVariants } from "../constants";
+import { fadeInUp } from "@/lib/animations";
 
 export function CompanionsCard() {
 	return (
 		<motion.div
-			variants={itemVariants}
+			variants={fadeInUp}
 			className="bg-card rounded-3xl p-6 border border-border shadow-sm space-y-4"
 		>
 			<h3 className="font-semibold flex items-center gap-2">

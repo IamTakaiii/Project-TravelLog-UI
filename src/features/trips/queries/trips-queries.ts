@@ -27,3 +27,5 @@ export const tripQueryOptions = (tripId: string) =>
 export type TripsQueryData = Trip[];
 export type TripQueryData = Trip;
 
+
+

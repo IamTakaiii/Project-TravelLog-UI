@@ -65,7 +65,7 @@ export function calculateDebts(
   });
 
   const whoOwesMe: DebtBreakdown[] = Object.entries(debtMap)
-    .filter(([_, amt]) => amt > 1) // Tolerance for floating point
+    .filter(([, amt]) => amt > 1) // Tolerance for floating point
     .map(([uid, amt]) => ({
       userId: uid,
       amount: amt,
@@ -73,12 +73,13 @@ export function calculateDebts(
     }));
 
   const iOweWho: DebtBreakdown[] = Object.entries(debtMap)
-    .filter(([_, amt]) => amt < -1)
+    .filter(([, amt]) => amt < -1)
     .map(([uid, amt]) => ({
       userId: uid,
       amount: amt,
       transactions: transactionsMap[uid] || [],
     }));
+
 
   const netBalance = Object.values(debtMap).reduce(
     (sum, amt) => sum + amt,

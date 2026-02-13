@@ -1,17 +1,13 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "@tanstack/react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
 	createTripSchema,
 	type CreateTripFormValues,
 } from "../schemas/create-trip-schema";
-import { tripsApi } from "../api/trips-api";
-import { tripQueryKeys } from "../queries/trips-queries";
+import { useTripMutations } from "./use-trip-mutations";
 
 export function useCreateTrip() {
-	const navigate = useNavigate();
-	const queryClient = useQueryClient();
+	const { createTrip } = useTripMutations();
 
 	const form = useForm<CreateTripFormValues>({
 		resolver: zodResolver(createTripSchema),
@@ -28,34 +24,18 @@ export function useCreateTrip() {
 		},
 	});
 
-	const {
-		mutate: createTrip,
-		isPending: isLoading,
-		error,
-	} = useMutation({
-		mutationFn: tripsApi.create,
-		onSuccess: () => {
-			// Invalidate trips list cache so it refetches automatically
-			queryClient.invalidateQueries({ queryKey: tripQueryKeys.lists() });
-
-			// Navigate to trips list
-			navigate({ to: "/trips" });
-		},
-	});
-
 	const onSubmit = async (data: CreateTripFormValues) => {
-		createTrip(data);
+		createTrip.mutate(data);
 	};
 
 	return {
 		form,
-		isLoading,
-		error: error
-			? error instanceof Error
-				? error.message
-				: "trips.errors.create_failed"
-			: null,
+		isLoading: createTrip.isPending,
+		error: createTrip.error ? (createTrip.error as any).message : null,
 		onSubmit,
 	};
 }
+
+
+
 

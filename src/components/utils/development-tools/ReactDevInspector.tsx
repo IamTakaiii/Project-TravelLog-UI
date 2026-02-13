@@ -1,5 +1,5 @@
 import { useState, lazy, Suspense } from "react";
-import { isProduction } from "../../../common/utils";
+import { isProduction } from "@/lib/common-utils";
 import inspectorIcon from "@/assets/images/inspector.png";
 
 const Inspector = lazy(() =>

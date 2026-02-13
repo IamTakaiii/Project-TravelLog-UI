@@ -2,8 +2,8 @@ import { Expense, CurrencyCode } from '../types';
 import { ExpenseFormValues } from '../schemas/expense-schema';
 import { ExpenseRepository, ExpenseNotFoundError } from './expense-repository';
 import { DEFAULT_CURRENCIES } from '../constants/currencies';
-import { convertCurrency } from '../services/currency-converter';
-import { calculateEqualSplit } from '../services/split-calculator';
+import { convertCurrency } from '../utils/currency-converter';
+import { calculateEqualSplit } from '../utils/split-calculator';
 import { MOCK_USER_IDS } from '../mock/mock-users';
 
 /**

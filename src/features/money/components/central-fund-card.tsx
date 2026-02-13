@@ -3,8 +3,9 @@ import { Wallet } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { CentralFundSheet } from "./central-fund-sheet";
 import { fundsQueryOptions } from "../queries/fund-queries";
-import { getCurrencySymbol } from "../services/money-formatter";
+import { getCurrencySymbol } from "../utils/money-formatter";
 import { CurrencyCode } from "../types";
+import { ModernCard } from "@/components/common/modern-card";
 
 import { Progress } from "@/components/ui/progress";
 
@@ -30,8 +31,8 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 
 	return (
 		<>
-			<div
-				className="bg-card/50 backdrop-blur-xl rounded-3xl border border-border/50 p-6 shadow-sm cursor-pointer hover:bg-card/80 transition-all group space-y-6"
+			<ModernCard
+				className="cursor-pointer hover:bg-card/80 transition-all group space-y-6"
 				onClick={() => setIsOpen(true)}
 			>
 				{/* Header Section */}
@@ -91,7 +92,7 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 						</div>
 					</div>
 				</div>
-			</div>
+			</ModernCard>
 
 			<CentralFundSheet
 				tripId={tripId}
@@ -102,3 +103,4 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 		</>
 	);
 }
+

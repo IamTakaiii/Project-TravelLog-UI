@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { useParams } from "@tanstack/react-router";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { expensesQueryOptions } from "../queries/money-queries";
 import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
 import { ExpenseFormSheet } from "../components/expense-form-sheet";
@@ -9,28 +9,30 @@ import { ExpenseDetailSheet } from "../components/expense-detail-sheet";
 import { MoneyHeader } from "../components/money-header";
 import { BudgetSummaryCard } from "../components/budget-summary-card";
 import { CentralFundCard } from "../components/central-fund-card";
-import { TabSwitcher } from "../components/tab-switcher";
 import { ExpensesTab } from "../components/expenses-tab";
 import { BalancesTab } from "../components/balances-tab";
 import { useExpenseFilters } from "../hooks/use-expense-filters";
 import { useBudgetStats } from "../hooks/use-budget-stats";
-import { useExpenseMutations } from "../hooks/use-expense-mutations";
 import { Expense, CurrencyCode } from "../types";
-import { TABS, ANIMATION_VARIANTS } from "../constants/tabs";
-import { calculateDuration } from "@/features/trips/utils/trip-utils";
+import { TABS } from "../constants/tabs";
+import { calculateTripDuration } from "@/features/trips/utils/trip-duration";
+
 import type { TabType } from "../constants/tabs";
 import { MOCK_USER_IDS } from "../mock/mock-users";
-import { useCrudUiState } from "@/hooks/use-crud-ui-state";
+import { FeaturePageLayout } from "@/components/common/feature-page-layout";
+import { useExpenseActions } from "../hooks/use-expense-actions";
+import { TabSwitcher } from "@/components/common/tab-switcher";
+import { ConfirmDialog } from "@/components/common/confirm-dialog";
 
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { Trash2 } from "lucide-react";
+import { Trash2, Receipt, ArrowRightLeft } from "lucide-react";
 
 export function MoneyManagementPage() {
 	const params = useParams({ from: "/_layout/trips/$tripId/money" });
 	const { data: trip } = useSuspenseQuery(tripQueryOptions(params.tripId));
-	const { data: expenses = [] } = useQuery(expensesQueryOptions(trip.id));
+	const { data: expenses = [], isLoading: isExpensesLoading } = useQuery(expensesQueryOptions(trip.id));
 
 	const [activeTab, setActiveTab] = useState<TabType>(TABS.EXPENSES);
+
 	const {
 		selectedItem: selectedExpense,
 		setSelectedItem: setSelectedExpense,
@@ -40,13 +42,14 @@ export function MoneyManagementPage() {
 		setIsDeleteOpen: setIsDeleteDialogOpen,
 		openEdit: handleEditExpense,
 		openDelete: handleDeleteExpense,
-	} = useCrudUiState<Expense>();
+		handleDelete,
+		isDeleting,
+	} = useExpenseActions(trip.id);
 
 	const totalBudget = trip.budget ? parseFloat(trip.budget) : 0;
-	const tripDays = calculateDuration(trip.startDate, trip.endDate);
-	const budgetStats = useBudgetStats({ expenses, totalBudget, tripDays });
+	const tripDays = calculateTripDuration(trip.startDate, trip.endDate);
 
-	const { deleteExpense } = useExpenseMutations(trip.id);
+	const budgetStats = useBudgetStats({ expenses, totalBudget, tripDays });
 
 	const {
 		searchQuery,
@@ -65,59 +68,58 @@ export function MoneyManagementPage() {
 		setActiveTab(tab);
 	}, []);
 
+	const moneyTabs = [
+		{ id: TABS.EXPENSES, label: "Expenses", icon: Receipt },
+		{ id: TABS.BALANCES, label: "Balances", icon: ArrowRightLeft },
+	];
+
 	return (
-		<motion.div
-			initial="hidden"
-			animate="show"
-			variants={ANIMATION_VARIANTS.container}
-			className="min-h-screen bg-background p-6 lg:p-10 space-y-10"
-		>
-			{/* Decorative Background */}
-			<div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-				<div className="absolute top-20 right-20 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
-				<div className="absolute bottom-20 left-20 w-[300px] h-[300px] bg-accent/10 rounded-full blur-[100px] animate-pulse delay-1000" />
+		<FeaturePageLayout>
+			<MoneyHeader tripId={trip.id} tripTitle={trip.title} />
+
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+				<BudgetSummaryCard
+					totalSpent={budgetStats.totalSpent}
+					totalBudget={budgetStats.totalBudget}
+					remaining={budgetStats.remaining}
+					percentage={budgetStats.percentage}
+					dailyAverage={budgetStats.dailyAverage}
+					currency={(trip.currency as CurrencyCode) || "THB"}
+				/>
+
+				<CentralFundCard
+					tripId={trip.id}
+					currency={(trip.currency as CurrencyCode) || "THB"}
+				/>
 			</div>
 
-			<div className="max-w-7xl mx-auto space-y-8">
-				<MoneyHeader tripId={trip.id} tripTitle={trip.title} />
+			<TabSwitcher 
+				activeTab={activeTab} 
+				onTabChange={handleTabChange} 
+				tabs={moneyTabs}
+			/>
 
-				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-					<BudgetSummaryCard
-						totalSpent={budgetStats.totalSpent}
-						totalBudget={budgetStats.totalBudget}
-						remaining={budgetStats.remaining}
-						percentage={budgetStats.percentage}
-						dailyAverage={budgetStats.dailyAverage}
-						currency={(trip.currency as CurrencyCode) || "THB"}
+			<AnimatePresence mode="wait">
+				{activeTab === TABS.EXPENSES ? (
+					<ExpensesTab
+						searchQuery={searchQuery}
+						onSearchChange={setSearchQuery}
+						onSearchClear={clearSearch}
+						selectedCategory={selectedCategory}
+						onCategoryToggle={handleCategoryToggle}
+						filteredExpenses={filteredExpenses}
+						onExpenseClick={handleExpenseClick}
+						isLoading={isExpensesLoading}
 					/>
 
-					<CentralFundCard
-						tripId={trip.id}
-						currency={(trip.currency as CurrencyCode) || "THB"}
+				) : (
+					<BalancesTab
+						expenses={expenses}
+						currentUserId={MOCK_USER_IDS.CURRENT_USER}
 					/>
-				</div>
+				)}
+			</AnimatePresence>
 
-				<TabSwitcher activeTab={activeTab} onTabChange={handleTabChange} />
-
-				<AnimatePresence mode="wait">
-					{activeTab === TABS.EXPENSES ? (
-						<ExpensesTab
-							searchQuery={searchQuery}
-							onSearchChange={setSearchQuery}
-							onSearchClear={clearSearch}
-							selectedCategory={selectedCategory}
-							onCategoryToggle={handleCategoryToggle}
-							filteredExpenses={filteredExpenses}
-							onExpenseClick={handleExpenseClick}
-						/>
-					) : (
-						<BalancesTab
-							expenses={expenses}
-							currentUserId={MOCK_USER_IDS.CURRENT_USER}
-						/>
-					)}
-				</AnimatePresence>
-			</div>
 
 			{/* Floating Action Button */}
 			<div className="fixed bottom-6 right-6 z-50">
@@ -160,20 +162,14 @@ export function MoneyManagementPage() {
 				}
 				confirmText="Delete Permanently"
 				cancelText="Keep Expense"
-				onConfirm={() =>
-					selectedExpense &&
-					deleteExpense.mutate(selectedExpense.id, {
-						onSuccess: () => {
-							setSelectedExpense(null);
-							setIsDeleteDialogOpen(false);
-						},
-					})
-				}
-				isLoading={deleteExpense.isPending}
+				onConfirm={handleDelete}
+				isLoading={isDeleting}
 				variant="destructive"
 				icon={<Trash2 className="size-7 text-destructive" />}
 			/>
-		</motion.div>
+		</FeaturePageLayout>
 	);
 }
+
+
 

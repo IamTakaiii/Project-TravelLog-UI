@@ -1,21 +1,14 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "@tanstack/react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
 	createTripSchema,
 	type CreateTripFormValues,
 } from "../schemas/create-trip-schema";
-import { tripsApi, type Trip } from "../api/trips-api";
-import { tripQueryKeys } from "../queries/trips-queries";
-
-import { toast } from "sonner";
-import { useTranslation } from "react-i18next";
+import { Trip } from "../types";
+import { useTripMutations } from "./use-trip-mutations";
 
 export function useEditTrip(trip: Trip) {
-	const navigate = useNavigate();
-	const queryClient = useQueryClient();
-	const { t } = useTranslation();
+	const { updateTrip } = useTripMutations();
 
 	const form = useForm<CreateTripFormValues>({
 		resolver: zodResolver(createTripSchema),
@@ -32,37 +25,18 @@ export function useEditTrip(trip: Trip) {
 		},
 	});
 
-	const {
-		mutate: updateTrip,
-		isPending: isLoading,
-		error,
-	} = useMutation({
-		mutationFn: (data: CreateTripFormValues) => tripsApi.update(trip.id, data),
-		onSuccess: () => {
-			// Invalidate trips list cache so it refetches automatically
-			queryClient.invalidateQueries({ queryKey: tripQueryKeys.lists() });
-			queryClient.invalidateQueries({ queryKey: tripQueryKeys.detail(trip.id) });
-
-			toast.success(t("Trip updated successfully"));
-
-			// Navigate to trips list or detail
-			navigate({ to: `/trips/${trip.id}` as any });
-		},
-	});
-
 	const onSubmit = async (data: CreateTripFormValues) => {
-		updateTrip(data);
+		updateTrip.mutate({ id: trip.id, data });
 	};
 
 	return {
 		form,
-		isLoading,
-		error: error
-			? error instanceof Error
-				? error.message
-				: "trips.errors.update_failed"
-			: null,
+		isLoading: updateTrip.isPending,
+		error: updateTrip.error ? (updateTrip.error as any).message : null,
 		onSubmit,
 	};
 }
+
+
+
 

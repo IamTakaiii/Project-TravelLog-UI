@@ -1,3 +1,4 @@
+import { LucideIcon } from "lucide-react";
 import { ExpenseCategory } from "../types";
 import {
 	Utensils,
@@ -54,7 +55,7 @@ export const DEFAULT_CATEGORIES: ExpenseCategory[] = [
 	},
 ];
 
-export const CATEGORY_ICONS: Record<string, any> = {
+export const CATEGORY_ICONS: Record<string, LucideIcon> = {
 	Utensils,
 	MapPin,
 	Hotel,
@@ -66,3 +67,4 @@ export const CATEGORY_ICONS: Record<string, any> = {
 	MoreHorizontal,
 	Receipt,
 };
+

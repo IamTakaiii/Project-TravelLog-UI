@@ -5,7 +5,8 @@ import App from "./App.tsx";
 import { routeTree } from "./routeTree.gen.ts";
 import { queryClient } from "./lib/query-client.ts";
 import "./styles/tailwind.css";
-import "./common/i18n.ts";
+import "./lib/i18n.ts";
+
 
 const router = createRouter({
 	routeTree,

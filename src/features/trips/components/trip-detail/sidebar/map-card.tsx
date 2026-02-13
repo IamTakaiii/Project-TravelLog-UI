@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import { MapPin } from "lucide-react";
-import { itemVariants } from "../constants";
+import { fadeInUp } from "@/lib/animations";
 
 export function MapCard() {
 	return (
 		<motion.div
-			variants={itemVariants}
+			variants={fadeInUp}
 			className="bg-card rounded-3xl overflow-hidden border border-border shadow-sm"
 		>
 			<div className="p-4 border-b border-border/50 font-semibold flex items-center gap-2">

@@ -4,19 +4,18 @@ import { DashboardStats } from "../components/dashboard-stats";
 import { DashboardRecentTrips } from "../components/dashboard-recent-trips";
 import { DashboardQuickActions } from "../components/dashboard-quick-actions";
 import { motion } from "framer-motion";
-import { staggerContainer, fadeInUp } from "@/common/animations";
+import { fadeInUp } from "@/lib/animations";
+import { FeaturePageLayout } from "@/components/common/feature-page-layout";
+import { useQuery } from "@tanstack/react-query";
+import { tripsQueryOptions } from "@/features/trips/queries/trips-queries";
 
 export function DashboardPage() {
 	const session = authClient.useSession();
 	const user = session.data?.user;
+	const { isLoading } = useQuery(tripsQueryOptions);
 
 	return (
-		<motion.div
-			variants={staggerContainer}
-			initial="hidden"
-			animate="show"
-			className="min-h-screen bg-background p-6 lg:p-10 space-y-10"
-		>
+		<FeaturePageLayout>
 			{/* 1. Hero Section */}
 			<motion.div variants={fadeInUp}>
 				<DashboardHeader user={user} />
@@ -24,17 +23,17 @@ export function DashboardPage() {
 
 			{/* 2. Stats Section */}
 			<motion.div variants={fadeInUp}>
-				<DashboardStats />
+				<DashboardStats isLoading={isLoading} />
 			</motion.div>
 
 			{/* 3. Main Content: Split Layout */}
 			<motion.section variants={fadeInUp} className="grid lg:grid-cols-3 gap-8">
-				{/* Left Column: Recent Trips (Wider) */}
 				<DashboardRecentTrips />
-				{/* Right Column: Quick Actions & Calendar (Narrower) */}
 				<DashboardQuickActions />
 			</motion.section>
-		</motion.div>
+		</FeaturePageLayout>
 	);
 }
+
+
 

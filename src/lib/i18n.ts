@@ -1,7 +1,7 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import { isProduction } from "./utils";
+import { isProduction } from "@/lib/common-utils";
 
 // Import your translation files (adjust paths as needed)
 import translationEN from "@/assets/locales/en/translations.json";

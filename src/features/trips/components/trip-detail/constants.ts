@@ -13,21 +13,6 @@ import type { TabConfig } from "./types";
 export const DEFAULT_COVER_IMAGE =
 	"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&auto=format&fit=crop&q=80";
 
-export const containerVariants: Variants = {
-	hidden: { opacity: 0 },
-	show: {
-		opacity: 1,
-		transition: {
-			staggerChildren: 0.1,
-		},
-	},
-};
-
-export const itemVariants: Variants = {
-	hidden: { opacity: 0, y: 20 },
-	show: { opacity: 1, y: 0 },
-};
-
 export const tabContentVariants: Variants = {
 	hidden: { opacity: 0, y: 10 },
 	visible: { opacity: 1, y: 0 },

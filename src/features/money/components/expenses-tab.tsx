@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Expense } from "../types";
-import { ExpenseSearch } from "./expense-search";
+import { SearchInput } from "@/components/common/search-input";
 import { CategoryFilter } from "./category-filter";
 import { ExpenseList } from "./expense-list";
 import { ANIMATION_VARIANTS } from "../constants/tabs";
@@ -13,6 +13,7 @@ interface ExpensesTabProps {
 	onCategoryToggle: (categoryId: string) => void;
 	filteredExpenses: Expense[];
 	onExpenseClick: (expense: Expense) => void;
+	isLoading?: boolean;
 }
 
 export function ExpensesTab({
@@ -23,6 +24,7 @@ export function ExpensesTab({
 	onCategoryToggle,
 	filteredExpenses,
 	onExpenseClick,
+	isLoading,
 }: ExpensesTabProps) {
 	return (
 		<motion.div
@@ -31,10 +33,11 @@ export function ExpensesTab({
 			className="space-y-6"
 		>
 			<div className="flex flex-col sm:flex-row gap-4">
-				<ExpenseSearch
+				<SearchInput
 					value={searchQuery}
 					onChange={onSearchChange}
 					onClear={onSearchClear}
+					placeholder="Search expenses..."
 				/>
 
 				<CategoryFilter
@@ -43,7 +46,13 @@ export function ExpensesTab({
 				/>
 			</div>
 
-			<ExpenseList expenses={filteredExpenses} onExpenseClick={onExpenseClick} />
+			<ExpenseList 
+				expenses={filteredExpenses} 
+				onExpenseClick={onExpenseClick} 
+				isLoading={isLoading}
+			/>
 		</motion.div>
 	);
 }
+
+

@@ -1,9 +1,24 @@
 import { Plane, Globe, Luggage, Users } from "lucide-react";
 import { motion } from "framer-motion";
-import { staggerContainer } from "@/common/animations";
+import { staggerContainer } from "@/lib/animations";
 import { StatCard } from "@/components/common/stat-card";
+import { StatCardSkeleton } from "@/components/common/skeletons";
 
-export function DashboardStats() {
+interface DashboardStatsProps {
+	isLoading?: boolean;
+}
+
+export function DashboardStats({ isLoading }: DashboardStatsProps) {
+	if (isLoading) {
+		return (
+			<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+				{[...Array(4)].map((_, i) => (
+					<StatCardSkeleton key={i} />
+				))}
+			</div>
+		);
+	}
+
 	return (
 		<motion.section
 			variants={staggerContainer}
@@ -46,4 +61,5 @@ export function DashboardStats() {
 		</motion.section>
 	);
 }
+
 

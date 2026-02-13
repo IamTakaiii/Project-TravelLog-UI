@@ -1,21 +1,22 @@
 import { motion } from "framer-motion";
 import { Calendar, Clock, Plane, DollarSign } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { formatDateRange, calculateDuration } from "../../utils/trip-utils";
 import { useTripDetail } from "./trip-detail-context";
-import { staggerContainer } from "@/common/animations";
+import { staggerContainer } from "@/lib/animations";
 import { StatCard } from "@/components/common/stat-card";
+import { calculateTripDuration } from "@/features/trips/utils/trip-duration";
+import { formatTripDateRange } from "@/features/trips/utils/trip-formatter";
 
 export function StatsGrid() {
 	const { t } = useTranslation();
 	const { trip } = useTripDetail();
-	const duration = calculateDuration(trip.startDate, trip.endDate);
+	const duration = calculateTripDuration(trip.startDate, trip.endDate);
 
 	const stats = [
 		{
 			icon: Calendar,
 			label: t("trips.detail.travel_dates", "Travel Dates"),
-			value: formatDateRange(trip.startDate, trip.endDate),
+			value: formatTripDateRange(trip.startDate, trip.endDate),
 		},
 		{
 			icon: Clock,
@@ -60,4 +61,5 @@ export function StatsGrid() {
 		</motion.div>
 	);
 }
+
 

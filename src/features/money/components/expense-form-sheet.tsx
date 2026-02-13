@@ -14,7 +14,7 @@ import { useState } from "react";
 import { CurrencyCode, Expense } from "../types";
 import { useExpenseForm, FormMode } from "../hooks/use-expense-form";
 import { MOCK_USERS } from "../mock/mock-users";
-import { calculateEqualSplit, validateExactSplit } from "../services/split-calculator";
+import { calculateEqualSplit, validateExactSplit } from "../utils/split-calculator";
 
 // Sub-components
 import { AmountHeroInput } from "./expense-form/amount-hero-input";

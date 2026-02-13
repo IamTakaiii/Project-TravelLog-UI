@@ -1,8 +1,9 @@
 import { Wallet, TrendingUp, AlertCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { formatMoney } from "../services/money-formatter";
+import { formatMoney } from "../utils/money-formatter";
 import { BUDGET_WARNING_PERCENT, BUDGET_CRITICAL_PERCENT } from "../constants/thresholds";
 import { CurrencyCode } from "../types";
+import { ModernCard } from "@/components/common/modern-card";
 
 interface BudgetSummaryCardProps {
 	totalSpent: number;
@@ -34,7 +35,7 @@ export function BudgetSummaryCard({
 	}
 
 	return (
-		<div className="bg-card/50 backdrop-blur-xl rounded-3xl border border-border/50 p-6 shadow-sm space-y-6">
+		<ModernCard className="space-y-6">
 			<div className="flex justify-between items-start gap-3">
 				<div className="space-y-1 flex-1 min-w-0">
 					<h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
@@ -101,6 +102,7 @@ export function BudgetSummaryCard({
 					</div>
 				</div>
 			</div>
-		</div>
+		</ModernCard>
 	);
 }
+

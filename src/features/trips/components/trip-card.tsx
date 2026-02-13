@@ -3,7 +3,8 @@ import { MapPin, DollarSign, Plane } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Trip } from "../api/trips-api";
-import { getStatusConfig } from "../utils/trip-utils";
+import { getStatusConfig } from "../utils/trip-status";
+
 
 interface TripCardProps {
 	trip: Trip;

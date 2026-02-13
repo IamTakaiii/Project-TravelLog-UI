@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Expense } from "../types";
-import { calculateBudgetStats, BudgetStats } from "../services/budget-calculator";
+import { calculateBudgetStats, BudgetStats } from "../utils/budget-calculator";
 
 interface UseBudgetStatsProps {
 	expenses: Expense[];

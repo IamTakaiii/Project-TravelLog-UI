@@ -1,44 +1,11 @@
 import { apiClient } from "@/lib/api-client";
 import type { CreateTripFormValues } from "../schemas/create-trip-schema";
-
-export interface TripUser {
-	id: string;
-	name: string;
-	email: string;
-	image?: string | null;
-}
-
-export interface Trip {
-	id: string;
-	title: string;
-	description: string | null;
-	coverImage: string | null;
-	destination: string | null;
-	destinationType?: string;
-	currency?: string;
-	budget: string | null;
-	startDate: string;
-	endDate: string;
-	status: "active" | "inactive" | "completed";
-	createdBy: string;
-	updatedBy: TripUser | null;
-	createdAt: string;
-	updatedAt: string;
-}
-
-export interface CreateTripPayload {
-	title: string;
-	description?: string;
-	coverImage?: string;
-	destination?: string;
-	destinationType?: string;
-	currency?: string;
-	budget?: string;
-	startDate: string;
-	endDate: string;
-}
+export { type Trip, type CreateTripPayload } from "../types";
+import { Trip, CreateTripPayload } from "../types";
 
 export const tripsApi = {
+
+
 	async create(data: CreateTripFormValues): Promise<Trip> {
 		const payload: CreateTripPayload = {
 			title: data.title,
@@ -92,4 +59,5 @@ export const tripsApi = {
 		});
 	},
 };
+
 

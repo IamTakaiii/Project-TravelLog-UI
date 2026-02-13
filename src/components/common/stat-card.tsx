@@ -1,7 +1,7 @@
 import { LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { fadeInUp } from "@/common/animations";
+import { fadeInUp } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 
 interface StatCardProps {

@@ -1,4 +1,4 @@
-import { formatDate } from "../../../utils/trip-utils";
+import { formatTripDate } from "@/features/trips/utils/trip-formatter";
 import { useTripDetail } from "../trip-detail-context";
 
 export function MetadataCard() {
@@ -6,13 +6,13 @@ export function MetadataCard() {
 
 	return (
 		<div className="pt-6 border-t border-border/50 text-xs text-muted-foreground space-y-2">
-			<MetadataRow label="Created" value={formatDate(trip.createdAt)} />
+			<MetadataRow label="Created" value={formatTripDate(trip.createdAt)} />
 
 			{trip.updatedAt !== trip.createdAt && (
 				<>
 					<MetadataRow
 						label="Last Updated"
-						value={formatDate(trip.updatedAt)}
+						value={formatTripDate(trip.updatedAt)}
 					/>
 					{trip.updatedBy && <UpdatedByRow user={trip.updatedBy} />}
 				</>

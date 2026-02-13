@@ -5,13 +5,8 @@ import {
 	useCallback,
 	type ReactNode,
 } from "react";
-import { useNavigate } from "@tanstack/react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
-import { tripsApi, type Trip } from "../../api/trips-api";
-import { tripQueryKeys } from "../../queries/trips-queries";
-import { useTranslateError } from "@/hooks/use-translate-error";
+import { type Trip } from "../../api/trips-api";
+import { useTripMutations } from "../../hooks/use-trip-mutations";
 import type { TabType, TripDetailContextValue } from "./types";
 
 const TripDetailContext = createContext<TripDetailContextValue | null>(null);
@@ -25,29 +20,13 @@ export function TripDetailProvider({
 	trip,
 	children,
 }: TripDetailProviderProps) {
-	const { t } = useTranslation();
-	const navigate = useNavigate();
-	const queryClient = useQueryClient();
-	const { translateError } = useTranslateError();
-
 	const [activeTab, setActiveTab] = useState<TabType>("itinerary");
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
-	const deleteTripMutation = useMutation({
-		mutationFn: (id: string) => tripsApi.delete(id),
-		onSuccess: () => {
-			toast.success(t("Trip deleted successfully"));
-			queryClient.invalidateQueries({ queryKey: tripQueryKeys.lists() });
-			navigate({ to: "/trips" });
-		},
-		onError: (error) => {
-			toast.error(translateError(error.message));
-		},
-	});
+	const { deleteTrip } = useTripMutations();
 
 	const handleDelete = useCallback(() => {
-		deleteTripMutation.mutate(trip.id);
-	}, [deleteTripMutation, trip.id]);
+		deleteTrip.mutate(trip.id);
+	}, [deleteTrip, trip.id]);
 
 	const value: TripDetailContextValue = {
 		trip,
@@ -56,7 +35,7 @@ export function TripDetailProvider({
 		isDeleteDialogOpen,
 		setIsDeleteDialogOpen,
 		handleDelete,
-		isDeleting: deleteTripMutation.isPending,
+		isDeleting: deleteTrip.isPending,
 	};
 
 	return (
@@ -66,6 +45,7 @@ export function TripDetailProvider({
 	);
 }
 
+
 export function useTripDetail() {
 	const context = useContext(TripDetailContext);
 	if (!context) {
@@ -73,4 +53,6 @@ export function useTripDetail() {
 	}
 	return context;
 }
+
+
 

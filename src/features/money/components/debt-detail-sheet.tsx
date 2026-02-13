@@ -1,5 +1,5 @@
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { formatMoney } from "../services/money-formatter";
+import { formatMoney } from "../utils/money-formatter";
 import { DebtBreakdown } from "../hooks/use-debt-calculator";
 import { ExpenseCard } from "./expense-card";
 import { CheckCircle2, Receipt } from "lucide-react";

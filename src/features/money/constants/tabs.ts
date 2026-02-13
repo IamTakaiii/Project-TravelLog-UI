@@ -1,4 +1,4 @@
-import { staggerContainer, tabTransition } from "@/common/animations";
+import { staggerContainer, tabTransition } from "@/lib/animations";
 
 export const TABS = {
 	EXPENSES: "expenses",

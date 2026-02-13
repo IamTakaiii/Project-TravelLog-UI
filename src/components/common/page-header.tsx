@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
-import { fadeInUp } from "@/common/animations";
+import { fadeInUp } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 
 interface PageHeaderProps {

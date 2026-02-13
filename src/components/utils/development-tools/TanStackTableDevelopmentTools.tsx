@@ -1,5 +1,5 @@
 import React from "react";
-import { isProduction } from "../../../common/utils";
+import { isProduction } from "@/lib/common-utils";
 
 export const TanStackTableDevelopmentTools = isProduction
 	? (): null => null

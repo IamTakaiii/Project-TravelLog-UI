@@ -2,15 +2,17 @@ import { motion } from "framer-motion";
 import { useTripDetail } from "./trip-detail-context";
 import { HeroNavigationBar } from "./hero-navigation-bar";
 import { HeroTitleOverlay } from "./hero-title-overlay";
-import { itemVariants, DEFAULT_COVER_IMAGE } from "./constants";
+import { DEFAULT_COVER_IMAGE } from "./constants";
+import { fadeInUp } from "@/lib/animations";
 
 export function HeroSection() {
+
 	const { trip } = useTripDetail();
 	const coverImage = trip.coverImage || DEFAULT_COVER_IMAGE;
 
 	return (
 		<motion.div
-			variants={itemVariants}
+			variants={fadeInUp}
 			className="relative h-[40vh] min-h-[320px] lg:h-[45vh] w-full overflow-hidden"
 		>
 			<img

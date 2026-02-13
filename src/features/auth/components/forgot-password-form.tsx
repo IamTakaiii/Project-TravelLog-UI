@@ -5,7 +5,8 @@ import { useForgotPassword } from "../hooks/use-forgot-password";
 import { useTranslation } from "react-i18next";
 import { useTranslateError } from "@/hooks/use-translate-error";
 import { Link } from "@tanstack/react-router";
-import { AuthFormField } from "./auth-form-field";
+import { FormInput } from "@/components/ui/form-input";
+import { Form } from "@/components/ui/form";
 
 export function ForgotPasswordForm() {
 	const { t } = useTranslation();
@@ -13,9 +14,8 @@ export function ForgotPasswordForm() {
 	const { form, isLoading, error, isSuccess, onSubmit, resetForm } =
 		useForgotPassword();
 	const {
-		register,
+		control,
 		handleSubmit,
-		formState: { errors },
 	} = form;
 
 	// Success state - show confirmation message
@@ -73,50 +73,47 @@ export function ForgotPasswordForm() {
 
 	return (
 		<div className="grid gap-6">
-			<form onSubmit={handleSubmit(onSubmit)}>
-				<div className="grid gap-5">
-					{/* Email Field */}
-					<AuthFormField
-						label={t("auth.fields.email")}
-						name="email"
-						register={register}
-						errors={errors}
-						icon={Mail}
-						placeholder={t("auth.placeholders.email")}
-						type="email"
-						autoCapitalize="none"
-						autoComplete="email"
-						autoCorrect="off"
-						isLoading={isLoading}
-					/>
+			<Form {...form}>
+				<form onSubmit={handleSubmit(onSubmit)}>
+					<div className="grid gap-5">
+						<FormInput
+							control={control}
+							name="email"
+							label={t("auth.fields.email")}
+							placeholder={t("auth.placeholders.email")}
+							type="email"
+							icon={<Mail className="size-4" />}
+							disabled={isLoading}
+						/>
 
-					{/* Error Message */}
-					{error && (
-						<div className="bg-destructive/10 text-destructive text-sm p-4 rounded-xl border border-destructive/20 flex items-start gap-3">
-							<div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center shrink-0 mt-0.5">
-								<span className="text-xs">!</span>
+						{/* Error Message */}
+						{error && (
+							<div className="bg-destructive/10 text-destructive text-sm p-4 rounded-xl border border-destructive/20 flex items-start gap-3">
+								<div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center shrink-0 mt-0.5">
+									<span className="text-xs">!</span>
+								</div>
+								<span>{translateError(error) || error}</span>
 							</div>
-							<span>{translateError(error) || error}</span>
-						</div>
-					)}
-
-					{/* Submit Button */}
-					<Button
-						disabled={isLoading}
-						className="w-full h-12 mt-2 text-base font-semibold shadow-travel hover:shadow-travel-lg transition-all duration-300 group"
-						size="lg"
-					>
-						{isLoading ? (
-							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-						) : (
-							<>
-								<Send className="mr-2 h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-								{t("auth.forgot_password.submit")}
-							</>
 						)}
-					</Button>
-				</div>
-			</form>
+
+						{/* Submit Button */}
+						<Button
+							disabled={isLoading}
+							className="w-full h-12 mt-2 text-base font-semibold shadow-travel hover:shadow-travel-lg transition-all duration-300 group"
+							size="lg"
+						>
+							{isLoading ? (
+								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+							) : (
+								<>
+									<Send className="mr-2 h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+									{t("auth.forgot_password.submit")}
+								</>
+							)}
+						</Button>
+					</div>
+				</form>
+			</Form>
 
 			{/* Back to Login */}
 			<Link to="/login" className="w-full">
@@ -131,3 +128,5 @@ export function ForgotPasswordForm() {
 		</div>
 	);
 }
+
+
