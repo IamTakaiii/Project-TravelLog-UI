@@ -30,8 +30,6 @@ export function HeroTitleOverlay() {
 							</div>
 						)}
 					</div>
-
-					<CollaboratorsPreview />
 				</div>
 			</div>
 		</div>
@@ -86,21 +84,21 @@ function StatusBadges({
 	);
 }
 
-function CollaboratorsPreview() {
-	return (
-		<div className="hidden md:flex items-center gap-3 bg-black/30 backdrop-blur-md rounded-full px-4 py-2 border border-white/10">
-			<div className="flex -space-x-2">
-				<div
-					className="size-8 rounded-full border-2 border-white/20 bg-white/20 flex items-center justify-center text-[10px] font-bold text-white"
-					title="You"
-				>
-					ME
-				</div>
-				<div className="size-8 rounded-full border-2 border-white/20 bg-white/10 flex items-center justify-center text-xs text-white/70 hover:bg-white/20 transition-colors cursor-pointer">
-					+
-				</div>
-			</div>
-			<span className="text-xs text-white/70 font-medium">Members</span>
-		</div>
-	);
-}
+// function CollaboratorsPreview() {
+// 	return (
+// 		<div className="hidden md:flex items-center gap-3 bg-black/30 backdrop-blur-md rounded-full px-4 py-2 border border-white/10">
+// 			<div className="flex -space-x-2">
+// 				<div
+// 					className="size-8 rounded-full border-2 border-white/20 bg-white/20 flex items-center justify-center text-[10px] font-bold text-white"
+// 					title="You"
+// 				>
+// 					ME
+// 				</div>
+// 				<div className="size-8 rounded-full border-2 border-white/20 bg-white/10 flex items-center justify-center text-xs text-white/70 hover:bg-white/20 transition-colors cursor-pointer">
+// 					+
+// 				</div>
+// 			</div>
+// 			<span className="text-xs text-white/70 font-medium">Members</span>
+// 		</div>
+// 	);
+// }
