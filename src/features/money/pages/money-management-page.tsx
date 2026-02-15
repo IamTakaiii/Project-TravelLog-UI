@@ -93,9 +93,9 @@ export function MoneyManagementPage() {
 				/>
 			</div>
 
-			<TabSwitcher 
-				activeTab={activeTab} 
-				onTabChange={handleTabChange} 
+			<TabSwitcher
+				activeTab={activeTab}
+				onTabChange={handleTabChange}
 				tabs={moneyTabs}
 			/>
 

@@ -17,6 +17,7 @@ let MOCK_EXPENSES: Expense[] = [
 		category: "food",
 		splitDetails: { type: "equal", involvedUserIds: ["u1", "u2", "u3"] },
 		createdBy: "u1",
+		place: { name: "Sushi Zanmai, Shinjuku" },
 		createdAt: new Date().toISOString(),
 	},
 	{
@@ -24,6 +25,7 @@ let MOCK_EXPENSES: Expense[] = [
 		tripId: "t1",
 		description: "Taxi to Hotel",
 		amount: 4500,
+		place: { name: "Haneda Airport" },
 		currency: "JPY",
 		exchangeRate: 0.24,
 		thbAmount: 1080,
@@ -48,19 +50,19 @@ export const expensesApi = {
 
 		const rate =
 			DEFAULT_CURRENCIES[data.currency as keyof typeof DEFAULT_CURRENCIES].rate;
-		
+
 		// Build split details based on type
 		const splitDetails: Expense["splitDetails"] =
 			data.splitType === "exact" && data.exactAmounts
 				? {
-						type: "exact",
-						involvedUserIds: data.involvedUserIds,
-						amounts: data.exactAmounts,
-				  }
+					type: "exact",
+					involvedUserIds: data.involvedUserIds,
+					amounts: data.exactAmounts,
+				}
 				: {
-						type: "equal",
-						involvedUserIds: data.involvedUserIds,
-				  };
+					type: "equal",
+					involvedUserIds: data.involvedUserIds,
+				};
 
 		const newExpense: Expense = {
 			id: Date.now().toString(),
@@ -100,14 +102,14 @@ export const expensesApi = {
 		const splitDetails: Expense["splitDetails"] =
 			data.splitType === "exact" && data.exactAmounts
 				? {
-						type: "exact",
-						involvedUserIds: data.involvedUserIds,
-						amounts: data.exactAmounts,
-				  }
+					type: "exact",
+					involvedUserIds: data.involvedUserIds,
+					amounts: data.exactAmounts,
+				}
 				: {
-						type: "equal",
-						involvedUserIds: data.involvedUserIds,
-				  };
+					type: "equal",
+					involvedUserIds: data.involvedUserIds,
+				};
 
 		const updatedExpense: Expense = {
 			...MOCK_EXPENSES[index]!,

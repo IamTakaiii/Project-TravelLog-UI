@@ -53,7 +53,7 @@ export function ExpenseFormSheet({
 
 	return (
 		<Sheet open={open} onOpenChange={setOpen}>
-			{trigger ? (
+			{controlledOpen !== undefined ? null : trigger ? (
 				<SheetTrigger asChild>{trigger}</SheetTrigger>
 			) : !isEditing ? (
 				<SheetTrigger asChild>

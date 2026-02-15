@@ -1,7 +1,8 @@
 import { Control } from "react-hook-form";
 import { DEFAULT_CURRENCIES } from "../../constants/currencies";
 import { ExpenseFormValues } from "../../schemas/expense-schema";
-import { FormInput } from "@/components/ui/form-input";
+import { FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { FormSelect } from "@/components/ui/form-select";
 
 interface AmountHeroInputProps {
@@ -23,12 +24,26 @@ export function AmountHeroInput({ control }: AmountHeroInputProps) {
 					name="currency"
 					options={currencyOptions}
 				/>
-				<FormInput
-					className="flex-1"
+				<FormField
 					control={control}
 					name="amount"
-					type="number"
-					placeholder="0.00"
+					render={({ field }) => (
+						<FormItem className="flex-1 space-y-0">
+							<FormControl>
+								<Input
+									{...field}
+									type="number"
+									placeholder="0.00"
+									className="h-12 bg-muted/30 border-border/50 focus:bg-background text-right font-mono text-lg"
+									onChange={(e) => {
+										const value = e.target.value;
+										field.onChange(value === "" ? "" : Number(value));
+									}}
+								/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
 				/>
 			</div>
 		</div>
