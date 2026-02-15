@@ -1,7 +1,7 @@
 import { Control } from "react-hook-form";
-import { MapPin } from "lucide-react";
 import { ExpenseFormValues } from "../../schemas/expense-schema";
 import { FormInput } from "@/components/ui/form-input";
+import { PlaceAutocomplete } from "@/components/common/place-autocomplete";
 
 interface BasicInfoFieldsProps {
 	control: Control<ExpenseFormValues>;
@@ -19,12 +19,10 @@ export function BasicInfoFields({ control, mode }: BasicInfoFieldsProps) {
 			/>
 
 			{mode === "standard" && (
-				<FormInput
+				<PlaceAutocomplete
 					control={control}
 					name="placeName"
 					label="Where was this?"
-					placeholder="Location (Optional)"
-					icon={<MapPin className="size-3" />}
 				/>
 			)}
 		</div>

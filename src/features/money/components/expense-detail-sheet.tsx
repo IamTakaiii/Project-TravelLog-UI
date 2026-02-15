@@ -4,7 +4,7 @@ import { formatMoney } from "../utils/money-formatter";
 import { getCategoryById } from "../utils/category-lookup";
 import { CENTRAL_FUND_ID } from "../constants/thresholds";
 import { CategoryIcon } from "./category-icon";
-import { MapPin, Calendar, User, Users, Receipt, Pencil, Trash2 } from "lucide-react";
+import { MapPin, Calendar, User, Users, Receipt, Pencil, Trash2, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -159,9 +159,21 @@ export function ExpenseDetailSheet({
 									<p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
 										Location
 									</p>
-									<p className="text-xs sm:text-sm font-bold truncate">
+									<Button
+										mode="link"
+										className="p-0 h-auto text-xs sm:text-sm font-bold truncate text-foreground hover:text-primary flex items-center gap-1"
+										onClick={() =>
+											window.open(
+												`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+													expense.place!.name
+												)}`,
+												"_blank"
+											)
+										}
+									>
 										{expense.place.name}
-									</p>
+										<ExternalLink className="size-3" />
+									</Button>
 								</div>
 							</div>
 						)}
