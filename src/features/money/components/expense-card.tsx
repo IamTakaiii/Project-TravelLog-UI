@@ -12,6 +12,8 @@ interface ExpenseCardProps {
 	onClick?: () => void;
 	userMap?: Map<string, string>;
 	tripCurrency?: import("../types").CurrencyCode;
+	overrideAmount?: number;
+	overrideSubAmount?: number;
 }
 
 export const ExpenseCard = memo(function ExpenseCard({
@@ -19,10 +21,11 @@ export const ExpenseCard = memo(function ExpenseCard({
 	onClick,
 	userMap,
 	tripCurrency = "THB",
+	overrideAmount,
+	overrideSubAmount,
 }: ExpenseCardProps) {
 	const category =
-		getCategoryById(expense.category) ||
-		getCategoryById("other");
+		expense.isSettlement ? getCategoryById("settlement") : getCategoryById(expense.category);
 	const isCentral = expense.payerId === CENTRAL_FUND_ID;
 
 	if (!category) return null;
@@ -68,12 +71,12 @@ export const ExpenseCard = memo(function ExpenseCard({
 			<div className="text-right shrink-0">
 				{/* Always show in trip currency (thbAmount = baseAmount in trip currency) */}
 				<p className="font-black text-base tracking-tight">
-					{formatMoney(expense.thbAmount, tripCurrency)}
+					{formatMoney(overrideAmount ?? expense.thbAmount, tripCurrency)}
 				</p>
-				{/* Show original currency as subtitle if different */}
-				{expense.currency !== tripCurrency && (
+				{/* Show original currency as subtitle if different or if overridden */}
+				{(overrideSubAmount !== undefined || expense.currency !== tripCurrency) && (
 					<p className="text-[10px] text-muted-foreground">
-						{formatMoney(expense.amount, expense.currency)}
+						{formatMoney(overrideSubAmount ?? expense.amount, expense.currency)}
 					</p>
 				)}
 			</div>

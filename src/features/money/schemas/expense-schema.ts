@@ -7,6 +7,7 @@ export const expenseSchema = z
 		currency: z.string(),
 		date: z.string(),
 		category: z.string(),
+		isSettlement: z.boolean().optional(),
 		payerId: z.string().min(1, "Payer is required"),
 		splitType: z.enum(["equal", "exact"]),
 		involvedUserIds: z

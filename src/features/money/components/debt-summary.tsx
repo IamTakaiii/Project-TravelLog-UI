@@ -20,9 +20,12 @@ import { cn } from "@/lib/utils";
 interface DebtSummaryProps {
 	expenses: Expense[];
 	currentUserId: string;
+	userMap: Map<string, string>;
+	tripCurrency: import("../types").CurrencyCode;
+	onSettle: (amount: number, type: 'pay' | 'receive', targetUserId: string, currentUserId: string, targetUserName: string, currency: import("../types").CurrencyCode) => Promise<void>;
 }
 
-export function DebtSummary({ expenses, currentUserId }: DebtSummaryProps) {
+export function DebtSummary({ expenses, currentUserId, userMap, tripCurrency, onSettle }: DebtSummaryProps) {
 	const { whoOwesMe, iOweWho, totalReceivable, totalPayable } =
 		useDebtCalculator(expenses, currentUserId);
 	const [selectedDebt, setSelectedDebt] = useState<{
@@ -109,7 +112,7 @@ export function DebtSummary({ expenses, currentUserId }: DebtSummaryProps) {
 							"text-3xl sm:text-4xl font-black font-mono tracking-tighter",
 							netBalance > 0 ? "text-emerald-600" : netBalance < 0 ? "text-destructive" : "text-muted-foreground"
 						)}>
-							{netBalance > 0 ? "+" : ""}{formatMoney(Math.abs(netBalance), "THB")}
+							{netBalance > 0 ? "+" : ""}{formatMoney(Math.abs(netBalance), tripCurrency)}
 						</p>
 					</div>
 
@@ -130,7 +133,7 @@ export function DebtSummary({ expenses, currentUserId }: DebtSummaryProps) {
 								To Receive
 							</p>
 							<p className="text-base sm:text-lg font-black text-emerald-600 font-mono tracking-tight">
-								{formatMoney(totalReceivable, "THB")}
+								{formatMoney(totalReceivable, tripCurrency)}
 							</p>
 						</div>
 					</div>
@@ -143,7 +146,7 @@ export function DebtSummary({ expenses, currentUserId }: DebtSummaryProps) {
 								To Pay
 							</p>
 							<p className="text-base sm:text-lg font-black text-destructive font-mono tracking-tight">
-								{formatMoney(totalPayable, "THB")}
+								{formatMoney(totalPayable, tripCurrency)}
 							</p>
 						</div>
 					</div>
@@ -173,7 +176,7 @@ export function DebtSummary({ expenses, currentUserId }: DebtSummaryProps) {
 							</div>
 						</div>
 						<span className="text-sm font-black font-mono text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-full">
-							+{formatMoney(totalReceivable, "THB")}
+							+{formatMoney(totalReceivable, tripCurrency)}
 						</span>
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -181,11 +184,13 @@ export function DebtSummary({ expenses, currentUserId }: DebtSummaryProps) {
 							<DebtCard
 								key={item.userId}
 								userId={item.userId}
+								userName={userMap.get(item.userId) || item.userId}
 								amount={item.amount}
 								type="receive"
 								totalAmount={totalReceivable}
 								transactionCount={item.transactions.length}
 								index={index}
+								tripCurrency={tripCurrency}
 								onClick={() => setSelectedDebt({ item, type: "receive" })}
 							/>
 						))}
@@ -216,7 +221,7 @@ export function DebtSummary({ expenses, currentUserId }: DebtSummaryProps) {
 							</div>
 						</div>
 						<span className="text-sm font-black font-mono text-destructive bg-destructive/10 px-3 py-1 rounded-full">
-							-{formatMoney(totalPayable, "THB")}
+							-{formatMoney(totalPayable, tripCurrency)}
 						</span>
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -224,11 +229,13 @@ export function DebtSummary({ expenses, currentUserId }: DebtSummaryProps) {
 							<DebtCard
 								key={item.userId}
 								userId={item.userId}
+								userName={userMap.get(item.userId) || item.userId}
 								amount={Math.abs(item.amount)}
 								type="pay"
 								totalAmount={totalPayable}
 								transactionCount={item.transactions.length}
 								index={index}
+								tripCurrency={tripCurrency}
 								onClick={() => setSelectedDebt({ item, type: "pay" })}
 							/>
 						))}
@@ -240,7 +247,22 @@ export function DebtSummary({ expenses, currentUserId }: DebtSummaryProps) {
 				debt={selectedDebt?.item || null}
 				type={selectedDebt?.type || "pay"}
 				onClose={() => setSelectedDebt(null)}
-				onSettle={() => setSelectedDebt(null)}
+				onSettle={async () => {
+					if (selectedDebt?.item) {
+						await onSettle(
+							selectedDebt.item.amount,
+							selectedDebt.type,
+							selectedDebt.item.userId,
+							currentUserId,
+							userMap.get(selectedDebt.item.userId) || selectedDebt.item.userId,
+							tripCurrency
+						);
+						setSelectedDebt(null);
+					}
+				}}
+				userMap={userMap}
+				currentUserId={currentUserId}
+				tripCurrency={tripCurrency}
 			/>
 		</div>
 	);
@@ -267,19 +289,23 @@ function getAvatarColors(userId: string): { bg: string; text: string; ring: stri
 
 const DebtCard = memo(function DebtCard({
 	userId,
+	userName,
 	amount,
 	type,
 	totalAmount,
 	transactionCount,
 	index,
+	tripCurrency,
 	onClick,
 }: {
 	userId: string;
+	userName: string;
 	amount: number;
 	type: "pay" | "receive";
 	totalAmount: number;
 	transactionCount: number;
 	index: number;
+	tripCurrency: import("../types").CurrencyCode;
 	onClick: () => void;
 }) {
 	const isPay = type === "pay";
@@ -308,11 +334,11 @@ const DebtCard = memo(function DebtCard({
 							avatarColors.ring
 						)}
 					>
-						{userId.substring(0, 2).toUpperCase()}
+						{userName.substring(0, 2).toUpperCase()}
 					</div>
 					<div className="space-y-0.5 min-w-0">
 						<p className="font-bold text-foreground text-sm sm:text-base truncate leading-tight">
-							{userId}
+							{userName}
 						</p>
 						<div className="flex items-center gap-1.5">
 							<CircleDot
@@ -337,7 +363,7 @@ const DebtCard = memo(function DebtCard({
 						)}
 					>
 						{isPay ? "-" : "+"}
-						{formatMoney(amount, "THB")}
+						{formatMoney(amount, tripCurrency)}
 					</p>
 					<div className="flex items-center justify-end gap-0.5 mt-0.5">
 						<span className="text-[9px] sm:text-[10px] font-semibold text-muted-foreground/70 group-hover:text-primary transition-colors">

@@ -12,6 +12,7 @@ import {
 	MoreHorizontal,
 	Receipt,
 	PlusCircle,
+	Handshake,
 } from "lucide-react";
 
 export const DEFAULT_CATEGORIES: ExpenseCategory[] = [
@@ -54,6 +55,12 @@ export const DEFAULT_CATEGORIES: ExpenseCategory[] = [
 		icon: "MoreHorizontal",
 		color: "bg-gray-100 text-gray-600 dark:bg-gray-500/20 dark:text-gray-400",
 	},
+	{
+		id: "settlement",
+		name: "Settlement",
+		icon: "Handshake",
+		color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
+	},
 ];
 
 export const CATEGORY_ICONS: Record<string, LucideIcon> = {
@@ -68,5 +75,5 @@ export const CATEGORY_ICONS: Record<string, LucideIcon> = {
 	MoreHorizontal,
 	Receipt,
 	PlusCircle,
+	Handshake,
 };
-

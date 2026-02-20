@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
@@ -22,88 +22,81 @@ interface UseExpenseFormParams {
   onSuccess?: () => void;
 }
 
-function getDefaultValues(expense?: Expense, currency?: string, users: UserInfo[] = []): ExpenseFormValues {
-  if (expense) {
-    return {
-      description: expense.description,
-      amount: expense.amount,
-      currency: expense.currency || currency || 'THB',
-      date: new Date(expense.date).toISOString().slice(0, 16),
-      category: expense.category,
-      payerId: expense.payerId,
-      splitType: expense.splitDetails.type,
-      involvedUserIds: expense.splitDetails.involvedUserIds,
-      exactAmounts: expense.splitDetails.amounts || {},
-      placeName: expense.place?.name || '',
-    };
-  }
-
-  const allUserIds = users.map(u => u.id);
-  const payerId = allUserIds.length > 0 ? allUserIds[0] : '';
-
-  return {
-    description: '',
-    amount: 0,
-    currency: currency || 'THB',
-    date: new Date().toISOString().slice(0, 16),
-    category: 'food',
-    payerId: payerId as string,
-    splitType: 'equal',
-    involvedUserIds: allUserIds,
-    exactAmounts: {},
-    placeName: '',
-  };
-}
-
 /**
  * Encapsulates React Hook Form setup, mode switching, form reset,
  * and mutation submission for the expense form.
  */
-export function useExpenseForm({ tripId, currency, expense, users = [], onSuccess }: UseExpenseFormParams) {
+export function useExpenseForm({ tripId, currency = 'THB', expense, users = [], onSuccess }: UseExpenseFormParams) {
   const isEditing = !!expense;
   const [mode, setMode] = useState<FormMode>(expense ? 'standard' : 'quick');
 
   const { createExpense, updateExpense } = useExpenseMutations(tripId);
 
+  const defaultValues = useMemo((): ExpenseFormValues => {
+    if (expense) {
+      return {
+        description: expense.description,
+        amount: expense.amount,
+        currency: expense.currency || currency,
+        date: new Date(expense.date).toISOString().slice(0, 16),
+        category: expense.category,
+        payerId: expense.payerId,
+        splitType: expense.splitDetails.type,
+        involvedUserIds: expense.splitDetails.involvedUserIds,
+        exactAmounts: expense.splitDetails.amounts || {},
+        placeName: expense.place?.name || '',
+      };
+    }
+
+    const allUserIds = users.map(u => u.id);
+    const payerId = allUserIds.length > 0 ? allUserIds[0] : '';
+
+    return {
+      description: '',
+      amount: 0,
+      currency: currency,
+      date: new Date().toISOString().slice(0, 16),
+      category: 'food',
+      payerId: payerId as string,
+      splitType: 'equal',
+      involvedUserIds: allUserIds,
+      exactAmounts: {},
+      placeName: '',
+    };
+  }, [expense, currency, users]);
+
   const form = useForm<ExpenseFormValues>({
     resolver: zodResolver(expenseSchema),
-    defaultValues: getDefaultValues(expense, currency, users),
+    defaultValues,
   });
 
-  // Reset form when expense or users change (edit mode)
+  // Reset form when defaultValues change (important for edit mode transitions)
   useEffect(() => {
+    form.reset(defaultValues);
     if (expense) {
-      form.reset(getDefaultValues(expense, currency, users));
       setMode('standard');
-    } else {
-      form.reset(getDefaultValues(undefined, currency, users));
-      setMode(mode === 'standard' ? 'standard' : 'quick'); // preserve mode if it was changed
     }
-  }, [expense, currency, users, form]);
+  }, [defaultValues, form, expense]);
 
   const onSubmit = useCallback(
     (data: ExpenseFormValues) => {
+      const mutationOptions = {
+        onSuccess: () => {
+          toast.success(isEditing ? 'Expense updated' : 'Expense added');
+          if (!isEditing) {
+            form.reset(defaultValues);
+          }
+          onSuccess?.();
+        },
+      };
+
       if (isEditing && expense) {
-        updateExpense.mutate(
-          { id: expense.id, data },
-          {
-            onSuccess: () => {
-              toast.success('Expense updated');
-              onSuccess?.();
-            },
-          },
-        );
+        updateExpense.mutate({ id: expense.id, data }, mutationOptions);
       } else {
-        createExpense.mutate({ data }, {
-          onSuccess: () => {
-            toast.success('Expense added');
-            form.reset(getDefaultValues(undefined, currency, users));
-            onSuccess?.();
-          },
-        });
+        createExpense.mutate({ data }, mutationOptions);
       }
     },
-    [isEditing, expense, createExpense, updateExpense, form, currency, users, onSuccess],
+    [isEditing, expense, createExpense, updateExpense, form, defaultValues, onSuccess],
   );
 
   const isPending = createExpense.isPending || updateExpense.isPending;

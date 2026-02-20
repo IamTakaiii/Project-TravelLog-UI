@@ -6,12 +6,17 @@ import { CheckCircle2, Receipt, ArrowDownLeft, ArrowUpRight } from "lucide-react
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { DetailSheetHero } from "./detail-sheet-hero";
+import { CurrencyCode } from "../types";
 
 interface DebtDetailSheetProps {
 	debt: DebtBreakdown | null;
 	type: "pay" | "receive";
 	onClose: () => void;
 	onSettle: () => void;
+	userMap: Map<string, string>;
+	currentUserId: string;
+	tripCurrency?: CurrencyCode;
 }
 
 export function DebtDetailSheet({
@@ -19,41 +24,27 @@ export function DebtDetailSheet({
 	type,
 	onClose,
 	onSettle,
+	userMap,
+	currentUserId,
+	tripCurrency = "THB",
 }: DebtDetailSheetProps) {
 	if (!debt) return null;
 
 	const isPay = type === "pay";
+	const userName = userMap.get(debt.userId) || debt.userId;
 
 	return (
 		<Sheet open={!!debt} onOpenChange={onClose}>
 			<SheetContent className="w-full sm:max-w-md p-0 overflow-y-auto border-l border-border/50">
-				{/* Hero Section */}
-				<div
-					className={cn(
-						"relative p-8 pb-14 flex flex-col items-center justify-center text-center overflow-hidden",
-						isPay
-							? "bg-gradient-to-br from-destructive/5 via-destructive/10 to-orange-500/5"
-							: "bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-teal-500/5"
-					)}
+				<DetailSheetHero
+					colorClass={isPay
+						? "bg-gradient-to-br from-destructive/5 via-destructive/10 to-orange-500/5"
+						: "bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-teal-500/5"
+					}
 				>
-					{/* Decorative blur */}
-					<div
-						className={cn(
-							"absolute top-0 right-0 w-40 h-40 rounded-full blur-[80px] opacity-20 pointer-events-none",
-							isPay ? "bg-destructive" : "bg-emerald-500"
-						)}
-					/>
-					<div
-						className={cn(
-							"absolute bottom-0 left-0 w-32 h-32 rounded-full blur-[60px] opacity-15 pointer-events-none",
-							isPay ? "bg-orange-500" : "bg-teal-500"
-						)}
-					/>
-
-					{/* Avatar */}
-					<div className="relative z-10 mb-4">
+					<div className="relative mb-4">
 						<div className="size-20 rounded-3xl bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-lg border border-border/50 text-2xl font-black text-foreground">
-							{debt.userId.slice(0, 2).toUpperCase()}
+							{userName.slice(0, 2).toUpperCase()}
 						</div>
 						<div
 							className={cn(
@@ -69,28 +60,27 @@ export function DebtDetailSheet({
 						</div>
 					</div>
 
-					{/* Title */}
-					<h2 className="relative z-10 text-base font-semibold text-muted-foreground">
-						{isPay ? `You owe ${debt.userId}` : `${debt.userId} owes you`}
+					<h2 className="text-base font-semibold text-muted-foreground">
+						{isPay
+							? `You owe ${userName}`
+							: `${userName} owes you`}
 					</h2>
 
-					{/* Amount */}
 					<span
 						className={cn(
-							"relative z-10 text-4xl sm:text-5xl font-black font-mono tracking-tighter mt-2",
+							"text-4xl sm:text-5xl font-black font-mono tracking-tighter mt-2",
 							isPay ? "text-destructive" : "text-emerald-600"
 						)}
 					>
 						{isPay ? "-" : "+"}
-						{formatMoney(Math.abs(debt.amount), "THB")}
+						{formatMoney(Math.abs(debt.amount), tripCurrency)}
 					</span>
 
-					{/* Settle Button */}
 					<Button
 						onClick={onSettle}
 						size="lg"
 						className={cn(
-							"relative z-10 mt-6 rounded-full font-bold shadow-lg gap-2 active:scale-95 transition-all px-8",
+							"mt-6 rounded-full font-bold shadow-lg gap-2 active:scale-95 transition-all px-8",
 							isPay
 								? "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
 								: "bg-emerald-600 hover:bg-emerald-700 text-white"
@@ -99,9 +89,8 @@ export function DebtDetailSheet({
 						<CheckCircle2 className="size-4" />
 						Mark as Settled
 					</Button>
-				</div>
+				</DetailSheetHero>
 
-				{/* Expense Details */}
 				<div className="px-6 -mt-6 relative z-10 space-y-6 pb-10">
 					<div className="bg-card rounded-3xl p-5 sm:p-6 shadow-xl border border-border/50">
 						<div className="flex items-center justify-between mb-5">
@@ -119,16 +108,37 @@ export function DebtDetailSheet({
 						</div>
 
 						<div className="space-y-3">
-							{debt.transactions.map((ex, i) => (
-								<motion.div
-									key={ex.id}
-									initial={{ opacity: 0, y: 8 }}
-									animate={{ opacity: 1, y: 0 }}
-									transition={{ duration: 0.3, delay: i * 0.05 }}
-								>
-									<ExpenseCard expense={ex} onClick={() => { }} />
-								</motion.div>
-							))}
+							{debt.transactions.map((ex, i) => {
+								const splitters = ex.splitDetails.involvedUserIds;
+								const targetUserId = isPay ? ex.payerId : currentUserId;
+
+								let share = ex.thbAmount / splitters.length;
+								let originalShare = ex.amount / splitters.length;
+
+								if (ex.splitDetails.type === 'exact' && ex.splitDetails.amounts) {
+									share = ex.splitDetails.amounts[targetUserId] || 0;
+									originalShare = ex.splitDetails.amounts[targetUserId] || 0;
+									share = originalShare * ex.exchangeRate;
+								}
+
+								return (
+									<motion.div
+										key={ex.id}
+										initial={{ opacity: 0, y: 8 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ duration: 0.3, delay: i * 0.05 }}
+									>
+										<ExpenseCard
+											expense={ex}
+											onClick={() => { }}
+											userMap={userMap}
+											overrideAmount={share}
+											overrideSubAmount={originalShare}
+											tripCurrency={tripCurrency}
+										/>
+									</motion.div>
+								);
+							})}
 						</div>
 					</div>
 				</div>

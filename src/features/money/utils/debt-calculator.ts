@@ -43,13 +43,20 @@ export function calculateDebts(
 
     const payerId = ex.payerId;
     const splitters = ex.splitDetails.involvedUserIds;
+    const isExact = ex.splitDetails.type === 'exact';
+    const exactAmounts = ex.splitDetails.amounts;
+
     const amountPerPerson = ex.thbAmount / splitters.length;
 
     if (payerId === currentUserId) {
       // I paid, others owe me
       splitters.forEach((uid) => {
         if (uid !== currentUserId) {
-          debtMap[uid] = (debtMap[uid] || 0) + amountPerPerson;
+          const share = isExact && exactAmounts
+            ? (exactAmounts[uid] || 0) * ex.exchangeRate
+            : amountPerPerson;
+
+          debtMap[uid] = (debtMap[uid] || 0) + share;
 
           if (!transactionsMap[uid]) transactionsMap[uid] = [];
           transactionsMap[uid].push(ex);
@@ -57,7 +64,11 @@ export function calculateDebts(
       });
     } else if (splitters.includes(currentUserId)) {
       // Someone else paid, I owe them
-      debtMap[payerId] = (debtMap[payerId] || 0) - amountPerPerson;
+      const myShare = isExact && exactAmounts
+        ? (exactAmounts[currentUserId] || 0) * ex.exchangeRate
+        : amountPerPerson;
+
+      debtMap[payerId] = (debtMap[payerId] || 0) - myShare;
 
       if (!transactionsMap[payerId]) transactionsMap[payerId] = [];
       transactionsMap[payerId].push(ex);

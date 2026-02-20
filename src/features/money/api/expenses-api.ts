@@ -33,6 +33,35 @@ const mapExpenseResponse = (data: any): Expense => {
 		place: data.locationName ? { name: data.locationName } : undefined,
 		createdBy: data.createdBy,
 		createdAt: data.createdAt,
+		isSettlement: data.isSettlement ?? false,
+	};
+};
+
+// Map UI Form Values to API DTO
+const mapFormToPayload = (data: ExpenseFormValues, exchangeRate: number, tripId?: string) => {
+	return {
+		...(tripId ? { tripId } : {}),
+		payerId: data.payerId,
+		amount: data.amount,
+		currency: data.currency,
+		exchangeRate,
+		title: data.description,
+		category: data.category || "other",
+		locationName: data.placeName || undefined,
+		isSettlement: data.isSettlement || false,
+		splits: data.involvedUserIds.map((userId) => {
+			const isExact = data.splitType === "exact";
+			const splitAmount = isExact && data.exactAmounts
+				? data.exactAmounts[userId] || 0
+				: data.amount / data.involvedUserIds.length;
+
+			return {
+				userId,
+				amount: splitAmount,
+				splitType: data.splitType.toUpperCase(),
+				splitValue: splitAmount,
+			};
+		}),
 	};
 };
 
@@ -43,35 +72,8 @@ export const expensesApi = {
 	},
 
 	async create(tripId: string, data: ExpenseFormValues, exchangeRate?: number): Promise<Expense> {
-		// exchangeRate = "how many tripCurrency per 1 unit of data.currency"
-		// Provided by useExchangeRates(tripCurrency) at submit time.
-		// Falls back to 1 (same currency) if not provided.
 		const rate = exchangeRate ?? 1;
-
-		// Map UI Form Values to API DTO
-		const payload = {
-			tripId,
-			payerId: data.payerId,
-			amount: data.amount,
-			currency: data.currency,
-			exchangeRate: rate,
-			title: data.description,
-			category: data.category || "other",
-			locationName: data.placeName || undefined,
-			splits: data.involvedUserIds.map((userId) => {
-				const isExact = data.splitType === "exact";
-				const splitAmount = isExact && data.exactAmounts
-					? data.exactAmounts[userId] || 0
-					: data.amount / data.involvedUserIds.length;
-
-				return {
-					userId,
-					amount: splitAmount,
-					splitType: data.splitType.toUpperCase(),
-					splitValue: splitAmount, // In this system maybe exact value is splitValue
-				};
-			}),
-		};
+		const payload = mapFormToPayload(data, rate, tripId);
 
 		const response = await apiClient<any>("/api/v1/expenses", {
 			method: "POST",
@@ -89,29 +91,7 @@ export const expensesApi = {
 
 	async update(id: string, data: ExpenseFormValues, exchangeRate?: number): Promise<Expense> {
 		const rate = exchangeRate ?? 1;
-
-		const payload = {
-			payerId: data.payerId,
-			amount: data.amount,
-			currency: data.currency,
-			exchangeRate: rate,
-			title: data.description,
-			category: data.category || "other",
-			locationName: data.placeName || undefined,
-			splits: data.involvedUserIds.map((userId) => {
-				const isExact = data.splitType === "exact";
-				const splitAmount = isExact && data.exactAmounts
-					? data.exactAmounts[userId] || 0
-					: data.amount / data.involvedUserIds.length;
-
-				return {
-					userId,
-					amount: splitAmount,
-					splitType: data.splitType.toUpperCase(),
-					splitValue: splitAmount,
-				};
-			}),
-		};
+		const payload = mapFormToPayload(data, rate);
 
 		const response = await apiClient<any>(`/api/v1/expenses/${id}`, {
 			method: "PATCH",

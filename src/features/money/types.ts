@@ -42,6 +42,7 @@ export interface Expense {
 	image?: string;
 	createdBy: string;
 	createdAt: string;
+	isSettlement: boolean;
 }
 
 export interface MoneyStats {

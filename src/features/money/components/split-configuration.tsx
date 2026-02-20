@@ -1,10 +1,10 @@
 import { Users, DollarSign } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { formatMoney } from "../utils/money-formatter";
 import { CurrencyCode } from "../types";
+import { SplitUserItem } from "./split-user-item";
 
 export interface SplitUser {
 	id: string;
@@ -64,185 +64,124 @@ export function SplitConfiguration({
 					onValueChange={(value) => onSplitTypeChange(value as "equal" | "exact")}
 					className="grid grid-cols-2 gap-3"
 				>
-					<div>
-						<RadioGroupItem
-							value="equal"
-							id="equal"
-							className="peer sr-only"
-						/>
-						<Label
-							htmlFor="equal"
-							className={cn(
-								"flex flex-col items-center justify-center rounded-2xl border-2 p-4 cursor-pointer transition-all",
-								splitType === "equal"
-									? "border-primary bg-primary/5 shadow-inner"
-									: "border-border bg-muted/30 hover:bg-muted/50"
-							)}
-						>
-							<Users className="size-5 mb-2" />
-							<span className="text-sm font-bold">Split Equally</span>
-							<span className="text-xs text-muted-foreground">
-								Divide evenly
-							</span>
-						</Label>
-					</div>
-					<div>
-						<RadioGroupItem value="exact" id="exact" className="peer sr-only" />
-						<Label
-							htmlFor="exact"
-							className={cn(
-								"flex flex-col items-center justify-center rounded-2xl border-2 p-4 cursor-pointer transition-all",
-								splitType === "exact"
-									? "border-primary bg-primary/5 shadow-inner"
-									: "border-border bg-muted/30 hover:bg-muted/50"
-							)}
-						>
-							<DollarSign className="size-5 mb-2" />
-							<span className="text-sm font-bold">Exact Amounts</span>
-							<span className="text-xs text-muted-foreground">
-								Custom split
-							</span>
-						</Label>
-					</div>
+					<SplitTypeButton
+						value="equal"
+						label="Split Equally"
+						description="Divide evenly"
+						icon={<Users className="size-5 mb-2" />}
+						active={splitType === "equal"}
+					/>
+					<SplitTypeButton
+						value="exact"
+						label="Exact Amounts"
+						description="Custom split"
+						icon={<DollarSign className="size-5 mb-2" />}
+						active={splitType === "exact"}
+					/>
 				</RadioGroup>
 			</div>
 
 			{/* User Selection */}
-			<div>
-				<Label className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-3 block">
+			<div className="space-y-3">
+				<Label className="text-xs font-black uppercase tracking-widest text-muted-foreground block">
 					Who's Involved?
 				</Label>
 				<div className="space-y-2">
-					{users.map((user) => {
-						const isSelected = involvedUserIds.includes(user.id);
-						const userAmount =
-							splitType === "equal"
-								? equalSplitAmount
-								: exactAmounts[user.id] || 0;
-
-						return (
-							<div
-								key={user.id}
-								className={cn(
-									"flex items-center gap-3 p-3 rounded-2xl border-2 transition-all",
-									isSelected
-										? "border-primary bg-primary/5"
-										: "border-border bg-muted/30"
-								)}
-							>
-								<button
-									type="button"
-									onClick={() => toggleUser(user.id)}
-									className={cn(
-										"size-6 rounded-full border-2 flex items-center justify-center transition-all shrink-0",
-										isSelected
-											? "border-primary bg-primary"
-											: "border-muted-foreground/30"
-									)}
-								>
-									{isSelected && (
-										<svg
-											className="size-4 text-white"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke="currentColor"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={3}
-												d="M5 13l4 4L19 7"
-											/>
-										</svg>
-									)}
-								</button>
-
-								<span className="text-2xl">{user.avatar}</span>
-
-								<div className="flex-1 min-w-0">
-									<p className="font-bold text-sm">{user.name}</p>
-									{isSelected && splitType === "equal" && (
-										<p className="text-xs text-muted-foreground">
-											{formatMoney(userAmount, currency)}
-										</p>
-									)}
-								</div>
-
-								{isSelected && splitType === "exact" && (
-									<div className="relative w-28">
-										<span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold">
-											{currency}
-										</span>
-										<Input
-											type="number"
-											step="0.01"
-											placeholder="0.00"
-											value={exactAmounts[user.id] || ""}
-											onChange={(e) =>
-												onExactAmountChange(user.id, parseFloat(e.target.value) || 0)
-											}
-											className="h-9 pl-12 text-sm font-bold rounded-xl"
-										/>
-									</div>
-								)}
-							</div>
-						);
-					})}
+					{users.map((user) => (
+						<SplitUserItem
+							key={user.id}
+							user={user}
+							isSelected={involvedUserIds.includes(user.id)}
+							onToggle={() => toggleUser(user.id)}
+							splitType={splitType}
+							amount={equalSplitAmount}
+							currency={currency}
+							exactValue={exactAmounts[user.id]?.toString() || ""}
+							onExactAmountChange={(val) => onExactAmountChange(user.id, parseFloat(val) || 0)}
+						/>
+					))}
 				</div>
 			</div>
 
-			{/* Exact Split Summary */}
+			{/* Summary Blocks */}
 			{splitType === "exact" && involvedUserIds.length > 0 && (
-				<div
-					className={cn(
-						"p-4 rounded-2xl border-2 transition-all",
-						isExactValid
-							? "border-emerald-500/50 bg-emerald-500/5"
-							: "border-destructive/50 bg-destructive/5"
-					)}
-				>
-					<div className="flex items-center justify-between mb-2">
-						<span className="text-xs font-bold text-muted-foreground uppercase">
-							Total Split
-						</span>
-						<span
-							className={cn(
-								"text-sm font-black",
-								isExactValid ? "text-emerald-500" : "text-destructive"
-							)}
-						>
-							{formatMoney(exactTotal, currency)}
-						</span>
-					</div>
-					<div className="flex items-center justify-between">
-						<span className="text-xs font-bold text-muted-foreground uppercase">
-							Expense Total
-						</span>
-						<span className="text-sm font-black text-foreground">
-							{formatMoney(totalAmount, currency)}
-						</span>
-					</div>
-					{!isExactValid && (
-						<p className="text-xs text-destructive font-medium mt-2">
-							⚠️ Amounts must sum to total expense
-						</p>
-					)}
-				</div>
+				<ExactSplitSummary 
+					isExactValid={isExactValid}
+					exactTotal={exactTotal}
+					totalAmount={totalAmount}
+					currency={currency}
+				/>
 			)}
 
-			{/* Equal Split Summary */}
 			{splitType === "equal" && involvedUserIds.length > 0 && (
-				<div className="p-4 rounded-2xl border-2 border-primary/50 bg-primary/5">
-					<div className="flex items-center justify-between">
-						<span className="text-xs font-bold text-muted-foreground uppercase">
-							Each Person Pays
-						</span>
-						<span className="text-lg font-black text-primary">
-							{formatMoney(equalSplitAmount, currency)}
-						</span>
-					</div>
-				</div>
+				<EqualSplitSummary 
+					equalSplitAmount={equalSplitAmount}
+					currency={currency}
+				/>
 			)}
+		</div>
+	);
+}
+
+// Internal Helper Components
+
+function SplitTypeButton({ value, label, description, icon, active }: { 
+	value: string; label: string; description: string; icon: React.ReactNode; active: boolean 
+}) {
+	return (
+		<div>
+			<RadioGroupItem value={value} id={value} className="peer sr-only" />
+			<Label
+				htmlFor={value}
+				className={cn(
+					"flex flex-col items-center justify-center rounded-2xl border-2 p-4 cursor-pointer transition-all",
+					active
+						? "border-primary bg-primary/5 shadow-inner"
+						: "border-border bg-muted/30 hover:bg-muted/50"
+				)}
+			>
+				{icon}
+				<span className="text-sm font-bold">{label}</span>
+				<span className="text-xs text-muted-foreground">{description}</span>
+			</Label>
+		</div>
+	);
+}
+
+function ExactSplitSummary({ isExactValid, exactTotal, totalAmount, currency }: {
+	isExactValid: boolean; exactTotal: number; totalAmount: number; currency: CurrencyCode;
+}) {
+	return (
+		<div
+			className={cn(
+				"p-4 rounded-2xl border-2 transition-all",
+				isExactValid ? "border-emerald-500/50 bg-emerald-500/5" : "border-destructive/50 bg-destructive/5"
+			)}
+		>
+			<div className="flex items-center justify-between mb-2">
+				<span className="text-xs font-bold text-muted-foreground uppercase">Total Split</span>
+				<span className={cn("text-sm font-black", isExactValid ? "text-emerald-500" : "text-destructive")}>
+					{formatMoney(exactTotal, currency)}
+				</span>
+			</div>
+			<div className="flex items-center justify-between">
+				<span className="text-xs font-bold text-muted-foreground uppercase">Expense Total</span>
+				<span className="text-sm font-black text-foreground">{formatMoney(totalAmount, currency)}</span>
+			</div>
+			{!isExactValid && (
+				<p className="text-xs text-destructive font-medium mt-2">⚠️ Amounts must sum to total expense</p>
+			)}
+		</div>
+	);
+}
+
+function EqualSplitSummary({ equalSplitAmount, currency }: { equalSplitAmount: number; currency: CurrencyCode; }) {
+	return (
+		<div className="p-4 rounded-2xl border-2 border-primary/50 bg-primary/5">
+			<div className="flex items-center justify-between">
+				<span className="text-xs font-bold text-muted-foreground uppercase">Each Person Pays</span>
+				<span className="text-lg font-black text-primary">{formatMoney(equalSplitAmount, currency)}</span>
+			</div>
 		</div>
 	);
 }
