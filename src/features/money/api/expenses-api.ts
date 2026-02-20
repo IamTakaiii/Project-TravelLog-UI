@@ -1,131 +1,123 @@
+import { apiClient } from "@/lib/api-client";
 import { Expense } from "../types";
 import { ExpenseFormValues } from "../schemas/expense-schema";
-import { DEFAULT_CURRENCIES } from "../constants/currencies";
 
-// Mock Data Store
-let MOCK_EXPENSES: Expense[] = [
-	{
-		id: "1",
-		tripId: "t1",
-		description: "Welcome Dinner",
-		amount: 15000,
-		currency: "JPY",
-		exchangeRate: 0.24,
-		thbAmount: 3600,
-		date: new Date().toISOString(),
-		payerId: "u1",
-		category: "food",
-		splitDetails: { type: "equal", involvedUserIds: ["u1", "u2", "u3"] },
-		createdBy: "u1",
-		place: { name: "Sushi Zanmai, Shinjuku" },
-		createdAt: new Date().toISOString(),
-	},
-	{
-		id: "2",
-		tripId: "t1",
-		description: "Taxi to Hotel",
-		amount: 4500,
-		place: { name: "Haneda Airport" },
-		currency: "JPY",
-		exchangeRate: 0.24,
-		thbAmount: 1080,
-		date: new Date().toISOString(),
-		payerId: "u2",
-		category: "transport",
-		splitDetails: { type: "equal", involvedUserIds: ["u1", "u2", "u3"] },
-		createdBy: "u1",
-		createdAt: new Date().toISOString(),
-	},
-];
+// Map API response to UI Expense type
+const mapExpenseResponse = (data: any): Expense => {
+	const type = data.splits?.[0]?.splitType?.toLowerCase() || "equal";
+	const involvedUserIds = data.splits?.map((s: any) => s.userId) || [];
+	const amounts: Record<string, number> = {};
+	if (type === "exact" && data.splits) {
+		data.splits.forEach((s: any) => {
+			amounts[s.userId] = Number(s.amount);
+		});
+	}
+
+	return {
+		id: data.id,
+		tripId: data.tripId,
+		description: data.title,
+		amount: Number(data.amount),
+		currency: data.currency as any,
+		exchangeRate: Number(data.exchangeRate || 1),
+		rateAt: data.rateAt ?? undefined,
+		thbAmount: Number(data.baseAmount || data.amount),
+		date: data.date || data.createdAt,
+		payerId: data.payerId || "", // Payer ID might be null if it's from fund, need to handle or trust UI validation
+		category: data.category || "other",
+		splitDetails: {
+			type: type as any,
+			involvedUserIds,
+			...(type === "exact" ? { amounts } : {}),
+		},
+		place: data.locationName ? { name: data.locationName } : undefined,
+		createdBy: data.createdBy,
+		createdAt: data.createdAt,
+	};
+};
 
 export const expensesApi = {
-	async getByTripId(_tripId: string): Promise<Expense[]> {
-		// Simulate network delay
-		await new Promise((resolve) => setTimeout(resolve, 500));
-		return MOCK_EXPENSES;
+	async getByTripId(tripId: string): Promise<Expense[]> {
+		const response = await apiClient<any[]>(`/api/v1/expenses/trip/${tripId}`);
+		return response.map(mapExpenseResponse);
 	},
 
-	async create(tripId: string, data: ExpenseFormValues): Promise<Expense> {
-		await new Promise((resolve) => setTimeout(resolve, 500));
+	async create(tripId: string, data: ExpenseFormValues, exchangeRate?: number): Promise<Expense> {
+		// exchangeRate = "how many tripCurrency per 1 unit of data.currency"
+		// Provided by useExchangeRates(tripCurrency) at submit time.
+		// Falls back to 1 (same currency) if not provided.
+		const rate = exchangeRate ?? 1;
 
-		const rate =
-			DEFAULT_CURRENCIES[data.currency as keyof typeof DEFAULT_CURRENCIES].rate;
-
-		// Build split details based on type
-		const splitDetails: Expense["splitDetails"] =
-			data.splitType === "exact" && data.exactAmounts
-				? {
-					type: "exact",
-					involvedUserIds: data.involvedUserIds,
-					amounts: data.exactAmounts,
-				}
-				: {
-					type: "equal",
-					involvedUserIds: data.involvedUserIds,
-				};
-
-		const newExpense: Expense = {
-			id: Date.now().toString(),
+		// Map UI Form Values to API DTO
+		const payload = {
 			tripId,
-			description: data.description,
-			amount: data.amount,
-			currency: data.currency as any,
-			exchangeRate: rate,
-			thbAmount: data.amount * rate,
-			date: new Date(data.date).toISOString(),
 			payerId: data.payerId,
-			category: data.category,
-			splitDetails,
-			place: data.placeName ? { name: data.placeName } : undefined,
-			createdBy: "curr_user", // Mock current user
-			createdAt: new Date().toISOString(),
+			amount: data.amount,
+			currency: data.currency,
+			exchangeRate: rate,
+			title: data.description,
+			category: data.category || "other",
+			locationName: data.placeName || undefined,
+			splits: data.involvedUserIds.map((userId) => {
+				const isExact = data.splitType === "exact";
+				const splitAmount = isExact && data.exactAmounts
+					? data.exactAmounts[userId] || 0
+					: data.amount / data.involvedUserIds.length;
+
+				return {
+					userId,
+					amount: splitAmount,
+					splitType: data.splitType.toUpperCase(),
+					splitValue: splitAmount, // In this system maybe exact value is splitValue
+				};
+			}),
 		};
 
-		MOCK_EXPENSES = [newExpense, ...MOCK_EXPENSES];
-		return newExpense;
+		const response = await apiClient<any>("/api/v1/expenses", {
+			method: "POST",
+			body: JSON.stringify(payload),
+		});
+
+		return mapExpenseResponse(response);
 	},
 
 	async delete(id: string): Promise<void> {
-		await new Promise((resolve) => setTimeout(resolve, 300));
-		MOCK_EXPENSES = MOCK_EXPENSES.filter((e) => e.id !== id);
+		return apiClient<void>(`/api/v1/expenses/${id}`, {
+			method: "DELETE",
+		});
 	},
 
-	async update(id: string, data: ExpenseFormValues): Promise<Expense> {
-		await new Promise((resolve) => setTimeout(resolve, 500));
+	async update(id: string, data: ExpenseFormValues, exchangeRate?: number): Promise<Expense> {
+		const rate = exchangeRate ?? 1;
 
-		const index = MOCK_EXPENSES.findIndex((e) => e.id === id);
-		if (index === -1) throw new Error("Expense not found");
-
-		const rate =
-			DEFAULT_CURRENCIES[data.currency as keyof typeof DEFAULT_CURRENCIES].rate;
-
-		const splitDetails: Expense["splitDetails"] =
-			data.splitType === "exact" && data.exactAmounts
-				? {
-					type: "exact",
-					involvedUserIds: data.involvedUserIds,
-					amounts: data.exactAmounts,
-				}
-				: {
-					type: "equal",
-					involvedUserIds: data.involvedUserIds,
-				};
-
-		const updatedExpense: Expense = {
-			...MOCK_EXPENSES[index]!,
-			description: data.description,
-			amount: data.amount,
-			currency: data.currency as any,
-			exchangeRate: rate,
-			thbAmount: data.amount * rate,
-			date: new Date(data.date).toISOString(),
+		const payload = {
 			payerId: data.payerId,
-			category: data.category,
-			splitDetails,
-			place: data.placeName ? { name: data.placeName } : undefined,
+			amount: data.amount,
+			currency: data.currency,
+			exchangeRate: rate,
+			title: data.description,
+			category: data.category || "other",
+			locationName: data.placeName || undefined,
+			splits: data.involvedUserIds.map((userId) => {
+				const isExact = data.splitType === "exact";
+				const splitAmount = isExact && data.exactAmounts
+					? data.exactAmounts[userId] || 0
+					: data.amount / data.involvedUserIds.length;
+
+				return {
+					userId,
+					amount: splitAmount,
+					splitType: data.splitType.toUpperCase(),
+					splitValue: splitAmount,
+				};
+			}),
 		};
 
-		MOCK_EXPENSES[index] = updatedExpense;
-		return updatedExpense;
+		const response = await apiClient<any>(`/api/v1/expenses/${id}`, {
+			method: "PATCH",
+			body: JSON.stringify(payload),
+		});
+
+		return mapExpenseResponse(response);
 	},
 };

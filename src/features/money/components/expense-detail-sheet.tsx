@@ -4,9 +4,11 @@ import { formatMoney } from "../utils/money-formatter";
 import { getCategoryById } from "../utils/category-lookup";
 import { CENTRAL_FUND_ID } from "../constants/thresholds";
 import { CategoryIcon } from "./category-icon";
-import { MapPin, Calendar, User, Users, Receipt, Pencil, Trash2, ExternalLink } from "lucide-react";
+import { MapPin, Calendar, User, Users, Receipt, Pencil, Trash2, ExternalLink, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
 
 interface ExpenseDetailSheetProps {
 	expense: Expense | null;
@@ -21,6 +23,12 @@ export function ExpenseDetailSheet({
 	onEdit,
 	onDelete,
 }: ExpenseDetailSheetProps) {
+	// Always call hooks before early returns
+	const { data: trip } = useQuery({
+		...tripQueryOptions(expense?.tripId || ""),
+		enabled: !!expense?.tripId,
+	});
+
 	if (!expense) return null;
 
 	const category =
@@ -30,6 +38,18 @@ export function ExpenseDetailSheet({
 	const dateObj = new Date(expense.date);
 
 	if (!category) return null;
+
+	const userMap = new Map(trip?.members?.map((m) => [m.userId, m.user.name]) || []);
+	const tripCurrency = (trip?.currency as import("../types").CurrencyCode | undefined) || "THB";
+
+	const getPayerName = () => {
+		if (isCentral) return "Central Fund";
+		return userMap.get(expense.payerId) || `User ${expense.payerId.slice(0, 8)}`;
+	};
+
+	const getSplitUserName = (userId: string) => {
+		return userMap.get(userId) || `User ${userId.slice(0, 8)}`;
+	};
 
 	return (
 		<Sheet open={!!expense} onOpenChange={onClose}>
@@ -78,15 +98,28 @@ export function ExpenseDetailSheet({
 						{expense.description}
 					</h2>
 					<div className="flex flex-col sm:flex-row items-center sm:items-baseline gap-1 sm:gap-2 mt-2">
+						{/* Hero: always show in trip currency */}
 						<span className="text-3xl sm:text-4xl font-black font-mono tracking-tighter">
-							{formatMoney(expense.thbAmount, "THB")}
+							{formatMoney(expense.thbAmount, tripCurrency)}
 						</span>
-						{expense.currency !== "THB" && (
+						{/* Subtitle: show original currency if different from trip currency */}
+						{expense.currency !== tripCurrency && (
 							<span className="text-xs sm:text-sm font-bold opacity-60">
-								({expense.currency} {expense.amount.toLocaleString()})
+								({formatMoney(expense.amount, expense.currency)})
 							</span>
 						)}
 					</div>
+					{/* Exchange rate badge — shown only when currency differs from trip base */}
+					{expense.currency !== tripCurrency && expense.exchangeRate !== 1 && (
+						<div className="flex items-center gap-1.5 mt-1">
+							<span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted/60 text-muted-foreground">
+								1 {expense.currency} = {expense.exchangeRate.toFixed(4)} {tripCurrency}
+								{expense.rateAt && (
+									<span className="opacity-60"> · {new Date(expense.rateAt).toLocaleDateString([], { dateStyle: "medium" })}</span>
+								)}
+							</span>
+						</div>
+					)}
 				</div>
 
 				{/* Details List */}
@@ -117,12 +150,34 @@ export function ExpenseDetailSheet({
 							</div>
 						</div>
 
+						{/* Exchange Rate row — only when currency differs from trip base */}
+						{expense.currency !== tripCurrency && (
+							<div className="flex items-center gap-3 min-w-0">
+								<div className="p-2.5 bg-emerald-100 rounded-xl shrink-0">
+									<TrendingUp className="size-4 sm:size-5 text-emerald-600" />
+								</div>
+								<div className="space-y-0.5">
+									<p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+										Exchange Rate
+									</p>
+									<p className="text-xs sm:text-sm font-bold">
+										1 {expense.currency} = {expense.exchangeRate.toFixed(4)} {tripCurrency}
+										{expense.rateAt && (
+											<span className="text-[10px] font-normal text-muted-foreground ml-1.5">
+												(as of {new Date(expense.rateAt).toLocaleDateString([], { dateStyle: "medium" })})
+											</span>
+										)}
+									</p>
+								</div>
+							</div>
+						)}
+
 						{/* Payer */}
 						<div className="flex items-center justify-between flex-wrap gap-2">
-							<div className="flex items-center gap-3">
+							<div className="flex items-center gap-3 min-w-0 flex-1">
 								<div
 									className={cn(
-										"p-2.5 rounded-xl",
+										"p-2.5 rounded-xl shrink-0",
 										isCentral ? "bg-amber-100" : "bg-blue-100"
 									)}
 								>
@@ -133,17 +188,17 @@ export function ExpenseDetailSheet({
 										)}
 									/>
 								</div>
-								<div className="space-y-0.5">
+								<div className="space-y-0.5 min-w-0 flex-1 pr-2">
 									<p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
 										Paid By
 									</p>
-									<p className="text-xs sm:text-sm font-bold truncate max-w-[150px] sm:max-w-none">
-										{isCentral ? "Central Fund" : `User ${expense.payerId}`}
+									<p className="text-xs sm:text-sm font-bold truncate">
+										{getPayerName()}
 									</p>
 								</div>
 							</div>
 							{isCentral && (
-								<span className="bg-amber-100 text-amber-700 text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-wider">
+								<span className="bg-amber-100 text-amber-700 text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-wider shrink-0">
 									No Debt
 								</span>
 							)}
@@ -151,8 +206,8 @@ export function ExpenseDetailSheet({
 
 						{/* Location */}
 						{expense.place?.name && (
-							<div className="flex items-center gap-3">
-								<div className="p-2.5 bg-rose-100 rounded-xl">
+							<div className="flex items-center gap-3 min-w-0">
+								<div className="p-2.5 bg-rose-100 rounded-xl shrink-0">
 									<MapPin className="size-4 sm:size-5 text-rose-600" />
 								</div>
 								<div className="space-y-0.5 min-w-0 flex-1">
@@ -161,7 +216,7 @@ export function ExpenseDetailSheet({
 									</p>
 									<Button
 										mode="link"
-										className="p-0 h-auto text-xs sm:text-sm font-bold truncate text-foreground hover:text-primary flex items-center gap-1"
+										className="p-0 h-auto text-xs sm:text-sm font-bold truncate text-foreground hover:text-primary flex items-center justify-start gap-1"
 										onClick={() =>
 											window.open(
 												`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -171,8 +226,8 @@ export function ExpenseDetailSheet({
 											)
 										}
 									>
-										{expense.place.name}
-										<ExternalLink className="size-3" />
+										<span className="truncate block max-w-[250px]">{expense.place.name}</span>
+										<ExternalLink className="size-3 shrink-0" />
 									</Button>
 								</div>
 							</div>
@@ -187,28 +242,31 @@ export function ExpenseDetailSheet({
 								</h3>
 							</div>
 							<div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
-								{expense.splitDetails.involvedUserIds.map((userId) => (
-									<div
-										key={userId}
-										className="flex items-center gap-2 bg-muted/30 p-2 rounded-xl border border-border/50"
-									>
-										<div className="size-7 sm:size-8 rounded-full bg-background flex items-center justify-center text-[10px] sm:text-xs font-bold ring-1 ring-border shrink-0">
-											{userId.slice(0, 2).toUpperCase()}
+								{expense.splitDetails.involvedUserIds.map((userId) => {
+									const userName = getSplitUserName(userId);
+									return (
+										<div
+											key={userId}
+											className="flex items-center gap-2 bg-muted/30 p-2 rounded-xl border border-border/50"
+										>
+											<div className="size-7 sm:size-8 rounded-full bg-background flex items-center justify-center text-[10px] sm:text-xs font-bold ring-1 ring-border shrink-0">
+												{userName.slice(0, 2).toUpperCase()}
+											</div>
+											<div className="min-w-0 flex-1">
+												<p className="text-xs font-bold text-foreground truncate">
+													{userName}
+												</p>
+												<p className="text-[10px] text-muted-foreground">
+													{formatMoney(
+														expense.thbAmount /
+														expense.splitDetails.involvedUserIds.length,
+														tripCurrency
+													)}
+												</p>
+											</div>
 										</div>
-										<div className="min-w-0 flex-1">
-											<p className="text-xs font-bold text-foreground truncate">
-												User {userId}
-											</p>
-											<p className="text-[10px] text-muted-foreground">
-												{formatMoney(
-													expense.thbAmount /
-													expense.splitDetails.involvedUserIds.length,
-													"THB"
-												)}
-											</p>
-										</div>
-									</div>
-								))}
+									);
+								})}
 							</div>
 						</div>
 					</div>

@@ -11,6 +11,7 @@ import {
 	Music,
 	MoreHorizontal,
 	Receipt,
+	PlusCircle,
 } from "lucide-react";
 
 export const DEFAULT_CATEGORIES: ExpenseCategory[] = [
@@ -66,5 +67,6 @@ export const CATEGORY_ICONS: Record<string, LucideIcon> = {
 	Music,
 	MoreHorizontal,
 	Receipt,
+	PlusCircle,
 };
 

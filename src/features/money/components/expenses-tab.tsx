@@ -14,6 +14,8 @@ interface ExpensesTabProps {
 	filteredExpenses: Expense[];
 	onExpenseClick: (expense: Expense) => void;
 	isLoading?: boolean;
+	userMap?: Map<string, string>;
+	tripCurrency?: import("../types").CurrencyCode;
 }
 
 export function ExpensesTab({
@@ -25,6 +27,8 @@ export function ExpensesTab({
 	filteredExpenses,
 	onExpenseClick,
 	isLoading,
+	userMap,
+	tripCurrency,
 }: ExpensesTabProps) {
 	return (
 		<motion.div
@@ -46,10 +50,12 @@ export function ExpensesTab({
 				/>
 			</div>
 
-			<ExpenseList 
-				expenses={filteredExpenses} 
-				onExpenseClick={onExpenseClick} 
+			<ExpenseList
+				expenses={filteredExpenses}
+				onExpenseClick={onExpenseClick}
 				isLoading={isLoading}
+				userMap={userMap}
+				tripCurrency={tripCurrency}
 			/>
 		</motion.div>
 	);

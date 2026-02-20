@@ -8,19 +8,26 @@ import { Expense } from '../types';
 
 export type FormMode = 'quick' | 'standard';
 
+interface UserInfo {
+  id: string;
+  name: string;
+  avatar?: string;
+}
+
 interface UseExpenseFormParams {
   tripId: string;
   currency?: string;
   expense?: Expense;
+  users?: UserInfo[];
   onSuccess?: () => void;
 }
 
-function getDefaultValues(expense?: Expense, currency?: string): ExpenseFormValues {
+function getDefaultValues(expense?: Expense, currency?: string, users: UserInfo[] = []): ExpenseFormValues {
   if (expense) {
     return {
       description: expense.description,
       amount: expense.amount,
-      currency: expense.currency,
+      currency: expense.currency || currency || 'THB',
       date: new Date(expense.date).toISOString().slice(0, 16),
       category: expense.category,
       payerId: expense.payerId,
@@ -31,15 +38,18 @@ function getDefaultValues(expense?: Expense, currency?: string): ExpenseFormValu
     };
   }
 
+  const allUserIds = users.map(u => u.id);
+  const payerId = allUserIds.length > 0 ? allUserIds[0] : '';
+
   return {
     description: '',
     amount: 0,
     currency: currency || 'THB',
     date: new Date().toISOString().slice(0, 16),
     category: 'food',
-    payerId: 'u1',
+    payerId: payerId as string,
     splitType: 'equal',
-    involvedUserIds: ['u1', 'u2', 'u3'],
+    involvedUserIds: allUserIds,
     exactAmounts: {},
     placeName: '',
   };
@@ -48,9 +58,8 @@ function getDefaultValues(expense?: Expense, currency?: string): ExpenseFormValu
 /**
  * Encapsulates React Hook Form setup, mode switching, form reset,
  * and mutation submission for the expense form.
- * (Requirements 5.1, 7.2)
  */
-export function useExpenseForm({ tripId, currency, expense, onSuccess }: UseExpenseFormParams) {
+export function useExpenseForm({ tripId, currency, expense, users = [], onSuccess }: UseExpenseFormParams) {
   const isEditing = !!expense;
   const [mode, setMode] = useState<FormMode>(expense ? 'standard' : 'quick');
 
@@ -58,19 +67,19 @@ export function useExpenseForm({ tripId, currency, expense, onSuccess }: UseExpe
 
   const form = useForm<ExpenseFormValues>({
     resolver: zodResolver(expenseSchema),
-    defaultValues: getDefaultValues(expense, currency),
+    defaultValues: getDefaultValues(expense, currency, users),
   });
 
-  // Reset form when expense changes (edit mode)
+  // Reset form when expense or users change (edit mode)
   useEffect(() => {
     if (expense) {
-      form.reset(getDefaultValues(expense));
+      form.reset(getDefaultValues(expense, currency, users));
       setMode('standard');
     } else {
-      form.reset(getDefaultValues(undefined, currency));
-      setMode('quick');
+      form.reset(getDefaultValues(undefined, currency, users));
+      setMode(mode === 'standard' ? 'standard' : 'quick'); // preserve mode if it was changed
     }
-  }, [expense, currency, form]);
+  }, [expense, currency, users, form]);
 
   const onSubmit = useCallback(
     (data: ExpenseFormValues) => {
@@ -85,16 +94,16 @@ export function useExpenseForm({ tripId, currency, expense, onSuccess }: UseExpe
           },
         );
       } else {
-        createExpense.mutate(data, {
+        createExpense.mutate({ data }, {
           onSuccess: () => {
             toast.success('Expense added');
-            form.reset(getDefaultValues(undefined, currency));
+            form.reset(getDefaultValues(undefined, currency, users));
             onSuccess?.();
           },
         });
       }
     },
-    [isEditing, expense, createExpense, updateExpense, form, onSuccess],
+    [isEditing, expense, createExpense, updateExpense, form, currency, users, onSuccess],
   );
 
   const isPending = createExpense.isPending || updateExpense.isPending;

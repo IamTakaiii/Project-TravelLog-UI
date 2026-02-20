@@ -1,21 +1,24 @@
 import { Control } from "react-hook-form";
-import { CENTRAL_FUND_ID } from "../../constants/thresholds";
 import { ExpenseFormValues } from "../../schemas/expense-schema";
 import { FormSelect } from "@/components/ui/form-select";
 
-interface PayerSelectProps {
-	control: Control<ExpenseFormValues>;
+interface UserInfo {
+	id: string;
+	name: string;
+	avatar?: string;
 }
 
-export function PayerSelect({ control }: PayerSelectProps) {
+interface PayerSelectProps {
+	control: Control<ExpenseFormValues>;
+	users: UserInfo[];
+}
+
+export function PayerSelect({ control, users }: PayerSelectProps) {
 	const payerOptions = [
-		{ label: "Me", value: "u1" },
-		{ label: "Ploy", value: "u2" },
-		{ label: "Non", value: "u3" },
-		{ 
-			label: "Central Fund", 
-			value: CENTRAL_FUND_ID,
-		},
+		...users.map((user) => ({
+			label: user.name,
+			value: user.id,
+		})),
 	];
 
 	return (

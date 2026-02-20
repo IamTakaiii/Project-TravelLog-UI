@@ -10,11 +10,12 @@ import {
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SplitConfiguration } from "./split-configuration";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { CurrencyCode, Expense } from "../types";
 import { useExpenseForm, FormMode } from "../hooks/use-expense-form";
-import { MOCK_USERS } from "../mock/mock-users";
 import { calculateEqualSplit, validateExactSplit } from "../utils/split-calculator";
+import { useQuery } from "@tanstack/react-query";
+import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
 
 // Sub-components
 import { AmountHeroInput } from "./expense-form/amount-hero-input";
@@ -43,11 +44,25 @@ export function ExpenseFormSheet({
 	const open = controlledOpen ?? internalOpen;
 	const setOpen = onOpenChange ?? setInternalOpen;
 
+	const { data: trip } = useQuery(tripQueryOptions(tripId));
+
+	const users = useMemo(() => {
+		if (!trip || !trip.members) return [];
+		// Also add creator as member if they are not in the list (usually they should be)
+		return trip.members.map(m => ({
+			id: m.userId,
+			name: m.user.name || "Unknown User",
+			avatar: m.user.image || "",
+		}));
+	}, [trip]);
+
+
 	const { form, mode, setMode, isEditing, isPending, onSubmit } =
 		useExpenseForm({
 			tripId,
 			currency,
 			expense,
+			users,
 			onSuccess: () => setOpen(false),
 		});
 
@@ -101,7 +116,7 @@ export function ExpenseFormSheet({
 
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-						<AmountHeroInput control={form.control} />
+						<AmountHeroInput control={form.control} tripCurrency={(currency as CurrencyCode) || "THB"} />
 
 						<BasicInfoFields control={form.control} mode={mode} />
 
@@ -109,7 +124,7 @@ export function ExpenseFormSheet({
 
 						{mode === "standard" && (
 							<>
-								<PayerSelect control={form.control} />
+								<PayerSelect control={form.control} users={users} />
 
 								<FormField
 									control={form.control}
@@ -117,7 +132,7 @@ export function ExpenseFormSheet({
 									render={({ field }) => {
 										const amount = form.watch("amount") || 0;
 										const watchedCurrency = form.watch("currency") as CurrencyCode;
-										const involvedUserIds = form.watch("involvedUserIds");
+										const involvedUserIds = form.watch("involvedUserIds") || [];
 										const watchedExactAmounts = form.watch("exactAmounts") ?? {};
 
 										const equalSplit = calculateEqualSplit(amount, involvedUserIds);
@@ -147,7 +162,7 @@ export function ExpenseFormSheet({
 														};
 														form.setValue("exactAmounts", newAmounts);
 													}}
-													users={MOCK_USERS}
+													users={users}
 													equalSplitAmount={equalSplit.perPersonAmount}
 													exactTotal={exactValidation.totalAssigned}
 													isExactValid={exactValidation.isValid}

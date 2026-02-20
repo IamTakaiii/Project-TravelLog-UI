@@ -110,6 +110,8 @@ export function MoneyManagementPage() {
 						filteredExpenses={filteredExpenses}
 						onExpenseClick={handleExpenseClick}
 						isLoading={isExpensesLoading}
+						userMap={new Map(trip.members.map(m => [m.userId, m.user.name]))}
+						tripCurrency={(trip.currency as CurrencyCode) || "THB"}
 					/>
 
 				) : (

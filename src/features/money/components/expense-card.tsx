@@ -6,16 +6,19 @@ import { CENTRAL_FUND_ID } from "../constants/thresholds";
 import { CategoryIcon } from "./category-icon";
 import { Expense } from "../types";
 import { cn } from "@/lib/utils";
-import { MapPin } from "lucide-react";
 
 interface ExpenseCardProps {
 	expense: Expense;
 	onClick?: () => void;
+	userMap?: Map<string, string>;
+	tripCurrency?: import("../types").CurrencyCode;
 }
 
 export const ExpenseCard = memo(function ExpenseCard({
 	expense,
 	onClick,
+	userMap,
+	tripCurrency = "THB",
 }: ExpenseCardProps) {
 	const category =
 		getCategoryById(expense.category) ||
@@ -23,6 +26,12 @@ export const ExpenseCard = memo(function ExpenseCard({
 	const isCentral = expense.payerId === CENTRAL_FUND_ID;
 
 	if (!category) return null;
+
+	const getPayerName = () => {
+		if (isCentral) return "Central Fund";
+		if (userMap?.has(expense.payerId)) return userMap.get(expense.payerId);
+		return expense.payerId.slice(0, 8); // fallback
+	};
 
 	return (
 		<motion.div
@@ -44,7 +53,7 @@ export const ExpenseCard = memo(function ExpenseCard({
 				<h4 className="font-bold text-sm truncate">{expense.description}</h4>
 				<div className="flex items-center gap-1.5 text-xs text-muted-foreground">
 					<span className="truncate max-w-[80px]">
-						{isCentral ? "Central" : expense.payerId}
+						{getPayerName()}
 					</span>
 					<span>•</span>
 					<span>
@@ -53,25 +62,18 @@ export const ExpenseCard = memo(function ExpenseCard({
 							day: "numeric",
 						})}
 					</span>
-					{expense.place?.name && (
-						<>
-							<span>•</span>
-							<MapPin className="size-3" />
-							<span className="truncate max-w-[100px]">
-								{expense.place.name}
-							</span>
-						</>
-					)}
 				</div>
 			</div>
 
 			<div className="text-right shrink-0">
+				{/* Always show in trip currency (thbAmount = baseAmount in trip currency) */}
 				<p className="font-black text-base tracking-tight">
-					{formatMoney(expense.thbAmount, "THB")}
+					{formatMoney(expense.thbAmount, tripCurrency)}
 				</p>
-				{expense.currency !== "THB" && (
+				{/* Show original currency as subtitle if different */}
+				{expense.currency !== tripCurrency && (
 					<p className="text-[10px] text-muted-foreground">
-						{expense.currency}
+						{formatMoney(expense.amount, expense.currency)}
 					</p>
 				)}
 			</div>

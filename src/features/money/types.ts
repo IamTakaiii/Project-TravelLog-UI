@@ -29,6 +29,7 @@ export interface Expense {
 	amount: number; // Original currency amount
 	currency: CurrencyCode;
 	exchangeRate: number;
+	rateAt?: string;        // "YYYY-MM-DD" — which day's exchange rate was used
 	thbAmount: number; // Converted to base (THB for now, or trip base)
 	date: string; // ISO string
 	payerId: string;
@@ -72,26 +73,26 @@ export type UpdateFundInput = Partial<CreateFundInput>;
 
 // Discriminated union for split results (Requirement 3.3)
 export interface EqualSplitResult {
-  type: 'equal';
-  perPersonAmount: number;
-  involvedUserIds: string[];
-  totalAmount: number;
+	type: 'equal';
+	perPersonAmount: number;
+	involvedUserIds: string[];
+	totalAmount: number;
 }
 
 export interface ExactSplitResult {
-  type: 'exact';
-  amounts: Record<string, number>;
-  involvedUserIds: string[];
-  totalAmount: number;
+	type: 'exact';
+	amounts: Record<string, number>;
+	involvedUserIds: string[];
+	totalAmount: number;
 }
 
 export type SplitResult = EqualSplitResult | ExactSplitResult;
 
 // Split validation result (Requirement 8.4)
 export interface SplitValidation {
-  isValid: boolean;
-  totalAssigned: number;
-  expectedTotal: number;
-  discrepancy: number;
+	isValid: boolean;
+	totalAssigned: number;
+	expectedTotal: number;
+	discrepancy: number;
 }
 
