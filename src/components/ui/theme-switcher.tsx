@@ -50,7 +50,7 @@ export function ThemeSwitcher() {
 					<DropdownMenuItem
 						key={theme.id}
 						onClick={() => setPreset(theme.id)}
-						className="flex items-center gap-3 cursor-pointer py-2.5 hover:bg-primary/10 focus:bg-primary/10"
+						className="flex items-center gap-3 cursor-pointer py-2.5 hover:bg-primary/10 focus:bg-primary/10 focus:text-foreground"
 					>
 						<div
 							className="w-8 h-8 rounded-lg flex items-center justify-center text-lg shrink-0 border"
