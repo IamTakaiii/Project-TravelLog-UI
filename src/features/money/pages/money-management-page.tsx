@@ -4,8 +4,13 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import { expensesQueryOptions } from "../queries/money-queries";
 import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
-import { ExpenseFormSheet, ExpenseDetailSheet, ExpensesTab, BalancesTab } from "../components";
-import { MoneyManagementHeader } from "../components/money-management-header";
+import {
+	ExpenseFormSheet,
+	ExpenseDetailSheet,
+	ExpensesTab,
+	BalancesTab,
+	MoneyManagementHeader,
+} from "../components";
 import { useExpenseFilters } from "../hooks/use-expense-filters";
 import { useBudgetStats } from "../hooks/use-budget-stats";
 import { Expense, CurrencyCode } from "../types";
