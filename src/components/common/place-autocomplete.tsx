@@ -9,7 +9,7 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, VisuallyHidden } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Control, useController, FieldValues, Path } from "react-hook-form";
 import { FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
@@ -153,6 +153,9 @@ function PlaceAutocompleteInner<T extends FieldValues>({ control, name, label }:
 
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="max-w-[420px] w-[95vw] rounded-[2rem] p-0 border-none bg-transparent shadow-none overflow-visible [&>button]:hidden">
+                    <VisuallyHidden.Root>
+                        <DialogTitle>Search for a place</DialogTitle>
+                    </VisuallyHidden.Root>
                     {/* Glassmorphism Container */}
                     <div className="bg-card/95 backdrop-blur-3xl border border-white/20 dark:border-white/10 rounded-[2rem] shadow-2xl overflow-hidden relative">
                         {/* Decorative Glows */}

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Dialog as DialogPrimitive } from "radix-ui";
+import { Dialog as DialogPrimitive, VisuallyHidden } from "radix-ui";
 import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -118,18 +118,19 @@ function DialogTitle({
 	);
 }
 
-function DialogDescription({
+const DialogDescription = ({
 	className,
 	...props
-}: React.ComponentProps<typeof DialogPrimitive.Description>) {
-	return (
-		<DialogPrimitive.Description
-			data-slot="dialog-description"
-			className={cn("text-sm text-muted-foreground", className)}
-			{...props}
-		/>
-	);
-}
+}: React.ComponentProps<typeof DialogPrimitive.Description>) => (
+	<DialogPrimitive.Description
+		data-slot="dialog-description"
+		className={cn("text-sm text-muted-foreground", className)}
+		{...props}
+	/>
+);
+DialogDescription.displayName = DialogPrimitive.Description.displayName;
+
+const DialogVisuallyHidden = VisuallyHidden.Root;
 
 export {
 	Dialog,
@@ -142,4 +143,5 @@ export {
 	DialogFooter,
 	DialogTitle,
 	DialogDescription,
+	DialogVisuallyHidden as VisuallyHidden,
 };

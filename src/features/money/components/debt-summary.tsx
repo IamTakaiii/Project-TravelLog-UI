@@ -36,6 +36,24 @@ export function DebtSummary({ expenses, currentUserId, userMap, tripCurrency, on
 	const netBalance = totalReceivable - totalPayable;
 	const totalPeople = whoOwesMe.length + iOweWho.length;
 
+	const heroBackground = netBalance > 0
+		? "radial-gradient(circle, rgb(16 185 129), transparent)"
+		: netBalance < 0
+			? "radial-gradient(circle, rgb(239 68 68), transparent)"
+			: "radial-gradient(circle, rgb(148 163 184), transparent)";
+
+	const heroClassName = netBalance > 0
+		? "bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-teal-500/5 border-emerald-500/15"
+		: netBalance < 0
+			? "bg-gradient-to-br from-destructive/5 via-destructive/10 to-orange-500/5 border-destructive/15"
+			: "bg-gradient-to-br from-muted/40 to-muted/20 border-border/50";
+
+	const netBalanceClassName = netBalance > 0
+		? "text-emerald-600"
+		: netBalance < 0
+			? "text-destructive"
+			: "text-muted-foreground";
+
 	if (whoOwesMe.length === 0 && iOweWho.length === 0) {
 		return (
 			<motion.div
@@ -69,24 +87,12 @@ export function DebtSummary({ expenses, currentUserId, userMap, tripCurrency, on
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.4 }}
-				className={cn(
-					"relative overflow-hidden rounded-[2rem] p-6 sm:p-8 border",
-					netBalance > 0
-						? "bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-teal-500/5 border-emerald-500/15"
-						: netBalance < 0
-							? "bg-gradient-to-br from-destructive/5 via-destructive/10 to-orange-500/5 border-destructive/15"
-							: "bg-gradient-to-br from-muted/40 to-muted/20 border-border/50"
-				)}
+				className={cn("relative overflow-hidden rounded-[2rem] p-6 sm:p-8 border", heroClassName)}
 			>
 				{/* Decorative Elements */}
-				<div className="absolute top-0 right-0 w-48 h-48 rounded-full blur-[80px] opacity-20 pointer-events-none"
-					style={{
-						background: netBalance > 0
-							? "radial-gradient(circle, rgb(16 185 129), transparent)"
-							: netBalance < 0
-								? "radial-gradient(circle, rgb(239 68 68), transparent)"
-								: "radial-gradient(circle, rgb(148 163 184), transparent)"
-					}}
+				<div
+					className="absolute top-0 right-0 w-48 h-48 rounded-full blur-[80px] opacity-20 pointer-events-none"
+					style={{ background: heroBackground }}
 				/>
 
 				<div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -108,10 +114,7 @@ export function DebtSummary({ expenses, currentUserId, userMap, tripCurrency, on
 								Net Balance
 							</span>
 						</div>
-						<p className={cn(
-							"text-3xl sm:text-4xl font-black font-mono tracking-tighter",
-							netBalance > 0 ? "text-emerald-600" : netBalance < 0 ? "text-destructive" : "text-muted-foreground"
-						)}>
+						<p className={cn("text-3xl sm:text-4xl font-black font-mono tracking-tighter", netBalanceClassName)}>
 							{netBalance > 0 ? "+" : ""}{formatMoney(Math.abs(netBalance), tripCurrency)}
 						</p>
 					</div>
@@ -311,6 +314,10 @@ const DebtCard = memo(function DebtCard({
 	const isPay = type === "pay";
 	const percentage = totalAmount > 0 ? (amount / totalAmount) * 100 : 0;
 	const avatarColors = useMemo(() => getAvatarColors(userId), [userId]);
+	const accentColor = isPay ? "bg-destructive" : "bg-emerald-500";
+	const progressBarClassName = isPay
+		? "bg-gradient-to-r from-destructive/60 to-destructive"
+		: "bg-gradient-to-r from-emerald-400/60 to-emerald-500";
 
 	return (
 		<motion.div
@@ -326,14 +333,12 @@ const DebtCard = memo(function DebtCard({
 			<div className="flex items-center justify-between relative z-10">
 				<div className="flex items-center gap-3">
 					{/* Avatar */}
-					<div
-						className={cn(
-							"size-11 sm:size-12 rounded-2xl flex items-center justify-center font-black text-xs sm:text-sm shrink-0 ring-2",
-							avatarColors.bg,
-							avatarColors.text,
-							avatarColors.ring
-						)}
-					>
+					<div className={cn(
+						"size-11 sm:size-12 rounded-2xl flex items-center justify-center font-black text-xs sm:text-sm shrink-0 ring-2",
+						avatarColors.bg,
+						avatarColors.text,
+						avatarColors.ring
+					)}>
 						{userName.substring(0, 2).toUpperCase()}
 					</div>
 					<div className="space-y-0.5 min-w-0">
@@ -381,23 +386,16 @@ const DebtCard = memo(function DebtCard({
 						initial={{ width: 0 }}
 						animate={{ width: `${Math.min(percentage, 100)}%` }}
 						transition={{ duration: 0.8, delay: 0.3 + index * 0.06, ease: "easeOut" }}
-						className={cn(
-							"h-full rounded-full",
-							isPay
-								? "bg-gradient-to-r from-destructive/60 to-destructive"
-								: "bg-gradient-to-r from-emerald-400/60 to-emerald-500"
-						)}
+						className={cn("h-full rounded-full", progressBarClassName)}
 					/>
 				</div>
 			</div>
 
 			{/* Background Accent */}
-			<div
-				className={cn(
-					"absolute top-0 right-0 size-28 blur-[50px] opacity-[0.07] -mr-10 -mt-10 pointer-events-none transition-opacity group-hover:opacity-[0.12]",
-					isPay ? "bg-destructive" : "bg-emerald-500"
-				)}
-			/>
+			<div className={cn(
+				"absolute top-0 right-0 size-28 blur-[50px] opacity-[0.07] -mr-10 -mt-10 pointer-events-none transition-opacity group-hover:opacity-[0.12]",
+				accentColor
+			)} />
 		</motion.div>
 	);
 });
