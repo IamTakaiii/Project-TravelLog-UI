@@ -57,7 +57,7 @@ export function HistorySheet({
 				<SheetHeader className="p-6 border-b">
 					<SheetTitle>Activity Log</SheetTitle>
 					<SheetDescription>
-						History of all changes made to expenses in this trip.
+						History of all changes made to expenses and funds in this trip.
 					</SheetDescription>
 				</SheetHeader>
 
