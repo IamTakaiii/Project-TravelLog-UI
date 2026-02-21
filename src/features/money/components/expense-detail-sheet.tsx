@@ -2,7 +2,7 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Expense, CurrencyCode } from "../types";
 import { formatMoney } from "../utils/money-formatter";
 import { getCategoryById } from "../utils/category-lookup";
-import { CENTRAL_FUND_ID } from "../constants/thresholds";
+
 import { CategoryIcon } from "./category-icon";
 import { MapPin, Calendar, User, Users, Receipt, Pencil, Trash2, ExternalLink, TrendingUp, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
 import { DetailSheetHero } from "./detail-sheet-hero";
+import { fundsApi } from "../api/funds-api";
 
 interface ExpenseDetailSheetProps {
 	expense: Expense | null;
@@ -29,6 +30,14 @@ export function ExpenseDetailSheet({
 		enabled: !!expense?.tripId,
 	});
 
+	// Fetch the specific fund that paid (if any) so we can show its real title.
+	const { data: payerFund } = useQuery({
+		queryKey: ["fund", expense?.payerFundId],
+		queryFn: () => fundsApi.getById(expense!.payerFundId!),
+		enabled: !!expense?.payerFundId,
+		staleTime: 1000 * 60 * 10,
+	});
+
 	if (!expense) return null;
 
 	const category =
@@ -45,14 +54,16 @@ export function ExpenseDetailSheet({
 		.filter((c) => c.startsWith("bg-") || c.startsWith("dark:bg-"))
 		.join(" ") || "bg-muted dark:bg-muted";
 
-	const isCentral = expense.payerId === CENTRAL_FUND_ID;
+	const isCentral = !!expense.payerFundId;
 	const dateObj = new Date(expense.date);
 	const isSettlement = expense.isSettlement;
 	const userMap = new Map(trip?.members?.map((m) => [m.userId, m.user.name]) || []);
 	const tripCurrency = (trip?.currency as CurrencyCode | undefined) || "THB";
 
 	const getPayerName = () => {
-		if (isCentral) return "Central Fund";
+		// Show the specific fund title when a fund covered this expense.
+		if (isCentral) return payerFund?.title ?? "Central Fund";
+
 		return userMap.get(expense.payerId) || `User ${expense.payerId.slice(0, 8)}`;
 	};
 

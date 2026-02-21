@@ -32,7 +32,10 @@ export interface Expense {
 	rateAt?: string;      // "YYYY-MM-DD" — which day's exchange rate was used
 	thbAmount: number;    // Converted to trip base currency
 	date: string;         // ISO string
+	/** UUID of the user who paid. Null/empty when a fund paid. */
 	payerId: string;
+	/** UUID of the central fund that paid. Set when a fund covers this expense. */
+	payerFundId?: string;
 	category: string;
 	splitDetails: SplitDetails;
 	place?: {

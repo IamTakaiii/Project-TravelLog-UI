@@ -16,6 +16,7 @@ import { useExpenseForm, FormMode } from "../hooks/use-expense-form";
 import { calculateEqualSplit, validateExactSplit } from "../utils/split-calculator";
 import { useQuery } from "@tanstack/react-query";
 import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
+import { fundsQueryOptions } from "../queries/fund-queries";
 
 // Sub-components
 import { AmountHeroInput } from "./expense-form/amount-hero-input";
@@ -48,13 +49,14 @@ export function ExpenseFormSheet({
 
 	const users = useMemo(() => {
 		if (!trip || !trip.members) return [];
-		// Also add creator as member if they are not in the list (usually they should be)
 		return trip.members.map(m => ({
 			id: m.userId,
 			name: m.user.name || "Unknown User",
 			avatar: m.user.image || "",
 		}));
 	}, [trip]);
+
+	const { data: funds = [] } = useQuery(fundsQueryOptions(tripId));
 
 
 	const { form, mode, setMode, isEditing, isPending, onSubmit } =
@@ -124,7 +126,11 @@ export function ExpenseFormSheet({
 
 						{mode === "standard" && (
 							<>
-								<PayerSelect control={form.control} users={users} />
+								<PayerSelect
+									control={form.control}
+									users={users}
+									funds={funds}
+								/>
 
 								<FormField
 									control={form.control}

@@ -8,6 +8,8 @@ export const fundsQueryKeys = {
     list: (tripId: string) => [...fundsQueryKeys.lists(), tripId] as const,
     details: () => [...fundsQueryKeys.all, "detail"] as const,
     detail: (id: string) => [...fundsQueryKeys.details(), id] as const,
+    summaries: () => [...fundsQueryKeys.all, "summary"] as const,
+    summary: (tripId: string) => [...fundsQueryKeys.summaries(), tripId] as const,
 };
 
 export const fundsQueryOptions = (tripId: string) =>
@@ -24,6 +26,7 @@ export const useFundMutations = (tripId: string) => {
         mutationFn: (data: CreateFundInput) => fundsApi.create(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: fundsQueryKeys.list(tripId) });
+            queryClient.invalidateQueries({ queryKey: fundsQueryKeys.summary(tripId) });
         },
     });
 
@@ -32,6 +35,7 @@ export const useFundMutations = (tripId: string) => {
             fundsApi.update(id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: fundsQueryKeys.list(tripId) });
+            queryClient.invalidateQueries({ queryKey: fundsQueryKeys.summary(tripId) });
         },
     });
 
@@ -39,6 +43,7 @@ export const useFundMutations = (tripId: string) => {
         mutationFn: (id: string) => fundsApi.delete(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: fundsQueryKeys.list(tripId) });
+            queryClient.invalidateQueries({ queryKey: fundsQueryKeys.summary(tripId) });
         },
     });
 

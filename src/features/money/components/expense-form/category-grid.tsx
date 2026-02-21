@@ -26,7 +26,7 @@ export function CategoryGrid({ control }: CategoryGridProps) {
 				render={({ field }) => (
 					<div className="space-y-4">
 						<div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
-							{DEFAULT_CATEGORIES.map((cat) => (
+							{DEFAULT_CATEGORIES.filter(c => c.id !== "settlement").map((cat) => (
 								<div
 									key={cat.id}
 									onClick={() => field.onChange(cat.id)}

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { expensesApi } from "../api/expenses-api";
 import { expenseQueryKeys } from "../queries/money-queries";
+import { fundsQueryKeys } from "../queries/fund-queries";
 import { ExpenseFormValues } from "../schemas/expense-schema";
 
 export interface ExpenseMutationPayload {
@@ -22,6 +23,8 @@ export function useExpenseMutations(tripId: string) {
   const invalidateLists = () => {
     queryClient.invalidateQueries({ queryKey: expenseQueryKeys.lists() });
     queryClient.invalidateQueries({ queryKey: expenseQueryKeys.categories(tripId) });
+    // Also invalidate fund summary since an expense might have been paid by a fund
+    queryClient.invalidateQueries({ queryKey: fundsQueryKeys.summary(tripId) });
   };
 
   const createExpense = useMutation({

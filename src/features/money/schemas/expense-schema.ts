@@ -8,6 +8,7 @@ export const expenseSchema = z
 		date: z.string(),
 		category: z.string(),
 		isSettlement: z.boolean().optional(),
+		// Payer: either a user ID or a fund ID (prefixed with "fund:") — resolved at submit time
 		payerId: z.string().min(1, "Payer is required"),
 		splitType: z.enum(["equal", "exact"]),
 		involvedUserIds: z
@@ -18,7 +19,6 @@ export const expenseSchema = z
 	})
 	.refine(
 		(data) => {
-			// If exact split, validate that amounts sum to total
 			if (data.splitType === "exact") {
 				if (!data.exactAmounts || Object.keys(data.exactAmounts).length === 0) {
 					return false;
@@ -27,7 +27,6 @@ export const expenseSchema = z
 					(sum, amt) => sum + (amt || 0),
 					0
 				);
-				// Allow small floating point differences
 				return Math.abs(total - data.amount) < 0.01;
 			}
 			return true;
@@ -35,7 +34,17 @@ export const expenseSchema = z
 		{
 			message: "Exact amounts must sum to total amount",
 			path: ["splitType"],
-		}
+		},
 	);
 
 export type ExpenseFormValues = z.infer<typeof expenseSchema>;
+
+/** Returns true when the selected payer is a central fund (uses "fund:" prefix convention). */
+export function isPayerFund(payerId: string): boolean {
+	return payerId.startsWith("fund:");
+}
+
+/** Returns the actual fund UUID from a "fund:<id>" payer value. */
+export function extractFundId(payerId: string): string {
+	return payerId.slice("fund:".length);
+}

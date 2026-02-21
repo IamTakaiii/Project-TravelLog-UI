@@ -1,9 +1,13 @@
 import { apiClient } from "@/lib/api-client";
 import { Expense, BackendDebts } from "../types";
-import { ExpenseFormValues } from "../schemas/expense-schema";
+import { ExpenseFormValues, isPayerFund, extractFundId } from "../schemas/expense-schema";
 import type { ExpenseFilters } from "../queries/money-queries";
 
-// Map API response to UI Expense type
+// ── Response mapper ───────────────────────────────────────────────────────────
+
+/** The sentinel used for `payerId` when an expense was paid from a central fund. */
+export const CENTRAL_FUND_PAYER_ID = "central_fund" as const;
+
 const mapExpenseResponse = (data: any): Expense => {
 	const type = data.splits?.[0]?.splitType?.toLowerCase() || "equal";
 	const involvedUserIds = data.splits?.map((s: any) => s.userId) || [];
@@ -24,7 +28,11 @@ const mapExpenseResponse = (data: any): Expense => {
 		rateAt: data.rateAt ?? undefined,
 		thbAmount: Number(data.baseAmount || data.amount),
 		date: data.date || data.createdAt,
-		payerId: data.payerId || "", // Payer ID might be null if it's from fund, need to handle or trust UI validation
+		// payerFundId is set when a fund covered this expense.
+		// payerId is the sentinel so existing code that checks `payerId === CENTRAL_FUND_ID`
+		// continues to work; components that need the specific fund use payerFundId.
+		payerId: data.payerFundId ? CENTRAL_FUND_PAYER_ID : (data.payerId || ""),
+		payerFundId: data.payerFundId ?? undefined,
 		category: data.category || "other",
 		splitDetails: {
 			type: type as any,
@@ -39,10 +47,17 @@ const mapExpenseResponse = (data: any): Expense => {
 };
 
 // Map UI Form Values to API DTO
+// The `payerId` field uses a "fund:<id>" prefix convention when a central fund pays.
 const mapFormToPayload = (data: ExpenseFormValues, exchangeRate: number, tripId?: string) => {
+	const payerIsFund = isPayerFund(data.payerId);
+
 	return {
 		...(tripId ? { tripId } : {}),
-		payerId: data.payerId,
+		// Resolve payer: fund payment sets payerFundId and leaves payerId undefined.
+		...(payerIsFund
+			? { payerId: undefined, payerFundId: extractFundId(data.payerId) }
+			: { payerId: data.payerId, payerFundId: undefined }
+		),
 		amount: data.amount,
 		currency: data.currency,
 		exchangeRate,

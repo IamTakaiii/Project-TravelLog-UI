@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Wallet, Users, Coins, ReceiptText } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { CentralFundSheet } from "./central-fund-sheet";
-import { fundsQueryOptions } from "../queries/fund-queries";
+import { fundsQueryOptions, fundsQueryKeys } from "../queries/fund-queries";
+import { fundsApi } from "../api/funds-api";
 import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
 import { getCurrencySymbol, formatMoney } from "../utils/money-formatter";
 import { CurrencyCode } from "../types";
@@ -24,6 +25,12 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 
 	const { data: funds = [] } = useQuery(fundsQueryOptions(tripId));
 	const { data: trip } = useQuery(tripQueryOptions(tripId));
+	const { data: summary } = useQuery({
+		queryKey: fundsQueryKeys.summary(tripId),
+		queryFn: () => fundsApi.getSummary(tripId),
+		enabled: !!tripId,
+		refetchOnWindowFocus: true,
+	});
 
 	const totalAmount = funds
 		.filter((f) => f.currency === currency)
@@ -32,13 +39,12 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 	const membersCount = trip?.members?.length || 1;
 	const amountPerPerson = totalAmount / membersCount;
 
-	// Mock data for UI demonstration
-	const mockSpent = totalAmount * 0.45;
-	const mockRemaining = totalAmount - mockSpent;
-	const mockPercentage = 45;
+	// Real values from the backend summary
+	const totalSpent = summary?.totalSpent ?? 0;
+	const remaining = summary?.remaining ?? totalAmount;
+	const usagePercent = summary?.usagePercent ?? 0;
 
 	const handleDistribute = () => {
-		// In a real app, this would call an API to create distribution transactions
 		toast.success(`Distributed ${formatMoney(totalAmount, currency as CurrencyCode)} to ${membersCount} members`);
 		setIsDistributeOpen(false);
 	};
@@ -90,14 +96,14 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 
 				</div>
 
-				{/* Budget Summary Mock API */}
+				{/* Fund Usage — real data from backend */}
 				<div className="space-y-3 pt-2 border-t border-border/40">
 					<div className="space-y-2">
 						<div className="flex justify-between items-center text-xs">
 							<span className="font-bold text-muted-foreground">Fund Usage</span>
-							<span className="font-black text-primary">{mockPercentage}%</span>
+							<span className="font-black text-primary">{usagePercent}%</span>
 						</div>
-						<Progress value={mockPercentage} className="h-2 bg-muted/50" indicatorClassName="bg-primary" />
+						<Progress value={usagePercent} className="h-2 bg-muted/50" indicatorClassName="bg-primary" />
 					</div>
 
 					<div className="grid grid-cols-2 gap-3">
@@ -107,16 +113,16 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 							</p>
 							<p className="text-sm font-black text-emerald-500 truncate">
 								{getCurrencySymbol(currency as CurrencyCode)}
-								{mockRemaining.toLocaleString()}
+								{remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}
 							</p>
 						</div>
 						<div className="bg-background/40 rounded-xl p-3 border border-border/30">
 							<p className="text-[9px] font-bold text-muted-foreground uppercase mb-1">
-								Per Person (Refund)
+								Spent
 							</p>
 							<p className="text-sm font-black text-foreground truncate">
 								{getCurrencySymbol(currency as CurrencyCode)}
-								{amountPerPerson.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+								{totalSpent.toLocaleString(undefined, { maximumFractionDigits: 2 })}
 							</p>
 						</div>
 					</div>
