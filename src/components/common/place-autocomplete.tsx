@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Check, ChevronsUpDown, MapPin, Loader2, Navigation, Search, MapPinOff, CircleX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,10 +12,6 @@ import { Dialog, DialogContent, DialogTitle, VisuallyHidden } from "@/components
 import { cn } from "@/lib/utils";
 import { Control, useController, FieldValues, Path } from "react-hook-form";
 import { FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import usePlacesAutocomplete, {
-    getGeocode,
-    getLatLng,
-} from "use-places-autocomplete";
 import { useLoadScript } from "@react-google-maps/api";
 
 interface PlaceAutocompleteProps<T extends FieldValues> {
@@ -27,96 +22,115 @@ interface PlaceAutocompleteProps<T extends FieldValues> {
 
 const libraries: ("places")[] = ["places"];
 
+// ── Public wrapper (loads Google Maps script) ─────────────────────────────────
+
 export function PlaceAutocomplete<T extends FieldValues>({ control, name, label }: PlaceAutocompleteProps<T>) {
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: (import.meta.env["VITE_GOOGLE_MAPS_API_KEY"] as string) || "",
         libraries,
     });
 
-    if (!isLoaded) return <div>Loading...</div>;
+    if (!isLoaded) return <div />;
 
     return <PlaceAutocompleteInner control={control} name={name} label={label} />;
 }
 
+// ── Inner component (uses new Places API) ─────────────────────────────────────
+
+type Suggestion = google.maps.places.AutocompleteSuggestion;
+
 function PlaceAutocompleteInner<T extends FieldValues>({ control, name, label }: PlaceAutocompleteProps<T>) {
     const { field } = useController({ control, name });
     const [open, setOpen] = useState(false);
-
-    const {
-        ready,
-        value,
-        suggestions: { status, data },
-        setValue,
-        clearSuggestions,
-    } = usePlacesAutocomplete({
-        requestOptions: {
-            /* Define search scope here */
-        },
-        debounce: 800,
-    });
-
-    // Sync local value with form value ONLY when dialog opens
-    useEffect(() => {
-        if (open) {
-            setValue(field.value || "", false);
-        }
-    }, [open, field.value, setValue]);
-
-    const handleSelect = async (address: string) => {
-        setValue(address, false);
-        clearSuggestions();
-
-        try {
-            const results = await getGeocode({ address });
-            if (results[0]) {
-                const { lat, lng } = await getLatLng(results[0]);
-                console.log("📍 Coordinates: ", { lat, lng });
-            }
-            // You can save lat/lng to the form if you update your schema to support it.
-        } catch (error) {
-            console.error("Error: ", error);
-        }
-
-        field.onChange(address);
-        setOpen(false);
-    };
-
+    const [inputValue, setInputValue] = useState("");
+    const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+    const [isFetching, setIsFetching] = useState(false);
     const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-    const handleCurrentLocation = () => {
-        setIsLoadingLocation(true);
-        if (!navigator.geolocation) {
-            console.error("Geolocation is not supported by your browser");
-            setIsLoadingLocation(false);
+    // Sync local input when dialog opens
+    useEffect(() => {
+        if (open) setInputValue(field.value || "");
+    }, [open, field.value]);
+
+    // Fetch suggestions using the new AutocompleteSuggestion API
+    useEffect(() => {
+        clearTimeout(debounceRef.current);
+
+        if (!inputValue || inputValue.length < 2) {
+            setSuggestions([]);
             return;
         }
 
+        debounceRef.current = setTimeout(async () => {
+            setIsFetching(true);
+            try {
+                const { AutocompleteSuggestion } = await google.maps.importLibrary("places") as google.maps.PlacesLibrary;
+                const { suggestions: raw } = await AutocompleteSuggestion.fetchAutocompleteSuggestions({
+                    input: inputValue,
+                });
+                setSuggestions(raw);
+            } catch (err) {
+                console.error("[PlaceAutocomplete] Suggestions error:", err);
+                setSuggestions([]);
+            } finally {
+                setIsFetching(false);
+            }
+        }, 350);
+
+        return () => clearTimeout(debounceRef.current);
+    }, [inputValue]);
+
+    const handleSelect = useCallback(async (suggestion: Suggestion) => {
+        const prediction = suggestion.placePrediction;
+        if (!prediction) return;
+
+        try {
+            const place = prediction.toPlace();
+            await place.fetchFields({ fields: ["displayName", "formattedAddress", "location"] });
+
+            const address = place.formattedAddress || place.displayName || prediction.text.text;
+            field.onChange(address);
+            setSuggestions([]);
+            setInputValue(address);
+            setOpen(false);
+        } catch (err) {
+            console.error("[PlaceAutocomplete] Place detail error:", err);
+        }
+    }, [field]);
+
+    const handleCurrentLocation = useCallback(() => {
+        if (!navigator.geolocation) return;
+        setIsLoadingLocation(true);
+
         navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                const { latitude, longitude } = position.coords;
+            async ({ coords: { latitude, longitude } }) => {
                 try {
-                    const results = await getGeocode({
-                        location: { lat: latitude, lng: longitude },
-                    });
+                    const { Geocoder } = await google.maps.importLibrary("geocoding") as google.maps.GeocodingLibrary;
+                    const geocoder = new Geocoder();
+                    const { results } = await geocoder.geocode({ location: { lat: latitude, lng: longitude } });
                     if (results[0]) {
                         const address = results[0].formatted_address;
-                        setValue(address, false);
                         field.onChange(address);
+                        setInputValue(address);
                         setOpen(false);
                     }
-                } catch (error) {
-                    console.error("Error reverse geocoding:", error);
+                } catch (err) {
+                    console.error("[PlaceAutocomplete] Reverse geocode error:", err);
                 } finally {
                     setIsLoadingLocation(false);
                 }
             },
-            (error) => {
-                console.error("Error getting location:", error);
+            (err) => {
+                console.error("[PlaceAutocomplete] Geolocation error:", err);
                 setIsLoadingLocation(false);
             },
-            { timeout: 10000, maximumAge: 60000, enableHighAccuracy: true }
+            { timeout: 10000, maximumAge: 60000, enableHighAccuracy: true },
         );
-    };
+    }, [field]);
+
+    const showEmpty = !inputValue || inputValue.length < 2;
+    const showNoResults = !isFetching && inputValue.length >= 2 && suggestions.length === 0;
 
     return (
         <FormItem className="space-y-2">
@@ -140,7 +154,6 @@ function PlaceAutocompleteInner<T extends FieldValues>({ control, name, label }:
                             !field.value && "text-muted-foreground"
                         )}
                         onClick={() => setOpen(true)}
-                        disabled={!ready}
                     >
                         <span className="truncate flex-1 text-left">
                             {field.value || "Search for a place..."}
@@ -153,9 +166,10 @@ function PlaceAutocompleteInner<T extends FieldValues>({ control, name, label }:
 
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="max-w-[420px] w-[95vw] rounded-[2rem] p-0 border-none bg-transparent shadow-none overflow-visible [&>button]:hidden">
-                    <VisuallyHidden.Root>
+                    <VisuallyHidden>
                         <DialogTitle>Search for a place</DialogTitle>
-                    </VisuallyHidden.Root>
+                    </VisuallyHidden>
+
                     {/* Glassmorphism Container */}
                     <div className="bg-card/95 backdrop-blur-3xl border border-white/20 dark:border-white/10 rounded-[2rem] shadow-2xl overflow-hidden relative">
                         {/* Decorative Glows */}
@@ -166,16 +180,15 @@ function PlaceAutocompleteInner<T extends FieldValues>({ control, name, label }:
                             <div className="relative border-b border-border/50">
                                 <CommandInput
                                     placeholder="Search for a place..."
-                                    value={value}
-                                    onValueChange={(val) => setValue(val)}
-                                    disabled={!ready}
+                                    value={inputValue}
+                                    onValueChange={setInputValue}
                                     className="text-base pr-10 bg-transparent"
                                 />
-                                {value && (
+                                {inputValue && (
                                     <button
                                         onClick={() => {
-                                            setValue("", false);
-                                            clearSuggestions();
+                                            setInputValue("");
+                                            setSuggestions([]);
                                         }}
                                         className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted/50 text-muted-foreground transition-colors"
                                         type="button"
@@ -184,21 +197,19 @@ function PlaceAutocompleteInner<T extends FieldValues>({ control, name, label }:
                                     </button>
                                 )}
                             </div>
+
                             <CommandList className="max-h-[60vh]">
+                                {/* Quick Actions */}
                                 <CommandGroup heading="Quick Actions" className="text-muted-foreground/70 p-2">
                                     <CommandItem
                                         onSelect={handleCurrentLocation}
                                         className="flex items-center gap-3 py-3 px-3 cursor-pointer aria-selected:bg-primary/10 transition-colors rounded-xl mx-1 my-1"
                                         disabled={isLoadingLocation}
                                     >
-                                        <div className={cn("flex items-center justify-center size-10 rounded-full shrink-0 transition-colors",
-                                            isLoadingLocation ? "bg-primary/10 text-primary" : "bg-primary/10 text-primary"
-                                        )}>
-                                            {isLoadingLocation ? (
-                                                <Loader2 className="size-5 animate-spin" />
-                                            ) : (
-                                                <Navigation className="size-5 fill-primary/20" />
-                                            )}
+                                        <div className="flex items-center justify-center size-10 rounded-full shrink-0 bg-primary/10 text-primary">
+                                            {isLoadingLocation
+                                                ? <Loader2 className="size-5 animate-spin" />
+                                                : <Navigation className="size-5 fill-primary/20" />}
                                         </div>
                                         <div className="flex flex-col items-start gap-0.5">
                                             <span className="font-semibold text-primary">Use current location</span>
@@ -209,45 +220,60 @@ function PlaceAutocompleteInner<T extends FieldValues>({ control, name, label }:
 
                                 <div className="h-px bg-border/50 mx-4 my-1" />
 
-                                {!value && (
+                                {/* Loading */}
+                                {isFetching && (
+                                    <div className="flex items-center justify-center py-8 gap-2 text-muted-foreground">
+                                        <Loader2 className="size-4 animate-spin" />
+                                        <span className="text-sm">Searching...</span>
+                                    </div>
+                                )}
+
+                                {/* Empty state */}
+                                {showEmpty && !isFetching && (
                                     <div className="flex flex-col items-center justify-center py-12 gap-3 text-muted-foreground h-48">
                                         <Search className="size-12 opacity-20" />
                                         <p className="text-sm font-medium">Start typing to search...</p>
                                     </div>
                                 )}
 
-                                {status === "ZERO_RESULTS" && (
+                                {/* No results */}
+                                {showNoResults && (
                                     <div className="flex flex-col items-center justify-center py-12 gap-3 text-muted-foreground h-48">
                                         <MapPinOff className="size-12 opacity-20" />
                                         <p className="text-sm font-medium">No places found</p>
                                     </div>
                                 )}
 
-                                {status === "OK" && data.length > 0 && (
+                                {/* Results */}
+                                {suggestions.length > 0 && !isFetching && (
                                     <CommandGroup heading="Suggestions" className="pb-2">
-                                        {data.map(({ place_id, description, structured_formatting }) => (
-                                            <CommandItem
-                                                key={place_id}
-                                                value={description}
-                                                onSelect={handleSelect}
-                                                className="flex items-center gap-3 py-3 px-3 cursor-pointer aria-selected:bg-primary/5 rounded-xl mx-1"
-                                            >
-                                                <div className="flex items-center justify-center size-8 rounded-full bg-muted/50 shrink-0">
-                                                    <MapPin className="size-4 text-muted-foreground" />
-                                                </div>
-                                                <div className="flex flex-col min-w-0 flex-1 gap-0.5">
-                                                    <span className="font-medium text-foreground truncate text-sm">
-                                                        {structured_formatting.main_text}
-                                                    </span>
-                                                    <span className="text-[11px] text-muted-foreground truncate">
-                                                        {structured_formatting.secondary_text}
-                                                    </span>
-                                                </div>
-                                                {field.value === description && (
-                                                    <Check className="ml-2 h-4 w-4 text-primary shrink-0" />
-                                                )}
-                                            </CommandItem>
-                                        ))}
+                                        {suggestions.map((s) => {
+                                            const prediction = s.placePrediction;
+                                            if (!prediction) return null;
+                                            const main = prediction.mainText?.text ?? prediction.text.text;
+                                            const secondary = prediction.secondaryText?.text ?? "";
+                                            const isSelected = field.value === prediction.text.text;
+
+                                            return (
+                                                <CommandItem
+                                                    key={prediction.placeId}
+                                                    value={prediction.text.text}
+                                                    onSelect={() => handleSelect(s)}
+                                                    className="flex items-center gap-3 py-3 px-3 cursor-pointer aria-selected:bg-primary/5 rounded-xl mx-1"
+                                                >
+                                                    <div className="flex items-center justify-center size-8 rounded-full bg-muted/50 shrink-0">
+                                                        <MapPin className="size-4 text-muted-foreground" />
+                                                    </div>
+                                                    <div className="flex flex-col min-w-0 flex-1 gap-0.5">
+                                                        <span className="font-medium text-foreground truncate text-sm">{main}</span>
+                                                        {secondary && (
+                                                            <span className="text-[11px] text-muted-foreground truncate">{secondary}</span>
+                                                        )}
+                                                    </div>
+                                                    {isSelected && <Check className="ml-2 h-4 w-4 text-primary shrink-0" />}
+                                                </CommandItem>
+                                            );
+                                        })}
                                     </CommandGroup>
                                 )}
                             </CommandList>

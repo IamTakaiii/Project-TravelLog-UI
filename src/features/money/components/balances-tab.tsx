@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Expense } from "../types";
+import { Expense, CurrencyCode, BackendDebts } from "../types";
 import { DebtSummary } from "./debt-summary";
 import { ANIMATION_VARIANTS } from "../constants/tabs";
 
@@ -7,11 +7,12 @@ interface BalancesTabProps {
 	expenses: Expense[];
 	currentUserId: string;
 	userMap: Map<string, string>;
-	tripCurrency: import("../types").CurrencyCode;
-	onSettle: (amount: number, type: 'pay' | 'receive', targetUserId: string, currentUserId: string, targetUserName: string, currency: import("../types").CurrencyCode) => Promise<void>;
+	tripCurrency: CurrencyCode;
+	onSettle: (amount: number, type: 'pay' | 'receive', targetUserId: string, currentUserId: string, targetUserName: string, currency: CurrencyCode) => Promise<void>;
+	backendDebts?: BackendDebts;
 }
 
-export function BalancesTab({ expenses, currentUserId, userMap, tripCurrency, onSettle }: BalancesTabProps) {
+export function BalancesTab({ expenses, currentUserId, userMap, tripCurrency, onSettle, backendDebts }: BalancesTabProps) {
 	return (
 		<motion.div
 			key="balances"
@@ -23,6 +24,7 @@ export function BalancesTab({ expenses, currentUserId, userMap, tripCurrency, on
 				userMap={userMap}
 				tripCurrency={tripCurrency}
 				onSettle={onSettle}
+				backendDebts={backendDebts}
 			/>
 		</motion.div>
 	);

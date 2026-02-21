@@ -6,11 +6,12 @@ interface UseBudgetStatsProps {
 	expenses: Expense[];
 	totalBudget: number;
 	tripDays: number;
+	backendSum?: number;
 }
 
-export function useBudgetStats({ expenses, totalBudget, tripDays }: UseBudgetStatsProps): BudgetStats {
+export function useBudgetStats({ expenses, totalBudget, tripDays, backendSum }: UseBudgetStatsProps): BudgetStats {
 	return useMemo(
-		() => calculateBudgetStats(expenses, totalBudget, tripDays),
-		[expenses, totalBudget, tripDays]
+		() => calculateBudgetStats({ expenses, totalBudget, tripDays, backendSum }),
+		[expenses, totalBudget, tripDays, backendSum]
 	);
 }

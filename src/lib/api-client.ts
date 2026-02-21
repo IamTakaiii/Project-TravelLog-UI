@@ -4,6 +4,7 @@ const API_URL = import.meta.env["VITE_API_URL"] || "http://localhost:3000";
 
 interface RequestOptions extends RequestInit {
 	params?: Record<string, string>;
+	returnFullResponse?: boolean;
 }
 
 export async function apiClient<T>(
@@ -42,7 +43,12 @@ export async function apiClient<T>(
 		);
 	}
 
-	const result = (await response.json()) as { data?: T } & T;
+	const result = (await response.json()) as any;
+
+	if (options.returnFullResponse) {
+		return result as T;
+	}
+
 	// Handle consistent API response structure if applicable (e.g., { data: T })
 	return (result.data ?? result) as T;
 }

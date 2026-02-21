@@ -22,11 +22,13 @@ import { CurrencyCode } from "@/features/money/types";
 export function MoneyTab() {
 	const { t } = useTranslation();
 	const { trip } = useTripDetail();
-	const { data: expenses = [] } = useQuery(expensesQueryOptions(trip.id));
+	const { data: expensesData } = useQuery(expensesQueryOptions(trip.id));
+	const expenses = expensesData?.expenses || [];
+	const backendSum = expensesData?.sum;
 
 	// Calculate totals
 	const totalBudget = trip.budget ? parseFloat(trip.budget) : 0;
-	const totalSpent = expenses
+	const totalSpent = backendSum ?? expenses
 		.filter(
 			(ex) => ex.category !== "settlement" && ex.payerId !== CENTRAL_FUND_ID
 		)

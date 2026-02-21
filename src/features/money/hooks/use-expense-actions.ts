@@ -13,43 +13,43 @@ export function useExpenseActions(tripId: string) {
 	const queryClient = useQueryClient();
 
 	const handleDelete = useCallback(() => {
-		if (uiState.selectedItem) {
-			deleteExpense.mutate(uiState.selectedItem.id, {
-				onSuccess: () => {
-					uiState.closeAll();
-				},
-			});
-		}
+		if (!uiState.selectedItem) return;
+		deleteExpense.mutate(uiState.selectedItem.id, {
+			onSuccess: () => uiState.closeAll(),
+		});
 	}, [uiState, deleteExpense]);
 
-	const handleSettle = useCallback(async (
-		amount: number,
-		type: 'pay' | 'receive',
-		targetUserId: string,
-		currentUserId: string,
-		targetUserName: string,
-		currency: string
-	) => {
-		try {
-			// Create a new settlement expense to balance the debt
-			await expensesApi.create(tripId, {
-				description: `Settlement: ${type === 'pay' ? 'Paid to' : 'Received from'} ${targetUserName}`,
-				amount: Math.abs(amount),
-				currency: currency,
-				date: new Date().toISOString(),
-				category: "OTHER",
-				isSettlement: true,
-				payerId: type === 'pay' ? currentUserId : targetUserId,
-				splitType: "equal",
-				involvedUserIds: [type === 'pay' ? targetUserId : currentUserId],
-			});
+	const handleSettle = useCallback(
+		async (
+			amount: number,
+			type: "pay" | "receive",
+			targetUserId: string,
+			currentUserId: string,
+			targetUserName: string,
+			currency: string,
+		) => {
+			try {
+				await expensesApi.create(tripId, {
+					description: `Settlement: ${type === "pay" ? "Paid to" : "Received from"} ${targetUserName}`,
+					amount: Math.abs(amount),
+					currency,
+					date: new Date().toISOString(),
+					category: "OTHER",
+					isSettlement: true,
+					payerId: type === "pay" ? currentUserId : targetUserId,
+					splitType: "equal",
+					involvedUserIds: [type === "pay" ? targetUserId : currentUserId],
+				});
 
-			queryClient.invalidateQueries({ queryKey: expenseQueryKeys.list(tripId) });
-			toast.success("Debt settlement recorded");
-		} catch (error: any) {
-			toast.error(error.message || "Failed to settle debt");
-		}
-	}, [tripId, queryClient]);
+				// Invalidate all list queries (prefix) so every filter variant is refreshed
+				queryClient.invalidateQueries({ queryKey: expenseQueryKeys.lists() });
+				toast.success("Debt settlement recorded");
+			} catch (error: any) {
+				toast.error(error.message || "Failed to settle debt");
+			}
+		},
+		[tripId, queryClient],
+	);
 
 	return {
 		...uiState,

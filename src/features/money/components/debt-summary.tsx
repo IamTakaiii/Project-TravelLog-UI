@@ -1,6 +1,6 @@
 import { useState, memo, useMemo } from "react";
 import { useDebtCalculator, DebtBreakdown } from "../hooks/use-debt-calculator";
-import { Expense } from "../types";
+import { Expense, CurrencyCode, BackendDebts } from "../types";
 import { formatMoney } from "../utils/money-formatter";
 import {
 	ArrowDownLeft,
@@ -21,13 +21,14 @@ interface DebtSummaryProps {
 	expenses: Expense[];
 	currentUserId: string;
 	userMap: Map<string, string>;
-	tripCurrency: import("../types").CurrencyCode;
-	onSettle: (amount: number, type: 'pay' | 'receive', targetUserId: string, currentUserId: string, targetUserName: string, currency: import("../types").CurrencyCode) => Promise<void>;
+	tripCurrency: CurrencyCode;
+	onSettle: (amount: number, type: 'pay' | 'receive', targetUserId: string, currentUserId: string, targetUserName: string, currency: CurrencyCode) => Promise<void>;
+	backendDebts?: BackendDebts;
 }
 
-export function DebtSummary({ expenses, currentUserId, userMap, tripCurrency, onSettle }: DebtSummaryProps) {
+export function DebtSummary({ expenses, currentUserId, userMap, tripCurrency, onSettle, backendDebts }: DebtSummaryProps) {
 	const { whoOwesMe, iOweWho, totalReceivable, totalPayable } =
-		useDebtCalculator(expenses, currentUserId);
+		useDebtCalculator(expenses, currentUserId, backendDebts);
 	const [selectedDebt, setSelectedDebt] = useState<{
 		item: DebtBreakdown;
 		type: "pay" | "receive";

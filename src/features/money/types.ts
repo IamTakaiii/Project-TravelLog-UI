@@ -12,7 +12,7 @@ export type SplitType = "equal" | "exact";
 export interface SplitDetails {
 	type: SplitType;
 	involvedUserIds: string[];
-	amounts?: Record<string, number>; // UserId -> Amount
+	amounts?: Record<string, number>; // UserId -> Amount (only for exact splits)
 }
 
 export interface ExpenseCategory {
@@ -26,12 +26,12 @@ export interface Expense {
 	id: string;
 	tripId: string;
 	description: string;
-	amount: number; // Original currency amount
+	amount: number;       // Original currency amount
 	currency: CurrencyCode;
 	exchangeRate: number;
-	rateAt?: string;        // "YYYY-MM-DD" — which day's exchange rate was used
-	thbAmount: number; // Converted to base (THB for now, or trip base)
-	date: string; // ISO string
+	rateAt?: string;      // "YYYY-MM-DD" — which day's exchange rate was used
+	thbAmount: number;    // Converted to trip base currency
+	date: string;         // ISO string
 	payerId: string;
 	category: string;
 	splitDetails: SplitDetails;
@@ -45,23 +45,53 @@ export interface Expense {
 	isSettlement: boolean;
 }
 
-export interface MoneyStats {
+// ── Budget ────────────────────────────────────────────────────────────────────
+
+export interface BudgetSummary {
 	totalBudget: number;
 	totalSpent: number;
 	remaining: number;
 	dailyAverage: number;
 }
 
-export interface DebtItem {
+// ── Debts ─────────────────────────────────────────────────────────────────────
+
+export interface DebtBreakdown {
 	userId: string;
-	amount: number; // Positive = They owe me, Negative = I owe them
+	amount: number;
+	transactions: Expense[];
 }
+
+export interface DebtSummary {
+	whoOwesMe: DebtBreakdown[];
+	iOweWho: DebtBreakdown[];
+	netBalance: number;
+	totalReceivable: number;
+	totalPayable: number;
+}
+
+/** Raw debt breakdown received from the backend (transactionIds instead of full Expense objects) */
+export interface BackendDebtBreakdown {
+	userId: string;
+	amount: number;
+	transactionIds: string[];
+}
+
+export interface BackendDebts {
+	whoOwesMe: BackendDebtBreakdown[];
+	iOweWho: BackendDebtBreakdown[];
+	netBalance: number;
+	totalReceivable: number;
+	totalPayable: number;
+}
+
+// ── Funds ─────────────────────────────────────────────────────────────────────
 
 export interface Fund {
 	id: string;
 	tripId: string;
 	title: string;
-	amount: number; // From API as number
+	amount: number;
 	currency: CurrencyCode;
 	createdAt: string;
 	updatedAt: string;
@@ -72,16 +102,17 @@ export interface Fund {
 export type CreateFundInput = Pick<Fund, "title" | "tripId" | "amount" | "currency">;
 export type UpdateFundInput = Partial<CreateFundInput>;
 
-// Discriminated union for split results (Requirement 3.3)
+// ── Split results ─────────────────────────────────────────────────────────────
+
 export interface EqualSplitResult {
-	type: 'equal';
+	type: "equal";
 	perPersonAmount: number;
 	involvedUserIds: string[];
 	totalAmount: number;
 }
 
 export interface ExactSplitResult {
-	type: 'exact';
+	type: "exact";
 	amounts: Record<string, number>;
 	involvedUserIds: string[];
 	totalAmount: number;
@@ -89,11 +120,9 @@ export interface ExactSplitResult {
 
 export type SplitResult = EqualSplitResult | ExactSplitResult;
 
-// Split validation result (Requirement 8.4)
 export interface SplitValidation {
 	isValid: boolean;
 	totalAssigned: number;
 	expectedTotal: number;
 	discrepancy: number;
 }
-

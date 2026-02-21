@@ -1,9 +1,9 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useParams } from "@tanstack/react-router";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { expensesQueryOptions } from "../queries/money-queries";
+import { expensesQueryOptions, categoriesQueryOptions } from "../queries/money-queries";
 import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
 import {
 	ExpenseFormSheet,
@@ -30,9 +30,35 @@ import { Trash2, Receipt, ArrowRightLeft } from "lucide-react";
 export function MoneyManagementPage() {
 	const params = useParams({ from: "/_layout/trips/$tripId/money" });
 	const { data: trip } = useSuspenseQuery(tripQueryOptions(params.tripId));
-	const { data: expenses = [], isLoading: isExpensesLoading } = useQuery(expensesQueryOptions(trip.id));
 
 	const [activeTab, setActiveTab] = useState<TabType>(TABS.EXPENSES);
+
+	const {
+		searchQuery,
+		setSearchQuery,
+		selectedCategories,
+		handleCategoryToggle,
+		clearSearch,
+	} = useExpenseFilters();
+
+	// Debounce search to avoid firing a request on every keystroke
+	const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
+	const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+	useEffect(() => {
+		clearTimeout(debounceRef.current);
+		debounceRef.current = setTimeout(() => setDebouncedSearch(searchQuery), 350);
+		return () => clearTimeout(debounceRef.current);
+	}, [searchQuery]);
+
+	const filters = useMemo(() => ({
+		categories: selectedCategories.length > 0 ? selectedCategories : undefined,
+		search: debouncedSearch || undefined,
+	}), [selectedCategories, debouncedSearch]);
+
+	const { data: expensesData, isLoading: isExpensesLoading } = useQuery(expensesQueryOptions(trip.id, filters));
+	const { data: categories = [] } = useQuery(categoriesQueryOptions(trip.id));
+	const expenses = expensesData?.expenses || [];
+	const backendSum = expensesData?.sum;
 
 	const {
 		selectedItem: selectedExpense,
@@ -52,16 +78,7 @@ export function MoneyManagementPage() {
 	const totalBudget = trip.budget ? parseFloat(trip.budget) : 0;
 	const tripDays = calculateTripDuration(trip.startDate, trip.endDate);
 
-	const budgetStats = useBudgetStats({ expenses, totalBudget, tripDays });
-
-	const {
-		searchQuery,
-		setSearchQuery,
-		selectedCategory,
-		filteredExpenses,
-		handleCategoryToggle,
-		clearSearch,
-	} = useExpenseFilters({ expenses });
+	const budgetStats = useBudgetStats({ expenses, totalBudget, tripDays, backendSum });
 
 	const { t } = useTranslation();
 
@@ -93,13 +110,14 @@ export function MoneyManagementPage() {
 						searchQuery={searchQuery}
 						onSearchChange={setSearchQuery}
 						onSearchClear={clearSearch}
-						selectedCategory={selectedCategory}
+						selectedCategories={selectedCategories}
 						onCategoryToggle={handleCategoryToggle}
-						filteredExpenses={filteredExpenses}
+						filteredExpenses={expenses}
 						onExpenseClick={handleExpenseClick}
 						isLoading={isExpensesLoading}
 						userMap={userMap}
 						tripCurrency={tripCurrency}
+						categories={categories}
 					/>
 
 				) : (
@@ -109,6 +127,7 @@ export function MoneyManagementPage() {
 						userMap={userMap}
 						tripCurrency={tripCurrency}
 						onSettle={handleSettle}
+						backendDebts={expensesData?.debts}
 					/>
 				)}
 			</AnimatePresence>
@@ -154,6 +173,3 @@ export function MoneyManagementPage() {
 		</FeaturePageLayout>
 	);
 }
-
-
-

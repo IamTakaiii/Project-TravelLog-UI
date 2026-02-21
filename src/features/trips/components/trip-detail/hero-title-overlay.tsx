@@ -7,7 +7,8 @@ import { useTripDetail } from "./trip-detail-context";
 
 export function HeroTitleOverlay() {
 	const { trip } = useTripDetail();
-	const statusConfig = getStatusConfig(trip.status);
+	const { t } = useTranslation();
+	const statusConfig = getStatusConfig(trip.status, t);
 
 	return (
 		<div className="absolute bottom-0 left-0 right-0 p-6 lg:px-12 lg:pb-8">

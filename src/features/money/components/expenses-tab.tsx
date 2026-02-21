@@ -9,26 +9,28 @@ interface ExpensesTabProps {
 	searchQuery: string;
 	onSearchChange: (value: string) => void;
 	onSearchClear: () => void;
-	selectedCategory: string | null;
+	selectedCategories: string[];
 	onCategoryToggle: (categoryId: string) => void;
 	filteredExpenses: Expense[];
 	onExpenseClick: (expense: Expense) => void;
 	isLoading?: boolean;
 	userMap?: Map<string, string>;
 	tripCurrency?: import("../types").CurrencyCode;
+	categories?: string[];
 }
 
 export function ExpensesTab({
 	searchQuery,
 	onSearchChange,
 	onSearchClear,
-	selectedCategory,
+	selectedCategories,
 	onCategoryToggle,
 	filteredExpenses,
 	onExpenseClick,
 	isLoading,
 	userMap,
 	tripCurrency,
+	categories,
 }: ExpensesTabProps) {
 	return (
 		<motion.div
@@ -45,8 +47,9 @@ export function ExpensesTab({
 				/>
 
 				<CategoryFilter
-					selectedCategory={selectedCategory}
+					selectedCategories={selectedCategories}
 					onCategoryToggle={onCategoryToggle}
+					categories={categories}
 				/>
 			</div>
 

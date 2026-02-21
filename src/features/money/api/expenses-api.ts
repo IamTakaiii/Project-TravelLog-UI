@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/api-client";
-import { Expense } from "../types";
+import { Expense, BackendDebts } from "../types";
 import { ExpenseFormValues } from "../schemas/expense-schema";
+import type { ExpenseFilters } from "../queries/money-queries";
 
 // Map API response to UI Expense type
 const mapExpenseResponse = (data: any): Expense => {
@@ -66,9 +67,29 @@ const mapFormToPayload = (data: ExpenseFormValues, exchangeRate: number, tripId?
 };
 
 export const expensesApi = {
-	async getByTripId(tripId: string): Promise<Expense[]> {
-		const response = await apiClient<any[]>(`/api/v1/expenses/trip/${tripId}`);
-		return response.map(mapExpenseResponse);
+	async getByTripId(tripId: string, filters?: ExpenseFilters): Promise<{ expenses: Expense[]; sum: number; debts?: BackendDebts }> {
+		const qs = new URLSearchParams();
+		if (filters?.categories?.length) {
+			filters.categories.forEach((c) => qs.append("category", c));
+		}
+		if (filters?.search) qs.set("search", filters.search);
+
+		const url = `/api/v1/expenses/trip/${tripId}${qs.toString() ? `?${qs}` : ""}`;
+		const response = await apiClient<any>(url, { returnFullResponse: true });
+
+		const expenses = Array.isArray(response.data)
+			? response.data.map(mapExpenseResponse)
+			: [];
+
+		return {
+			expenses,
+			sum: response.meta?.sum || 0,
+			debts: response.meta?.debts
+		};
+	},
+
+	async getCategories(tripId: string): Promise<string[]> {
+		return apiClient<string[]>(`/api/v1/expenses/trip/${tripId}/categories`);
 	},
 
 	async create(tripId: string, data: ExpenseFormValues, exchangeRate?: number): Promise<Expense> {

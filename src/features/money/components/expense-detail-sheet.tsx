@@ -1,4 +1,4 @@
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Expense, CurrencyCode } from "../types";
 import { formatMoney } from "../utils/money-formatter";
 import { getCategoryById } from "../utils/category-lookup";
@@ -35,8 +35,15 @@ export function ExpenseDetailSheet({
 		expense.isSettlement
 			? getCategoryById("settlement")
 			: getCategoryById(expense.category) || getCategoryById("other");
-	
+
 	if (!category) return null;
+
+	// Extract bg tokens for both light and dark mode (e.g. "bg-orange-100 dark:bg-orange-500/20")
+	// so the hero section renders correctly in both themes.
+	const heroBg = category.color
+		.split(" ")
+		.filter((c) => c.startsWith("bg-") || c.startsWith("dark:bg-"))
+		.join(" ") || "bg-muted dark:bg-muted";
 
 	const isCentral = expense.payerId === CENTRAL_FUND_ID;
 	const dateObj = new Date(expense.date);
@@ -81,10 +88,13 @@ export function ExpenseDetailSheet({
 	return (
 		<Sheet open={!!expense} onOpenChange={onClose}>
 			<SheetContent className="w-full sm:max-w-md p-0 overflow-y-auto border-l border-border/50">
+				<SheetTitle className="sr-only">
+					{expense.isSettlement ? "Settlement Details" : expense.description}
+				</SheetTitle>
 				{isSettlement ? (
 					<div className="flex flex-col min-h-full">
-						<DetailSheetHero 
-							colorClass={category.color.replace("text-", "bg-").replace("0", "00/20")}
+						<DetailSheetHero
+							colorClass={heroBg}
 							actions={actions}
 							className="min-h-[40vh]"
 						>
@@ -136,8 +146,8 @@ export function ExpenseDetailSheet({
 					</div>
 				) : (
 					<>
-						<DetailSheetHero 
-							colorClass={category.color.replace("text-", "bg-").replace("0", "00/20")}
+						<DetailSheetHero
+							colorClass={heroBg}
 							actions={actions}
 						>
 							<div className={cn(
