@@ -27,6 +27,8 @@ export function useExpenseMutations(tripId: string) {
 		});
 		// Also invalidate fund summary since an expense might have been paid by a fund
 		queryClient.invalidateQueries({ queryKey: fundsQueryKeys.summary(tripId) });
+		// Invalidate history to show new logs immediately
+		queryClient.invalidateQueries({ queryKey: expenseQueryKeys.history(tripId) });
 	};
 
 	const createExpense = useMutation({

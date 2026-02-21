@@ -3,6 +3,7 @@ import { Plus, Wallet, Trash2, Edit2, X, Save, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -72,6 +73,18 @@ export function CentralFundSheet({
 
 	const handleSubmit = (data: CentralFundFormValues) => {
 		if (editingFund) {
+			// Skip update if nothing changed
+			const hasChanges =
+				data.title !== editingFund.title ||
+				data.amount !== editingFund.amount ||
+				data.currency !== editingFund.currency;
+
+			if (!hasChanges) {
+				toast.info("No changes detected");
+				resetForm();
+				return;
+			}
+
 			updateMutation.mutate(
 				{
 					id: editingFund.id,

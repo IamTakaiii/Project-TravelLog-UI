@@ -133,12 +133,18 @@ export interface SplitValidation {
 	discrepancy: number;
 }
 
+export interface ChangeEntry {
+	field: string;
+	from: any;
+	to: any;
+}
+
 export interface ExpenseLog {
 	id: string;
 	expenseId: string | null;
 	tripId: string;
 	action: "CREATE" | "UPDATE" | "DELETE";
-	data: any;
+	data: any & { changes?: ChangeEntry[] };
 	userId: string;
 	timestamp: string;
 	user: {

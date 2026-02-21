@@ -7,10 +7,20 @@ import {
 } from "@/components/ui/sheet";
 import { useQuery } from "@tanstack/react-query";
 import { historyQueryOptions } from "../queries/money-queries";
-import { Loader2, FileText, Trash2, Edit, Plus, User } from "lucide-react";
+import { fundsQueryOptions } from "../queries/fund-queries";
+import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
+import {
+	Loader2,
+	FileText,
+	Trash2,
+	Edit,
+	Plus,
+	User,
+	ArrowRight,
+} from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import dayjs from "dayjs";
-import { ExpenseLog } from "../types";
+import { ExpenseLog, ChangeEntry } from "../types";
 
 interface HistorySheetProps {
 	tripId: string;
@@ -23,7 +33,17 @@ export function HistorySheet({
 	open,
 	onOpenChange,
 }: HistorySheetProps) {
-	const { data: logs, isLoading } = useQuery(historyQueryOptions(tripId));
+	const { data: logs, isLoading: isLogsLoading } = useQuery(
+		historyQueryOptions(tripId)
+	);
+	const { data: trip, isLoading: isTripLoading } = useQuery(
+		tripQueryOptions(tripId)
+	);
+	const { data: funds, isLoading: isFundsLoading } = useQuery(
+		fundsQueryOptions(tripId)
+	);
+
+	const isLoading = isLogsLoading || isTripLoading || isFundsLoading;
 
 	const getActionIcon = (action: string) => {
 		switch (action) {
@@ -49,6 +69,47 @@ export function HistorySheet({
 			default:
 				return "bg-gray-100 text-gray-700";
 		}
+	};
+
+	const fieldLabels: Record<string, string> = {
+		title: "Title",
+		amount: "Amount",
+		currency: "Currency",
+		exchangeRate: "Exchange Rate",
+		baseAmount: "Base Amount",
+		description: "Description",
+		category: "Category",
+		date: "Date",
+		locationName: "Location",
+		locationLat: "Latitude",
+		locationLng: "Longitude",
+		isSettlement: "Settlement",
+		payerId: "Payer",
+		payerFundId: "Fund Payer",
+		rateAt: "Rate Date",
+	};
+
+	const formatChangeValue = (field: string, value: any): string => {
+		if (value === null || value === undefined) return "—";
+		if (field === "date" && typeof value === "string") {
+			return dayjs(value).format("MMM D, YYYY HH:mm");
+		}
+		if (field === "isSettlement") return value ? "Yes" : "No";
+		if (field === "amount" || field === "baseAmount" || field === "exchangeRate") {
+			return Number(value).toLocaleString(undefined, {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 6,
+			});
+		}
+		if (field === "payerId" && trip?.members) {
+			const member = trip.members.find((m) => m.userId === value);
+			return member?.user.name || value;
+		}
+		if (field === "payerFundId" && funds) {
+			const fund = funds.find((f) => f.id === value);
+			return fund?.title || value;
+		}
+		return String(value);
 	};
 
 	return (
@@ -105,6 +166,46 @@ export function HistorySheet({
 													{Number(log.data.amount || 0).toFixed(2)}{" "}
 													{log.data.currency}
 												</p>
+
+												{log.action === "UPDATE" &&
+													log.data.changes &&
+													log.data.changes.length > 0 && (
+														<div className="mt-2 pt-2 border-t border-border/50 space-y-1.5">
+															<p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+																Changes
+															</p>
+															{log.data.changes.map(
+																(
+																	change: ChangeEntry,
+																	idx: number,
+																) => (
+																	<div
+																		key={idx}
+																		className="flex items-center gap-1.5 text-xs"
+																	>
+																		<span className="text-muted-foreground font-medium min-w-[70px]">
+																			{fieldLabels[
+																				change.field
+																			] || change.field}
+																		</span>
+																		<span className="text-red-500/80 line-through truncate max-w-[80px]">
+																			{formatChangeValue(
+																				change.field,
+																				change.from,
+																			)}
+																		</span>
+																		<ArrowRight className="size-3 text-muted-foreground shrink-0" />
+																		<span className="text-green-600 dark:text-green-400 font-medium truncate max-w-[80px]">
+																			{formatChangeValue(
+																				change.field,
+																				change.to,
+																			)}
+																		</span>
+																	</div>
+																),
+															)}
+														</div>
+													)}
 											</div>
 
 											<div className="flex items-center gap-2 text-xs text-muted-foreground">

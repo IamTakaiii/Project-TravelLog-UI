@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
+import { clearSessionCache } from "@/lib/api-client";
 import { authQueryKeys } from "@/features/auth/queries/auth-queries";
 import {
 	type RegisterFormValues,
@@ -34,6 +35,7 @@ export function useRegister() {
 			if (error) throw error;
 		},
 		onSuccess: () => {
+			clearSessionCache();
 			queryClient.invalidateQueries({ queryKey: authQueryKeys.session });
 			navigate({ to: "/" });
 		},

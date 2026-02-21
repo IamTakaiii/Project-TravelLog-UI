@@ -88,6 +88,22 @@ export function useExpenseForm({
 
 	const onSubmit = useCallback(
 		(data: ExpenseFormValues) => {
+			// Skip update if nothing changed
+			if (isEditing) {
+				const hasChanges = Object.keys(data).some((key) => {
+					const k = key as keyof ExpenseFormValues;
+					const newVal = JSON.stringify(data[k]);
+					const oldVal = JSON.stringify(defaultValues[k]);
+					return newVal !== oldVal;
+				});
+
+				if (!hasChanges) {
+					toast.info("No changes detected");
+					onSuccess?.();
+					return;
+				}
+			}
+
 			const mutationOptions = {
 				onSuccess: () => {
 					toast.success(isEditing ? "Expense updated" : "Expense added");

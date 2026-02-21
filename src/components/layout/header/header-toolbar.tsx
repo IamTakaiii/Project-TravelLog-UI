@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { authClient } from "@/lib/auth-client";
+import { clearSessionCache } from "@/lib/api-client";
 import { useRouter } from "@tanstack/react-router";
 
 import { ThemeSwitcher } from "@/components/ui/theme-switcher";
@@ -33,6 +34,7 @@ export function HeaderToolbar() {
 
 	const handleSignOut = async () => {
 		await authClient.signOut();
+		clearSessionCache();
 		router.invalidate();
 		router.navigate({ to: "/login" });
 	};

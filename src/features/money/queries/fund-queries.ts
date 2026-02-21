@@ -6,6 +6,7 @@ import {
 import { toast } from "sonner";
 import { fundsApi } from "../api/funds-api";
 import { CreateFundInput, UpdateFundInput } from "../types";
+import { expenseQueryKeys } from "./money-queries";
 
 export const fundsQueryKeys = {
 	all: ["funds"] as const,
@@ -34,6 +35,9 @@ export const useFundMutations = (tripId: string) => {
 			queryClient.invalidateQueries({
 				queryKey: fundsQueryKeys.summary(tripId),
 			});
+			queryClient.invalidateQueries({
+				queryKey: expenseQueryKeys.history(tripId),
+			});
 		},
 		onError: (error: Error) => {
 			toast.error(error.message || "Failed to create fund");
@@ -48,6 +52,9 @@ export const useFundMutations = (tripId: string) => {
 			queryClient.invalidateQueries({
 				queryKey: fundsQueryKeys.summary(tripId),
 			});
+			queryClient.invalidateQueries({
+				queryKey: expenseQueryKeys.history(tripId),
+			});
 		},
 		onError: (error: Error) => {
 			toast.error(error.message || "Failed to update fund");
@@ -60,6 +67,9 @@ export const useFundMutations = (tripId: string) => {
 			queryClient.invalidateQueries({ queryKey: fundsQueryKeys.list(tripId) });
 			queryClient.invalidateQueries({
 				queryKey: fundsQueryKeys.summary(tripId),
+			});
+			queryClient.invalidateQueries({
+				queryKey: expenseQueryKeys.history(tripId),
 			});
 		},
 		onError: (error: Error) => {

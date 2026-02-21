@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
+import { clearSessionCache } from "@/lib/api-client";
 import { authQueryKeys } from "@/features/auth/queries/auth-queries";
 import { type LoginFormValues, loginSchema } from "../schemas/login-schema";
 import { getAuthErrorMessage } from "../utils/auth-utils";
@@ -28,7 +29,7 @@ export function useLogin() {
 			if (error) throw error;
 		},
 		onSuccess: () => {
-			// Invalidate session query to ensure user data is fresh
+			clearSessionCache();
 			queryClient.invalidateQueries({ queryKey: authQueryKeys.session });
 			navigate({ to: "/" });
 		},
