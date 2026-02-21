@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Trip } from "../api/trips-api";
 import { getStatusConfig } from "../utils/trip-status";
+import { useTranslation } from "react-i18next";
 
 
 interface TripCardProps {
@@ -12,7 +13,8 @@ interface TripCardProps {
 
 export function TripCard({ trip }: TripCardProps) {
 	const navigate = useNavigate();
-	const statusConfig = getStatusConfig(trip.status);
+	const { t } = useTranslation();
+	const statusConfig = getStatusConfig(trip.status, t);
 
 	const coverImage =
 		trip.coverImage ||
@@ -83,7 +85,7 @@ export function TripCard({ trip }: TripCardProps) {
 							<MapPin className="size-4" />
 						</div>
 						<span className="font-medium line-clamp-1">
-							{trip.destination || "No destination"}
+							{trip.destination || t("common.no_destination")}
 						</span>
 					</div>
 
@@ -95,7 +97,7 @@ export function TripCard({ trip }: TripCardProps) {
 						<span className="font-medium">
 							{trip.budget
 								? `${trip.currency || "USD"} ${trip.budget}`
-								: "No budget set"}
+								: t("common.no_budget")}
 						</span>
 					</div>
 				</div>
@@ -112,7 +114,7 @@ export function TripCard({ trip }: TripCardProps) {
 					</div>
 
 					<div className="flex items-center gap-1 text-xs font-semibold text-primary opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
-						View Details
+						{t("common.view_details")}
 						<Plane className="size-3 rotate-45" />
 					</div>
 				</div>

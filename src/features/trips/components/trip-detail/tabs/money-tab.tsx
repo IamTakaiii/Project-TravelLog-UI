@@ -51,7 +51,7 @@ export function MoneyTab() {
 			{/* Summary Cards */}
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 				<StatCard
-					title="Trip Budget"
+					title={t("trips.detail.budget_title")}
 					value={formatMoney(totalBudget, currency)}
 					icon={DollarSign}
 					colorClassName="text-primary"
@@ -59,7 +59,7 @@ export function MoneyTab() {
 					variant="centered"
 				/>
 				<StatCard
-					title="Spent so far"
+					title={t("trips.detail.spent_title")}
 					value={formatMoney(totalSpent, currency)}
 					icon={TrendingDown}
 					colorClassName="text-destructive"
@@ -67,7 +67,7 @@ export function MoneyTab() {
 					variant="centered"
 				/>
 				<StatCard
-					title="Remaining"
+					title={t("trips.detail.remaining_title")}
 					value={formatMoney(remaining, currency)}
 					icon={TrendingUp}
 					colorClassName="text-emerald-500"
@@ -87,11 +87,10 @@ export function MoneyTab() {
 					</div>
 					<div className="space-y-2">
 						<h3 className="text-2xl font-[800] tracking-tight text-foreground">
-							Complete Finance Manager
+							{t("trips.detail.finance_manager_title")}
 						</h3>
 						<p className="text-muted-foreground max-w-md mx-auto leading-relaxed">
-							Split bills, record places, track daily averages and manage debts
-							with your group in one place.
+							{t("trips.detail.finance_manager_description")}
 						</p>
 					</div>
 					<Link
@@ -102,7 +101,7 @@ export function MoneyTab() {
 							size="lg"
 							className="rounded-full font-black text-base px-8 py-7 shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 transition-all gap-3 active:scale-95"
 						>
-							Manage Finances <ArrowRight className="size-5" />
+							{t("trips.detail.manage_finances")} <ArrowRight className="size-5" />
 						</Button>
 					</Link>
 				</div>

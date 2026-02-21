@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from "react";
 import { useParams } from "@tanstack/react-router";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { expensesQueryOptions } from "../queries/money-queries";
 import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
 import {
@@ -62,14 +63,16 @@ export function MoneyManagementPage() {
 		clearSearch,
 	} = useExpenseFilters({ expenses });
 
+	const { t } = useTranslation();
+
 	const handleExpenseClick = useCallback((expense: Expense) => {
 		setSelectedExpense(expense);
 	}, [setSelectedExpense]);
 
 	const moneyTabs = useMemo(() => [
-		{ id: TABS.EXPENSES, label: "Expenses", icon: Receipt },
-		{ id: TABS.BALANCES, label: "Balances", icon: ArrowRightLeft },
-	], []);
+		{ id: TABS.EXPENSES, label: t("money.tabs.expenses"), icon: Receipt },
+		{ id: TABS.BALANCES, label: t("money.tabs.balances"), icon: ArrowRightLeft },
+	], [t]);
 
 	const { data: session } = useQuery(sessionQueryOptions);
 	const userMap = useMemo(() => new Map(trip.members.map(m => [m.userId, m.user.name])), [trip.members]);
@@ -135,14 +138,14 @@ export function MoneyManagementPage() {
 			<ConfirmDialog
 				open={isDeleteDialogOpen}
 				onOpenChange={setIsDeleteDialogOpen}
-				title="Delete Expense?"
+				title={t("money.confirm.delete_title")}
 				description={
 					<>
-						You're about to remove <span className="text-foreground font-bold italic">"{selectedExpense?.description}"</span>. This action is permanent and cannot be undone.
+						{t("money.confirm.delete_description")} <span className="text-foreground font-bold italic">"{selectedExpense?.description}"</span>.
 					</>
 				}
-				confirmText="Delete Permanently"
-				cancelText="Keep Expense"
+				confirmText={t("money.confirm.confirm_delete")}
+				cancelText={t("money.confirm.cancel_delete")}
 				onConfirm={handleDelete}
 				isLoading={isDeleting}
 				variant="destructive"

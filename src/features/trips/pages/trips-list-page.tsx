@@ -87,9 +87,9 @@ export function TripsListPage() {
 								className="flex flex-col items-center justify-center py-20 text-center"
 							>
 								<Search className="size-12 text-muted-foreground/50 mb-4" />
-								<h3 className="text-xl font-bold mb-2">No trips found</h3>
+								<h3 className="text-xl font-bold mb-2">{t("trips.list.no_results_title")}</h3>
 								<p className="text-muted-foreground">
-									No trips match your search "{searchQuery}"
+									{t("trips.list.no_results_description", { query: searchQuery })}
 								</p>
 							</motion.div>
 						) : (
@@ -112,8 +112,8 @@ export function TripsListPage() {
 					className="mt-12 text-center text-sm text-muted-foreground"
 				>
 					{searchQuery.trim()
-						? `Showing ${filteredTrips.length} of ${trips.length} trips`
-						: `You have ${trips.length} trip${trips.length !== 1 ? "s" : ""}`}
+						? t("trips.list.showing_count", { filtered: filteredTrips.length, total: trips.length })
+						: t("trips.list.total_count", { count: trips.length })}
 				</motion.div>
 			)}
 		</FeaturePageLayout>

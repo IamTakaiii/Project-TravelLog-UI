@@ -2,6 +2,14 @@
     "home": {
         "greeting": "Hello, world!"
     },
+    "common": {
+        "error_title": "Something went wrong",
+        "error_description": "We couldn't load the data. Please try again or contact support if the problem persists.",
+        "try_again": "Try Again",
+        "no_destination": "No destination",
+        "no_budget": "No budget set",
+        "view_details": "View Details"
+    },
     "auth": {
         "login": {
             "title": "Welcome back",
@@ -164,7 +172,33 @@
         },
         "detail": {
             "type": "Type",
-            "trip": "Trip"
+            "trip": "Trip",
+            "travel_dates": "Travel Dates",
+            "duration": "Duration",
+            "day": "Day",
+            "days": "Days",
+            "budget": "Budget",
+            "money_management": "Money",
+            "places_title": "Places to Visit",
+            "add_place": "Add Place",
+            "tab_itinerary": "Itinerary",
+            "tab_places": "Places",
+            "tab_money": "Money",
+            "no_places_title": "No places saved yet",
+            "no_places_description": "Collect ideas for places you want to visit during this trip. Add restaurants, attractions, hotels, and more.",
+            "discover_places": "Discover Places",
+            "itinerary_title": "Itinerary",
+            "add_activity": "Add Activity",
+            "no_itinerary": "No itinerary yet",
+            "no_itinerary_description": "Start planning your trip by adding daily activities, places to visit, and reservations.",
+            "create_itinerary": "Create Itinerary",
+            "money_summary": "Money Manager",
+            "budget_title": "Trip Budget",
+            "spent_title": "Spent so far",
+            "remaining_title": "Remaining",
+            "finance_manager_title": "Complete Finance Manager",
+            "finance_manager_description": "Split bills, record places, track daily averages and manage debts with your group in one place.",
+            "manage_finances": "Manage Finances"
         },
         "list": {
             "title": "Your",
@@ -175,7 +209,29 @@
             "search_placeholder": "Search trips by title, destination...",
             "empty_title": "No trips yet",
             "empty_description": "Start your journey by creating your first trip. Plan, explore, and make unforgettable memories.",
-            "create_first_trip": "Create Your First Trip"
+            "create_first_trip": "Create Your First Trip",
+            "no_results_title": "No trips found",
+            "no_results_description": "No trips match your search \"{{query}}\"",
+            "showing_count": "Showing {{filtered}} of {{total}} trips",
+            "total_count_one": "You have {{count}} trip",
+            "total_count_other": "You have {{count}} trips"
+        },
+        "status": {
+            "active": "Active",
+            "completed": "Completed",
+            "inactive": "Inactive"
+        }
+    },
+    "money": {
+        "tabs": {
+            "expenses": "Expenses",
+            "balances": "Balances"
+        },
+        "confirm": {
+            "delete_title": "Delete Expense?",
+            "delete_description": "You're about to remove this expense. This action is permanent and cannot be undone.",
+            "confirm_delete": "Delete Permanently",
+            "cancel_delete": "Keep Expense"
         }
     }
 }
