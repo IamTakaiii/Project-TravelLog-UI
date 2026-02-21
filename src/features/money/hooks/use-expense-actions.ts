@@ -43,6 +43,9 @@ export function useExpenseActions(tripId: string) {
 
 				// Invalidate all list queries (prefix) so every filter variant is refreshed
 				queryClient.invalidateQueries({ queryKey: expenseQueryKeys.lists() });
+				queryClient.invalidateQueries({
+					queryKey: expenseQueryKeys.history(tripId),
+				});
 				toast.success("Debt settlement recorded");
 			} catch (error: any) {
 				toast.error(error.message || "Failed to settle debt");
