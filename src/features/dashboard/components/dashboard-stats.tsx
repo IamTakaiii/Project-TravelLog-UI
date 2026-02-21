@@ -61,5 +61,3 @@ export function DashboardStats({ isLoading }: DashboardStatsProps) {
 		</motion.section>
 	);
 }
-
-

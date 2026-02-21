@@ -72,8 +72,7 @@ export function ConfirmDialog({
 							<div
 								className={cn(
 									"size-24 rounded-full flex items-center justify-center shadow-inner ring-4 ring-white/10",
-									animation === "default" &&
-									"animate-in zoom-in duration-500",
+									animation === "default" && "animate-in zoom-in duration-500",
 									variant === "destructive"
 										? "bg-gradient-to-br from-destructive/10 to-destructive/20 dark:from-destructive/40 dark:to-destructive/20"
 										: "bg-gradient-to-br from-primary/10 to-primary/20 dark:from-primary/40 dark:to-primary/20"
@@ -95,9 +94,7 @@ export function ConfirmDialog({
 								<div
 									className={cn(
 										"absolute inset-0 rounded-full animate-ping opacity-20 duration-1000",
-										variant === "destructive"
-											? "bg-destructive"
-											: "bg-primary"
+										variant === "destructive" ? "bg-destructive" : "bg-primary"
 									)}
 								/>
 							)}
@@ -139,7 +136,6 @@ export function ConfirmDialog({
 							>
 								{cancelText}
 							</AlertDialogCancel>
-
 						</AlertDialogFooter>
 					</div>
 				</div>

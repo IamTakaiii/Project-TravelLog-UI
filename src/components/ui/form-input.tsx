@@ -55,7 +55,10 @@ export function FormInput<T extends FieldValues>({
 								type={type}
 								placeholder={placeholder}
 								disabled={disabled}
-								className={cn(icon && "pl-10", "h-12 bg-muted/30 border-border/50 focus:bg-background")}
+								className={cn(
+									icon && "pl-10",
+									"h-12 bg-muted/30 border-border/50 focus:bg-background"
+								)}
 							/>
 						</FormControl>
 					</div>

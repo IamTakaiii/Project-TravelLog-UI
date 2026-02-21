@@ -11,4 +11,3 @@ export const ANIMATION_VARIANTS = {
 	container: staggerContainer,
 	tab: tabTransition,
 } as const;
-

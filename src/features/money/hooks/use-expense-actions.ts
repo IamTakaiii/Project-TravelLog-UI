@@ -26,7 +26,7 @@ export function useExpenseActions(tripId: string) {
 			targetUserId: string,
 			currentUserId: string,
 			targetUserName: string,
-			currency: string,
+			currency: string
 		) => {
 			try {
 				await expensesApi.create(tripId, {
@@ -48,7 +48,7 @@ export function useExpenseActions(tripId: string) {
 				toast.error(error.message || "Failed to settle debt");
 			}
 		},
-		[tripId, queryClient],
+		[tripId, queryClient]
 	);
 
 	return {

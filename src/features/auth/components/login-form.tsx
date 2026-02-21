@@ -13,10 +13,7 @@ export function LoginForm() {
 	const { t } = useTranslation();
 	const { translateError } = useTranslateError();
 	const { form, isLoading, error, onSubmit, handleSocialSignIn } = useLogin();
-	const {
-		control,
-		handleSubmit,
-	} = form;
+	const { control, handleSubmit } = form;
 
 	return (
 		<div className="grid gap-6">
@@ -96,6 +93,3 @@ export function LoginForm() {
 		</div>
 	);
 }
-
-
-

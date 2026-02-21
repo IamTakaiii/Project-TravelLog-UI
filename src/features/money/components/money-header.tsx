@@ -1,14 +1,19 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Wallet } from "lucide-react";
+import { ArrowLeft, Wallet, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/common/page-header";
 
 interface MoneyHeaderProps {
 	tripId: string;
 	tripTitle: string;
+	onHistoryClick?: () => void;
 }
 
-export function MoneyHeader({ tripId, tripTitle }: MoneyHeaderProps) {
+export function MoneyHeader({
+	tripId,
+	tripTitle,
+	onHistoryClick,
+}: MoneyHeaderProps) {
 	return (
 		<PageHeader
 			backButton={
@@ -34,7 +39,19 @@ export function MoneyHeader({ tripId, tripTitle }: MoneyHeaderProps) {
 					<span className="font-semibold text-foreground">{tripTitle}</span>
 				</>
 			}
+			actions={
+				onHistoryClick && (
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={onHistoryClick}
+						className="gap-2"
+					>
+						<History className="size-4" />
+						Activity Log
+					</Button>
+				)
+			}
 		/>
 	);
 }
-

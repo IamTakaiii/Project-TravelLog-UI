@@ -13,7 +13,13 @@ interface ExpenseListProps {
 	tripCurrency?: CurrencyCode;
 }
 
-export function ExpenseList({ expenses, onExpenseClick, isLoading, userMap, tripCurrency }: ExpenseListProps) {
+export function ExpenseList({
+	expenses,
+	onExpenseClick,
+	isLoading,
+	userMap,
+	tripCurrency,
+}: ExpenseListProps) {
 	if (isLoading) {
 		return (
 			<div className="space-y-2 w-full overflow-hidden">

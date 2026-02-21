@@ -14,7 +14,7 @@ export type { DebtBreakdown, DebtSummary };
 export function useDebtCalculator(
 	expenses: Expense[],
 	currentUserId: string,
-	backendDebts?: BackendDebts,
+	backendDebts?: BackendDebts
 ): DebtSummary {
 	return useMemo(() => {
 		if (backendDebts) {

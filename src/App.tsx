@@ -5,6 +5,7 @@ import type { TanstackRouter } from "./main";
 import { TanStackRouterDevelopmentTools } from "./components/utils/development-tools/TanStackRouterDevelopmentTools";
 // import { ReactDevInspector } from "./components/utils/development-tools/ReactDevInspector";
 import { queryClient } from "./lib/query-client";
+import { Toaster } from "@/components/ui/sonner";
 
 type AppProps = { router: TanstackRouter };
 
@@ -12,6 +13,7 @@ const App = ({ router }: AppProps) => {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<RouterProvider router={router} />
+			<Toaster position="top-center" richColors />
 			{/* <ReactDevInspector /> */}
 			<TanStackRouterDevelopmentTools
 				initialIsOpen={false}
@@ -24,4 +26,3 @@ const App = ({ router }: AppProps) => {
 };
 
 export default App;
-

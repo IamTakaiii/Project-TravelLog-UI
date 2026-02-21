@@ -1,6 +1,10 @@
 import { apiClient } from "@/lib/api-client";
-import { Expense, BackendDebts } from "../types";
-import { ExpenseFormValues, isPayerFund, extractFundId } from "../schemas/expense-schema";
+import { Expense, BackendDebts, ExpenseLog } from "../types";
+import {
+	ExpenseFormValues,
+	isPayerFund,
+	extractFundId,
+} from "../schemas/expense-schema";
 import type { ExpenseFilters } from "../queries/money-queries";
 
 // ── Response mapper ───────────────────────────────────────────────────────────
@@ -31,7 +35,7 @@ const mapExpenseResponse = (data: any): Expense => {
 		// payerFundId is set when a fund covered this expense.
 		// payerId is the sentinel so existing code that checks `payerId === CENTRAL_FUND_ID`
 		// continues to work; components that need the specific fund use payerFundId.
-		payerId: data.payerFundId ? CENTRAL_FUND_PAYER_ID : (data.payerId || ""),
+		payerId: data.payerFundId ? CENTRAL_FUND_PAYER_ID : data.payerId || "",
 		payerFundId: data.payerFundId ?? undefined,
 		category: data.category || "other",
 		splitDetails: {
@@ -48,16 +52,19 @@ const mapExpenseResponse = (data: any): Expense => {
 
 // Map UI Form Values to API DTO
 // The `payerId` field uses a "fund:<id>" prefix convention when a central fund pays.
-const mapFormToPayload = (data: ExpenseFormValues, exchangeRate: number, tripId?: string) => {
+const mapFormToPayload = (
+	data: ExpenseFormValues,
+	exchangeRate: number,
+	tripId?: string
+) => {
 	const payerIsFund = isPayerFund(data.payerId);
 
 	return {
 		...(tripId ? { tripId } : {}),
-		// Resolve payer: fund payment sets payerFundId and leaves payerId undefined.
+		// Resolve payer: fund payment sets payerFundId and sets payerId to null.
 		...(payerIsFund
-			? { payerId: undefined, payerFundId: extractFundId(data.payerId) }
-			: { payerId: data.payerId, payerFundId: undefined }
-		),
+			? { payerId: null, payerFundId: extractFundId(data.payerId) }
+			: { payerId: data.payerId, payerFundId: null }),
 		amount: data.amount,
 		currency: data.currency,
 		exchangeRate,
@@ -67,9 +74,10 @@ const mapFormToPayload = (data: ExpenseFormValues, exchangeRate: number, tripId?
 		isSettlement: data.isSettlement || false,
 		splits: data.involvedUserIds.map((userId) => {
 			const isExact = data.splitType === "exact";
-			const splitAmount = isExact && data.exactAmounts
-				? data.exactAmounts[userId] || 0
-				: data.amount / data.involvedUserIds.length;
+			const splitAmount =
+				isExact && data.exactAmounts
+					? data.exactAmounts[userId] || 0
+					: data.amount / data.involvedUserIds.length;
 
 			return {
 				userId,
@@ -82,7 +90,10 @@ const mapFormToPayload = (data: ExpenseFormValues, exchangeRate: number, tripId?
 };
 
 export const expensesApi = {
-	async getByTripId(tripId: string, filters?: ExpenseFilters): Promise<{ expenses: Expense[]; sum: number; debts?: BackendDebts }> {
+	async getByTripId(
+		tripId: string,
+		filters?: ExpenseFilters
+	): Promise<{ expenses: Expense[]; sum: number; debts?: BackendDebts }> {
 		const qs = new URLSearchParams();
 		if (filters?.categories?.length) {
 			filters.categories.forEach((c) => qs.append("category", c));
@@ -99,7 +110,7 @@ export const expensesApi = {
 		return {
 			expenses,
 			sum: response.meta?.sum || 0,
-			debts: response.meta?.debts
+			debts: response.meta?.debts,
 		};
 	},
 
@@ -107,7 +118,19 @@ export const expensesApi = {
 		return apiClient<string[]>(`/api/v1/expenses/trip/${tripId}/categories`);
 	},
 
-	async create(tripId: string, data: ExpenseFormValues, exchangeRate?: number): Promise<Expense> {
+	async getHistory(tripId: string): Promise<ExpenseLog[]> {
+		const response = await apiClient<any>(
+			`/api/v1/expenses/trip/${tripId}/history`,
+			{ returnFullResponse: true }
+		);
+		return (response.data ?? response) as ExpenseLog[];
+	},
+
+	async create(
+		tripId: string,
+		data: ExpenseFormValues,
+		exchangeRate?: number
+	): Promise<Expense> {
 		const rate = exchangeRate ?? 1;
 		const payload = mapFormToPayload(data, rate, tripId);
 
@@ -125,7 +148,11 @@ export const expensesApi = {
 		});
 	},
 
-	async update(id: string, data: ExpenseFormValues, exchangeRate?: number): Promise<Expense> {
+	async update(
+		id: string,
+		data: ExpenseFormValues,
+		exchangeRate?: number
+	): Promise<Expense> {
 		const rate = exchangeRate ?? 1;
 		const payload = mapFormToPayload(data, rate);
 

@@ -58,7 +58,6 @@ export function StatCard({
 							{trend}
 						</span>
 					)}
-
 				</div>
 				<div className={cn("space-y-1", variant === "centered" && "mt-2")}>
 					{variant === "centered" && (

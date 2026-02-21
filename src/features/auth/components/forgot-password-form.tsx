@@ -13,10 +13,7 @@ export function ForgotPasswordForm() {
 	const { translateError } = useTranslateError();
 	const { form, isLoading, error, isSuccess, onSubmit, resetForm } =
 		useForgotPassword();
-	const {
-		control,
-		handleSubmit,
-	} = form;
+	const { control, handleSubmit } = form;
 
 	// Success state - show confirmation message
 	if (isSuccess) {
@@ -128,5 +125,3 @@ export function ForgotPasswordForm() {
 		</div>
 	);
 }
-
-

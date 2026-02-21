@@ -1,55 +1,75 @@
-import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+	queryOptions,
+	useMutation,
+	useQueryClient,
+} from "@tanstack/react-query";
+import { toast } from "sonner";
 import { fundsApi } from "../api/funds-api";
 import { CreateFundInput, UpdateFundInput } from "../types";
 
 export const fundsQueryKeys = {
-    all: ["funds"] as const,
-    lists: () => [...fundsQueryKeys.all, "list"] as const,
-    list: (tripId: string) => [...fundsQueryKeys.lists(), tripId] as const,
-    details: () => [...fundsQueryKeys.all, "detail"] as const,
-    detail: (id: string) => [...fundsQueryKeys.details(), id] as const,
-    summaries: () => [...fundsQueryKeys.all, "summary"] as const,
-    summary: (tripId: string) => [...fundsQueryKeys.summaries(), tripId] as const,
+	all: ["funds"] as const,
+	lists: () => [...fundsQueryKeys.all, "list"] as const,
+	list: (tripId: string) => [...fundsQueryKeys.lists(), tripId] as const,
+	details: () => [...fundsQueryKeys.all, "detail"] as const,
+	detail: (id: string) => [...fundsQueryKeys.details(), id] as const,
+	summaries: () => [...fundsQueryKeys.all, "summary"] as const,
+	summary: (tripId: string) => [...fundsQueryKeys.summaries(), tripId] as const,
 };
 
 export const fundsQueryOptions = (tripId: string) =>
-    queryOptions({
-        queryKey: fundsQueryKeys.list(tripId),
-        queryFn: () => fundsApi.getByTripId(tripId),
-        enabled: !!tripId,
-    });
+	queryOptions({
+		queryKey: fundsQueryKeys.list(tripId),
+		queryFn: () => fundsApi.getByTripId(tripId),
+		enabled: !!tripId,
+	});
 
 export const useFundMutations = (tripId: string) => {
-    const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-    const createMutation = useMutation({
-        mutationFn: (data: CreateFundInput) => fundsApi.create(data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: fundsQueryKeys.list(tripId) });
-            queryClient.invalidateQueries({ queryKey: fundsQueryKeys.summary(tripId) });
-        },
-    });
+	const createMutation = useMutation({
+		mutationFn: (data: CreateFundInput) => fundsApi.create(data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: fundsQueryKeys.list(tripId) });
+			queryClient.invalidateQueries({
+				queryKey: fundsQueryKeys.summary(tripId),
+			});
+		},
+		onError: (error: Error) => {
+			toast.error(error.message || "Failed to create fund");
+		},
+	});
 
-    const updateMutation = useMutation({
-        mutationFn: ({ id, data }: { id: string; data: UpdateFundInput }) =>
-            fundsApi.update(id, data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: fundsQueryKeys.list(tripId) });
-            queryClient.invalidateQueries({ queryKey: fundsQueryKeys.summary(tripId) });
-        },
-    });
+	const updateMutation = useMutation({
+		mutationFn: ({ id, data }: { id: string; data: UpdateFundInput }) =>
+			fundsApi.update(id, data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: fundsQueryKeys.list(tripId) });
+			queryClient.invalidateQueries({
+				queryKey: fundsQueryKeys.summary(tripId),
+			});
+		},
+		onError: (error: Error) => {
+			toast.error(error.message || "Failed to update fund");
+		},
+	});
 
-    const deleteMutation = useMutation({
-        mutationFn: (id: string) => fundsApi.delete(id),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: fundsQueryKeys.list(tripId) });
-            queryClient.invalidateQueries({ queryKey: fundsQueryKeys.summary(tripId) });
-        },
-    });
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => fundsApi.delete(id),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: fundsQueryKeys.list(tripId) });
+			queryClient.invalidateQueries({
+				queryKey: fundsQueryKeys.summary(tripId),
+			});
+		},
+		onError: (error: Error) => {
+			toast.error(error.message || "Failed to delete fund");
+		},
+	});
 
-    return {
-        createMutation,
-        updateMutation,
-        deleteMutation,
-    };
+	return {
+		createMutation,
+		updateMutation,
+		deleteMutation,
+	};
 };

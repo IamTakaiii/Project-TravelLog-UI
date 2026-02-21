@@ -21,11 +21,16 @@ export function TabSwitcher<T extends string>({
 	className,
 }: TabSwitcherProps<T>) {
 	return (
-		<div className={cn("flex items-center p-1.5 bg-muted/50 rounded-2xl border border-border/50 w-full max-w-md", className)}>
+		<div
+			className={cn(
+				"flex items-center p-1.5 bg-muted/50 rounded-2xl border border-border/50 w-full max-w-md",
+				className
+			)}
+		>
 			{tabs.map((tab) => {
 				const Icon = tab.icon;
 				const isActive = activeTab === tab.id;
-				
+
 				return (
 					<button
 						key={tab.id}
@@ -37,7 +42,6 @@ export function TabSwitcher<T extends string>({
 								: "text-zinc-500 dark:text-zinc-400 hover:text-foreground hover:bg-white/50 dark:hover:bg-zinc-800/50"
 						)}
 					>
-
 						{Icon && <Icon className="size-4" />}
 						{tab.label}
 					</button>

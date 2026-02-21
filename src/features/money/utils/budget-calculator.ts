@@ -1,11 +1,15 @@
 import { Expense, BudgetSummary } from "../types";
-import { BUDGET_WARNING_PERCENT, BUDGET_CRITICAL_PERCENT, CENTRAL_FUND_ID } from "../constants/thresholds";
+import {
+	BUDGET_WARNING_PERCENT,
+	BUDGET_CRITICAL_PERCENT,
+	CENTRAL_FUND_ID,
+} from "../constants/thresholds";
 
 export interface BudgetStats extends BudgetSummary {
-  percentage: number;
-  isOverBudget: boolean;
-  isNearLimit: boolean;
-  isWarning: boolean;
+	percentage: number;
+	isOverBudget: boolean;
+	isNearLimit: boolean;
+	isWarning: boolean;
 }
 
 /**
@@ -20,34 +24,35 @@ export interface BudgetStats extends BudgetSummary {
  *  - Zero trip days → dailyAverage = 0
  */
 export function calculateBudgetStats({
-  expenses,
-  totalBudget,
-  tripDays,
-  backendSum,
+	expenses,
+	totalBudget,
+	tripDays,
+	backendSum,
 }: {
-  expenses: Expense[];
-  totalBudget: number;
-  tripDays: number;
-  backendSum?: number;
+	expenses: Expense[];
+	totalBudget: number;
+	tripDays: number;
+	backendSum?: number;
 }): BudgetStats {
-  const totalSpent =
-    backendSum ??
-    expenses
-      .filter((ex) => !ex.isSettlement && ex.payerId !== CENTRAL_FUND_ID)
-      .reduce((sum, ex) => sum + ex.thbAmount, 0);
+	const totalSpent =
+		backendSum ??
+		expenses
+			.filter((ex) => !ex.isSettlement && ex.payerId !== CENTRAL_FUND_ID)
+			.reduce((sum, ex) => sum + ex.thbAmount, 0);
 
-  const remaining = totalBudget - totalSpent;
-  const percentage = totalBudget > 0 ? Math.min((totalSpent / totalBudget) * 100, 100) : 0;
-  const dailyAverage = tripDays > 0 ? totalSpent / tripDays : 0;
+	const remaining = totalBudget - totalSpent;
+	const percentage =
+		totalBudget > 0 ? Math.min((totalSpent / totalBudget) * 100, 100) : 0;
+	const dailyAverage = tripDays > 0 ? totalSpent / tripDays : 0;
 
-  return {
-    totalBudget,
-    totalSpent,
-    remaining,
-    dailyAverage,
-    percentage,
-    isOverBudget: totalSpent > totalBudget,
-    isNearLimit: percentage >= BUDGET_CRITICAL_PERCENT,
-    isWarning: percentage >= BUDGET_WARNING_PERCENT,
-  };
+	return {
+		totalBudget,
+		totalSpent,
+		remaining,
+		dailyAverage,
+		percentage,
+		isOverBudget: totalSpent > totalBudget,
+		isNearLimit: percentage >= BUDGET_CRITICAL_PERCENT,
+		isWarning: percentage >= BUDGET_WARNING_PERCENT,
+	};
 }

@@ -24,7 +24,6 @@ export function TripDetailPage() {
 				animate="show"
 				className="min-h-screen bg-background pb-20"
 			>
-
 				<HeroSection />
 
 				<div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">

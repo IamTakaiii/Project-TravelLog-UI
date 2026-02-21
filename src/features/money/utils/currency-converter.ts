@@ -1,11 +1,11 @@
-import { CurrencyCode, CurrencyConfig } from '../types';
+import { CurrencyCode, CurrencyConfig } from "../types";
 
 export interface ConversionResult {
-  originalAmount: number;
-  convertedAmount: number;
-  exchangeRate: number;
-  sourceCurrency: CurrencyCode;
-  targetCurrency: CurrencyCode;
+	originalAmount: number;
+	convertedAmount: number;
+	exchangeRate: number;
+	sourceCurrency: CurrencyCode;
+	targetCurrency: CurrencyCode;
 }
 
 /**
@@ -19,30 +19,30 @@ export interface ConversionResult {
  * with an exchange rate of 1.
  */
 export function convertCurrency(
-  amount: number,
-  sourceCurrency: CurrencyCode,
-  targetCurrency: CurrencyCode,
-  rates: Record<CurrencyCode, CurrencyConfig>
+	amount: number,
+	sourceCurrency: CurrencyCode,
+	targetCurrency: CurrencyCode,
+	rates: Record<CurrencyCode, CurrencyConfig>
 ): ConversionResult {
-  if (sourceCurrency === targetCurrency) {
-    return {
-      originalAmount: amount,
-      convertedAmount: amount,
-      exchangeRate: 1,
-      sourceCurrency,
-      targetCurrency,
-    };
-  }
+	if (sourceCurrency === targetCurrency) {
+		return {
+			originalAmount: amount,
+			convertedAmount: amount,
+			exchangeRate: 1,
+			sourceCurrency,
+			targetCurrency,
+		};
+	}
 
-  const sourceRate = rates[sourceCurrency].rate;
-  const targetRate = rates[targetCurrency].rate;
-  const exchangeRate = sourceRate / targetRate;
+	const sourceRate = rates[sourceCurrency].rate;
+	const targetRate = rates[targetCurrency].rate;
+	const exchangeRate = sourceRate / targetRate;
 
-  return {
-    originalAmount: amount,
-    convertedAmount: amount * exchangeRate,
-    exchangeRate,
-    sourceCurrency,
-    targetCurrency,
-  };
+	return {
+		originalAmount: amount,
+		convertedAmount: amount * exchangeRate,
+		exchangeRate,
+		sourceCurrency,
+		targetCurrency,
+	};
 }

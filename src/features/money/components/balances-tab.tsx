@@ -8,16 +8,27 @@ interface BalancesTabProps {
 	currentUserId: string;
 	userMap: Map<string, string>;
 	tripCurrency: CurrencyCode;
-	onSettle: (amount: number, type: 'pay' | 'receive', targetUserId: string, currentUserId: string, targetUserName: string, currency: CurrencyCode) => Promise<void>;
+	onSettle: (
+		amount: number,
+		type: "pay" | "receive",
+		targetUserId: string,
+		currentUserId: string,
+		targetUserName: string,
+		currency: CurrencyCode
+	) => Promise<void>;
 	backendDebts?: BackendDebts;
 }
 
-export function BalancesTab({ expenses, currentUserId, userMap, tripCurrency, onSettle, backendDebts }: BalancesTabProps) {
+export function BalancesTab({
+	expenses,
+	currentUserId,
+	userMap,
+	tripCurrency,
+	onSettle,
+	backendDebts,
+}: BalancesTabProps) {
 	return (
-		<motion.div
-			key="balances"
-			{...ANIMATION_VARIANTS.tab}
-		>
+		<motion.div key="balances" {...ANIMATION_VARIANTS.tab}>
 			<DebtSummary
 				expenses={expenses}
 				currentUserId={currentUserId}

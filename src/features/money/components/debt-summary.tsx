@@ -22,11 +22,25 @@ interface DebtSummaryProps {
 	currentUserId: string;
 	userMap: Map<string, string>;
 	tripCurrency: CurrencyCode;
-	onSettle: (amount: number, type: 'pay' | 'receive', targetUserId: string, currentUserId: string, targetUserName: string, currency: CurrencyCode) => Promise<void>;
+	onSettle: (
+		amount: number,
+		type: "pay" | "receive",
+		targetUserId: string,
+		currentUserId: string,
+		targetUserName: string,
+		currency: CurrencyCode
+	) => Promise<void>;
 	backendDebts?: BackendDebts;
 }
 
-export function DebtSummary({ expenses, currentUserId, userMap, tripCurrency, onSettle, backendDebts }: DebtSummaryProps) {
+export function DebtSummary({
+	expenses,
+	currentUserId,
+	userMap,
+	tripCurrency,
+	onSettle,
+	backendDebts,
+}: DebtSummaryProps) {
 	const { whoOwesMe, iOweWho, totalReceivable, totalPayable } =
 		useDebtCalculator(expenses, currentUserId, backendDebts);
 	const [selectedDebt, setSelectedDebt] = useState<{
@@ -37,23 +51,26 @@ export function DebtSummary({ expenses, currentUserId, userMap, tripCurrency, on
 	const netBalance = totalReceivable - totalPayable;
 	const totalPeople = whoOwesMe.length + iOweWho.length;
 
-	const heroBackground = netBalance > 0
-		? "radial-gradient(circle, rgb(16 185 129), transparent)"
-		: netBalance < 0
-			? "radial-gradient(circle, rgb(239 68 68), transparent)"
-			: "radial-gradient(circle, rgb(148 163 184), transparent)";
+	const heroBackground =
+		netBalance > 0
+			? "radial-gradient(circle, rgb(16 185 129), transparent)"
+			: netBalance < 0
+				? "radial-gradient(circle, rgb(239 68 68), transparent)"
+				: "radial-gradient(circle, rgb(148 163 184), transparent)";
 
-	const heroClassName = netBalance > 0
-		? "bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-teal-500/5 border-emerald-500/15"
-		: netBalance < 0
-			? "bg-gradient-to-br from-destructive/5 via-destructive/10 to-orange-500/5 border-destructive/15"
-			: "bg-gradient-to-br from-muted/40 to-muted/20 border-border/50";
+	const heroClassName =
+		netBalance > 0
+			? "bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-teal-500/5 border-emerald-500/15"
+			: netBalance < 0
+				? "bg-gradient-to-br from-destructive/5 via-destructive/10 to-orange-500/5 border-destructive/15"
+				: "bg-gradient-to-br from-muted/40 to-muted/20 border-border/50";
 
-	const netBalanceClassName = netBalance > 0
-		? "text-emerald-600"
-		: netBalance < 0
-			? "text-destructive"
-			: "text-muted-foreground";
+	const netBalanceClassName =
+		netBalance > 0
+			? "text-emerald-600"
+			: netBalance < 0
+				? "text-destructive"
+				: "text-muted-foreground";
 
 	if (whoOwesMe.length === 0 && iOweWho.length === 0) {
 		return (
@@ -88,7 +105,10 @@ export function DebtSummary({ expenses, currentUserId, userMap, tripCurrency, on
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.4 }}
-				className={cn("relative overflow-hidden rounded-[2rem] p-6 sm:p-8 border", heroClassName)}
+				className={cn(
+					"relative overflow-hidden rounded-[2rem] p-6 sm:p-8 border",
+					heroClassName
+				)}
 			>
 				{/* Decorative Elements */}
 				<div
@@ -99,10 +119,16 @@ export function DebtSummary({ expenses, currentUserId, userMap, tripCurrency, on
 				<div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 					<div className="space-y-1">
 						<div className="flex items-center gap-2">
-							<div className={cn(
-								"p-1.5 rounded-lg",
-								netBalance > 0 ? "bg-emerald-500/15" : netBalance < 0 ? "bg-destructive/15" : "bg-muted"
-							)}>
+							<div
+								className={cn(
+									"p-1.5 rounded-lg",
+									netBalance > 0
+										? "bg-emerald-500/15"
+										: netBalance < 0
+											? "bg-destructive/15"
+											: "bg-muted"
+								)}
+							>
 								{netBalance > 0 ? (
 									<TrendingUp className="size-3.5 text-emerald-600" />
 								) : netBalance < 0 ? (
@@ -115,14 +141,22 @@ export function DebtSummary({ expenses, currentUserId, userMap, tripCurrency, on
 								Net Balance
 							</span>
 						</div>
-						<p className={cn("text-3xl sm:text-4xl font-black font-mono tracking-tighter", netBalanceClassName)}>
-							{netBalance > 0 ? "+" : ""}{formatMoney(Math.abs(netBalance), tripCurrency)}
+						<p
+							className={cn(
+								"text-3xl sm:text-4xl font-black font-mono tracking-tighter",
+								netBalanceClassName
+							)}
+						>
+							{netBalance > 0 ? "+" : ""}
+							{formatMoney(Math.abs(netBalance), tripCurrency)}
 						</p>
 					</div>
 
 					<div className="flex items-center gap-2 text-xs text-muted-foreground">
 						<Users className="size-3.5" />
-						<span className="font-semibold">{totalPeople} {totalPeople === 1 ? "person" : "people"}</span>
+						<span className="font-semibold">
+							{totalPeople} {totalPeople === 1 ? "person" : "people"}
+						</span>
 					</div>
 				</div>
 
@@ -175,7 +209,8 @@ export function DebtSummary({ expenses, currentUserId, userMap, tripCurrency, on
 									Friends Owe You
 								</h3>
 								<p className="text-[10px] text-muted-foreground">
-									{whoOwesMe.length} {whoOwesMe.length === 1 ? "person" : "people"}
+									{whoOwesMe.length}{" "}
+									{whoOwesMe.length === 1 ? "person" : "people"}
 								</p>
 							</div>
 						</div>
@@ -273,16 +308,32 @@ export function DebtSummary({ expenses, currentUserId, userMap, tripCurrency, on
 }
 
 // Generate a consistent color for avatars based on userId
-function getAvatarColors(userId: string): { bg: string; text: string; ring: string } {
+function getAvatarColors(userId: string): {
+	bg: string;
+	text: string;
+	ring: string;
+} {
 	const colors = [
-		{ bg: "bg-violet-500/15", text: "text-violet-600", ring: "ring-violet-500/20" },
+		{
+			bg: "bg-violet-500/15",
+			text: "text-violet-600",
+			ring: "ring-violet-500/20",
+		},
 		{ bg: "bg-blue-500/15", text: "text-blue-600", ring: "ring-blue-500/20" },
 		{ bg: "bg-cyan-500/15", text: "text-cyan-600", ring: "ring-cyan-500/20" },
 		{ bg: "bg-teal-500/15", text: "text-teal-600", ring: "ring-teal-500/20" },
-		{ bg: "bg-amber-500/15", text: "text-amber-600", ring: "ring-amber-500/20" },
+		{
+			bg: "bg-amber-500/15",
+			text: "text-amber-600",
+			ring: "ring-amber-500/20",
+		},
 		{ bg: "bg-pink-500/15", text: "text-pink-600", ring: "ring-pink-500/20" },
 		{ bg: "bg-rose-500/15", text: "text-rose-600", ring: "ring-rose-500/20" },
-		{ bg: "bg-indigo-500/15", text: "text-indigo-600", ring: "ring-indigo-500/20" },
+		{
+			bg: "bg-indigo-500/15",
+			text: "text-indigo-600",
+			ring: "ring-indigo-500/20",
+		},
 	];
 	let hash = 0;
 	for (let i = 0; i < userId.length; i++) {
@@ -334,12 +385,14 @@ const DebtCard = memo(function DebtCard({
 			<div className="flex items-center justify-between relative z-10">
 				<div className="flex items-center gap-3">
 					{/* Avatar */}
-					<div className={cn(
-						"size-11 sm:size-12 rounded-2xl flex items-center justify-center font-black text-xs sm:text-sm shrink-0 ring-2",
-						avatarColors.bg,
-						avatarColors.text,
-						avatarColors.ring
-					)}>
+					<div
+						className={cn(
+							"size-11 sm:size-12 rounded-2xl flex items-center justify-center font-black text-xs sm:text-sm shrink-0 ring-2",
+							avatarColors.bg,
+							avatarColors.text,
+							avatarColors.ring
+						)}
+					>
 						{userName.substring(0, 2).toUpperCase()}
 					</div>
 					<div className="space-y-0.5 min-w-0">
@@ -354,7 +407,8 @@ const DebtCard = memo(function DebtCard({
 								)}
 							/>
 							<p className="text-[9px] sm:text-[10px] font-semibold text-muted-foreground truncate">
-								{transactionCount} {transactionCount === 1 ? "expense" : "expenses"}
+								{transactionCount}{" "}
+								{transactionCount === 1 ? "expense" : "expenses"}
 							</p>
 						</div>
 					</div>
@@ -386,17 +440,23 @@ const DebtCard = memo(function DebtCard({
 					<motion.div
 						initial={{ width: 0 }}
 						animate={{ width: `${Math.min(percentage, 100)}%` }}
-						transition={{ duration: 0.8, delay: 0.3 + index * 0.06, ease: "easeOut" }}
+						transition={{
+							duration: 0.8,
+							delay: 0.3 + index * 0.06,
+							ease: "easeOut",
+						}}
 						className={cn("h-full rounded-full", progressBarClassName)}
 					/>
 				</div>
 			</div>
 
 			{/* Background Accent */}
-			<div className={cn(
-				"absolute top-0 right-0 size-28 blur-[50px] opacity-[0.07] -mr-10 -mt-10 pointer-events-none transition-opacity group-hover:opacity-[0.12]",
-				accentColor
-			)} />
+			<div
+				className={cn(
+					"absolute top-0 right-0 size-28 blur-[50px] opacity-[0.07] -mr-10 -mt-10 pointer-events-none transition-opacity group-hover:opacity-[0.12]",
+					accentColor
+				)}
+			/>
 		</motion.div>
 	);
 });

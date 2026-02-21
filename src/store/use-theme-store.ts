@@ -1,7 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type ThemePreset = "ocean" | "sunset" | "forest" | "lavender" | "midnight" | "sakura";
+export type ThemePreset =
+	| "ocean"
+	| "sunset"
+	| "forest"
+	| "lavender"
+	| "midnight"
+	| "sakura";
 
 export interface ThemePresetInfo {
 	id: ThemePreset;

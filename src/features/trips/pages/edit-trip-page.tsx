@@ -18,7 +18,10 @@ export function EditTripPage() {
 	const { form, isLoading, error, onSubmit } = useEditTrip(trip);
 
 	return (
-		<FeaturePageLayout maxWidth="4xl" className="bg-gradient-to-br from-background via-background to-primary/5">
+		<FeaturePageLayout
+			maxWidth="4xl"
+			className="bg-gradient-to-br from-background via-background to-primary/5"
+		>
 			{/* Back Button */}
 			<motion.div variants={fadeInUp} className="mb-8">
 				<Link to={`/trips/${trip.id}` as any}>
@@ -76,4 +79,3 @@ export function EditTripPage() {
 		</FeaturePageLayout>
 	);
 }
-

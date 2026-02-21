@@ -31,4 +31,3 @@ export function useExpenseFilters() {
 		hasActiveFilters: searchQuery !== "" || selectedCategories.length > 0,
 	};
 }
-

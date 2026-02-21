@@ -34,7 +34,7 @@ export const expenseSchema = z
 		{
 			message: "Exact amounts must sum to total amount",
 			path: ["splitType"],
-		},
+		}
 	);
 
 export type ExpenseFormValues = z.infer<typeof expenseSchema>;

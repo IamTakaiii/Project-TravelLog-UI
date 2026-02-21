@@ -4,7 +4,8 @@ import { tripsApi, type Trip } from "../api/trips-api";
 export const tripQueryKeys = {
 	all: ["trips"] as const,
 	lists: () => [...tripQueryKeys.all, "list"] as const,
-	list: (filters: string = "") => [...tripQueryKeys.lists(), { filters }] as const,
+	list: (filters: string = "") =>
+		[...tripQueryKeys.lists(), { filters }] as const,
 	details: () => [...tripQueryKeys.all, "detail"] as const,
 	detail: (id: string) => [...tripQueryKeys.details(), id] as const,
 };
@@ -26,6 +27,3 @@ export const tripQueryOptions = (tripId: string) =>
 // Type exports for convenience
 export type TripsQueryData = Trip[];
 export type TripQueryData = Trip;
-
-
-

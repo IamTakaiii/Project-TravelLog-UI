@@ -45,7 +45,6 @@ export function TripDetailProvider({
 	);
 }
 
-
 export function useTripDetail() {
 	const context = useContext(TripDetailContext);
 	if (!context) {
@@ -53,6 +52,3 @@ export function useTripDetail() {
 	}
 	return context;
 }
-
-
-

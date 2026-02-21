@@ -19,7 +19,10 @@ interface CentralFundCardProps {
 	currency?: string;
 }
 
-export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardProps) {
+export function CentralFundCard({
+	tripId,
+	currency = "THB",
+}: CentralFundCardProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isDistributeOpen, setIsDistributeOpen] = useState(false);
 
@@ -45,7 +48,9 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 	const usagePercent = summary?.usagePercent ?? 0;
 
 	const handleDistribute = () => {
-		toast.success(`Distributed ${formatMoney(totalAmount, currency as CurrencyCode)} to ${membersCount} members`);
+		toast.success(
+			`Distributed ${formatMoney(totalAmount, currency as CurrencyCode)} to ${membersCount} members`
+		);
 		setIsDistributeOpen(false);
 	};
 
@@ -92,18 +97,22 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 						<ReceiptText className="size-4" />
 						<span className="font-bold hidden sm:inline">Distribute</span>
 					</Button>
-
-
 				</div>
 
 				{/* Fund Usage — real data from backend */}
 				<div className="space-y-3 pt-2 border-t border-border/40">
 					<div className="space-y-2">
 						<div className="flex justify-between items-center text-xs">
-							<span className="font-bold text-muted-foreground">Fund Usage</span>
+							<span className="font-bold text-muted-foreground">
+								Fund Usage
+							</span>
 							<span className="font-black text-primary">{usagePercent}%</span>
 						</div>
-						<Progress value={usagePercent} className="h-2 bg-muted/50" indicatorClassName="bg-primary" />
+						<Progress
+							value={usagePercent}
+							className="h-2 bg-muted/50"
+							indicatorClassName="bg-primary"
+						/>
 					</div>
 
 					<div className="grid grid-cols-2 gap-3">
@@ -113,7 +122,9 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 							</p>
 							<p className="text-sm font-black text-emerald-500 truncate">
 								{getCurrencySymbol(currency as CurrencyCode)}
-								{remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+								{remaining.toLocaleString(undefined, {
+									maximumFractionDigits: 2,
+								})}
 							</p>
 						</div>
 						<div className="bg-background/40 rounded-xl p-3 border border-border/30">
@@ -122,7 +133,9 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 							</p>
 							<p className="text-sm font-black text-foreground truncate">
 								{getCurrencySymbol(currency as CurrencyCode)}
-								{totalSpent.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+								{totalSpent.toLocaleString(undefined, {
+									maximumFractionDigits: 2,
+								})}
 							</p>
 						</div>
 					</div>
@@ -143,11 +156,17 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 				title="Distribute Funds?"
 				description={
 					<div className="space-y-4 pt-2">
-						<p>You are about to refund the remaining central fund to all members.</p>
+						<p>
+							You are about to refund the remaining central fund to all members.
+						</p>
 						<div className="bg-muted/50 rounded-2xl p-4 space-y-2 border border-border">
 							<div className="flex justify-between text-sm">
-								<span className="text-muted-foreground">Total to Distribute:</span>
-								<span className="font-black text-foreground">{formatMoney(totalAmount, currency as CurrencyCode)}</span>
+								<span className="text-muted-foreground">
+									Total to Distribute:
+								</span>
+								<span className="font-black text-foreground">
+									{formatMoney(totalAmount, currency as CurrencyCode)}
+								</span>
 							</div>
 							<div className="flex justify-between text-sm">
 								<span className="text-muted-foreground">Members:</span>
@@ -157,7 +176,9 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 							</div>
 							<div className="pt-2 border-t border-border flex justify-between items-center">
 								<span className="font-bold text-primary">Each gets back:</span>
-								<span className="text-xl font-black text-primary">{formatMoney(amountPerPerson, currency as CurrencyCode)}</span>
+								<span className="text-xl font-black text-primary">
+									{formatMoney(amountPerPerson, currency as CurrencyCode)}
+								</span>
 							</div>
 						</div>
 					</div>
@@ -170,5 +191,3 @@ export function CentralFundCard({ tripId, currency = "THB" }: CentralFundCardPro
 		</>
 	);
 }
-
-

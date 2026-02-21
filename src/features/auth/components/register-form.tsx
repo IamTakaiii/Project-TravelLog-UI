@@ -21,10 +21,7 @@ export function RegisterForm() {
 	const { translateError } = useTranslateError();
 	const { form, isLoading, error, onSubmit, handleSocialSignUp } =
 		useRegister();
-	const {
-		control,
-		handleSubmit,
-	} = form;
+	const { control, handleSubmit } = form;
 
 	return (
 		<div className="grid gap-6">
@@ -115,6 +112,3 @@ export function RegisterForm() {
 		</div>
 	);
 }
-
-
-

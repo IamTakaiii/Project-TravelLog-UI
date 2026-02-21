@@ -32,19 +32,22 @@ export const DEFAULT_CATEGORIES: ExpenseCategory[] = [
 		id: "food",
 		name: "Food",
 		icon: "Utensils",
-		color: "bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400",
+		color:
+			"bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400",
 	},
 	{
 		id: "cafe",
 		name: "Café",
 		icon: "Coffee",
-		color: "bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400",
+		color:
+			"bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400",
 	},
 	{
 		id: "drinks",
 		name: "Drinks",
 		icon: "UtensilsCrossed",
-		color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400",
+		color:
+			"bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400",
 	},
 
 	// ── Getting Around ────────────────────────────────────────────────────────
@@ -72,7 +75,8 @@ export const DEFAULT_CATEGORIES: ExpenseCategory[] = [
 		id: "hotel",
 		name: "Hotel",
 		icon: "Hotel",
-		color: "bg-purple-100 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400",
+		color:
+			"bg-purple-100 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400",
 	},
 
 	// ── Things to Do ─────────────────────────────────────────────────────────
@@ -86,7 +90,8 @@ export const DEFAULT_CATEGORIES: ExpenseCategory[] = [
 		id: "ticket",
 		name: "Ticket",
 		icon: "Ticket",
-		color: "bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400",
+		color:
+			"bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400",
 	},
 
 	// ── Shopping ─────────────────────────────────────────────────────────────
@@ -114,7 +119,8 @@ export const DEFAULT_CATEGORIES: ExpenseCategory[] = [
 		id: "internet",
 		name: "SIM / WiFi",
 		icon: "Wifi",
-		color: "bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400",
+		color:
+			"bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400",
 	},
 	{
 		id: "laundry",
@@ -126,7 +132,8 @@ export const DEFAULT_CATEGORIES: ExpenseCategory[] = [
 		id: "fees",
 		name: "Fees / Visa",
 		icon: "CreditCard",
-		color: "bg-slate-100 text-slate-600 dark:bg-slate-500/20 dark:text-slate-400",
+		color:
+			"bg-slate-100 text-slate-600 dark:bg-slate-500/20 dark:text-slate-400",
 	},
 	{
 		id: "others",
@@ -140,7 +147,8 @@ export const DEFAULT_CATEGORIES: ExpenseCategory[] = [
 		id: "settlement",
 		name: "Settlement",
 		icon: "Handshake",
-		color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
+		color:
+			"bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
 	},
 ];
 

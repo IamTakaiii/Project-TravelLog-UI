@@ -35,11 +35,14 @@ export async function apiClient<T>(
 
 	if (!response.ok) {
 		const errorData = (await response.json().catch(() => ({}))) as {
-			error?: { code?: string };
+			error?: { code?: string; message?: string };
 			message?: string;
 		};
 		throw new Error(
-			errorData.error?.code || errorData.message || "Request failed"
+			errorData.error?.message ||
+				errorData.message ||
+				errorData.error?.code ||
+				"Request failed"
 		);
 	}
 
@@ -52,4 +55,3 @@ export async function apiClient<T>(
 	// Handle consistent API response structure if applicable (e.g., { data: T })
 	return (result.data ?? result) as T;
 }
-

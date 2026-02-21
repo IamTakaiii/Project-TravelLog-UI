@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/button";
 import { fadeInUp } from "@/lib/animations";
 import { useTripDetail } from "../trip-detail-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function CompanionsCard() {
 	const { trip } = useTripDetail();
@@ -31,7 +35,10 @@ export function CompanionsCard() {
 						<TooltipTrigger asChild>
 							<div className="relative group">
 								<Avatar className="size-10 border-2 border-background ring-2 ring-transparent group-hover:ring-primary/30 transition-all">
-									<AvatarImage src={member.user.image || ""} alt={member.user.name} />
+									<AvatarImage
+										src={member.user.image || ""}
+										alt={member.user.name}
+									/>
 									<AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
 										{member.user.name.substring(0, 2).toUpperCase()}
 									</AvatarFallback>

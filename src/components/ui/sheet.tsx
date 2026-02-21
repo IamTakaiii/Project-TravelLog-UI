@@ -65,8 +65,8 @@ const sheetVariants = cva(
 
 interface SheetContentProps
 	extends
-	React.ComponentProps<typeof SheetPrimitive.Content>,
-	VariantProps<typeof sheetVariants> {
+		React.ComponentProps<typeof SheetPrimitive.Content>,
+		VariantProps<typeof sheetVariants> {
 	overlay?: boolean;
 	close?: boolean;
 }

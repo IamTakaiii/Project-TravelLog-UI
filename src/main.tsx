@@ -7,7 +7,6 @@ import { queryClient } from "./lib/query-client.ts";
 import "./styles/tailwind.css";
 import "./lib/i18n.ts";
 
-
 const router = createRouter({
 	routeTree,
 	context: {

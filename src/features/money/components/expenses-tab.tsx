@@ -63,5 +63,3 @@ export function ExpensesTab({
 		</motion.div>
 	);
 }
-
-

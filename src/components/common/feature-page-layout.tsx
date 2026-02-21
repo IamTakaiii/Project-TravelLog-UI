@@ -25,7 +25,10 @@ export function FeaturePageLayout({
 			initial="hidden"
 			animate="show"
 			variants={staggerContainer}
-			className={cn("min-h-screen bg-background p-6 lg:p-10 relative overflow-hidden", className)}
+			className={cn(
+				"min-h-screen bg-background p-6 lg:p-10 relative overflow-hidden",
+				className
+			)}
 		>
 			{/* Shared Decorative Background */}
 			<div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
@@ -33,7 +36,12 @@ export function FeaturePageLayout({
 				<div className="absolute bottom-20 left-20 w-[300px] h-[300px] bg-accent/10 rounded-full blur-[100px] animate-pulse delay-1000" />
 			</div>
 
-			<div className={cn("mx-auto space-y-10 relative z-10", maxWidthClasses[maxWidth])}>
+			<div
+				className={cn(
+					"mx-auto space-y-10 relative z-10",
+					maxWidthClasses[maxWidth]
+				)}
+			>
 				{children}
 			</div>
 		</motion.div>

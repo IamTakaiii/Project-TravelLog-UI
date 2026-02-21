@@ -10,7 +10,10 @@ export function formatTripDate(dateString: string): string {
 	});
 }
 
-export function formatTripDateRange(startDate: string, endDate: string): string {
+export function formatTripDateRange(
+	startDate: string,
+	endDate: string
+): string {
 	const start = new Date(startDate);
 	const end = new Date(endDate);
 

@@ -13,17 +13,18 @@ export function CategoryFilter({
 	categories,
 }: CategoryFilterProps) {
 	// If we have backend categories, build list from them; otherwise fall back to defaults
-	const items = categories && categories.length > 0
-		? categories.map((id) => {
-			const known = DEFAULT_CATEGORIES.find(
-				(c) => c.id.toLowerCase() === id.toLowerCase()
-			);
-			return {
-				id: id.toLowerCase(),
-				name: known?.name ?? id,
-			};
-		})
-		: DEFAULT_CATEGORIES.map((c) => ({ id: c.id, name: c.name }));
+	const items =
+		categories && categories.length > 0
+			? categories.map((id) => {
+					const known = DEFAULT_CATEGORIES.find(
+						(c) => c.id.toLowerCase() === id.toLowerCase()
+					);
+					return {
+						id: id.toLowerCase(),
+						name: known?.name ?? id,
+					};
+				})
+			: DEFAULT_CATEGORIES.map((c) => ({ id: c.id, name: c.name }));
 
 	return (
 		<div className="flex flex-wrap gap-2">

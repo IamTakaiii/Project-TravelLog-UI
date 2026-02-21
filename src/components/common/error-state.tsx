@@ -40,8 +40,12 @@ export function ErrorState({
 				</div>
 			</div>
 			<div className="space-y-1">
-				<h3 className="text-lg font-semibold text-foreground">{displayTitle}</h3>
-				<p className="text-muted-foreground max-w-md mx-auto">{displayDescription}</p>
+				<h3 className="text-lg font-semibold text-foreground">
+					{displayTitle}
+				</h3>
+				<p className="text-muted-foreground max-w-md mx-auto">
+					{displayDescription}
+				</p>
 			</div>
 			{onRetry && (
 				<Button

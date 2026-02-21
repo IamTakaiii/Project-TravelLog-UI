@@ -10,7 +10,10 @@ import { FeaturePageLayout } from "@/components/common/feature-page-layout";
 export function CreateTripPage() {
 	const { t } = useTranslation();
 	return (
-		<FeaturePageLayout maxWidth="4xl" className="bg-gradient-to-br from-background via-background to-primary/5">
+		<FeaturePageLayout
+			maxWidth="4xl"
+			className="bg-gradient-to-br from-background via-background to-primary/5"
+		>
 			{/* Back Button */}
 			<motion.div variants={fadeInUp} className="mb-8">
 				<Link to="/trips">
@@ -87,4 +90,3 @@ export function CreateTripPage() {
 		</FeaturePageLayout>
 	);
 }
-

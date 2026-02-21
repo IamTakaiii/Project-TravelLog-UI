@@ -7,4 +7,3 @@ type IconProps = HeroIconSVGProps & {
 };
 
 export type Heroicon = React.FC<IconProps>;
-

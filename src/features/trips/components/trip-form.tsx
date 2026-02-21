@@ -37,10 +37,7 @@ export function TripForm({
 }: TripFormProps) {
 	const { t } = useTranslation();
 	const { translateError } = useTranslateError();
-	const {
-		control,
-		handleSubmit,
-	} = form;
+	const { control, handleSubmit } = form;
 
 	return (
 		<Form {...form}>
@@ -169,8 +166,3 @@ export function TripForm({
 		</Form>
 	);
 }
-
-
-
-
-

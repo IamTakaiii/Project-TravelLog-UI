@@ -26,12 +26,12 @@ export interface Expense {
 	id: string;
 	tripId: string;
 	description: string;
-	amount: number;       // Original currency amount
+	amount: number; // Original currency amount
 	currency: CurrencyCode;
 	exchangeRate: number;
-	rateAt?: string;      // "YYYY-MM-DD" — which day's exchange rate was used
-	thbAmount: number;    // Converted to trip base currency
-	date: string;         // ISO string
+	rateAt?: string; // "YYYY-MM-DD" — which day's exchange rate was used
+	thbAmount: number; // Converted to trip base currency
+	date: string; // ISO string
 	/** UUID of the user who paid. Null/empty when a fund paid. */
 	payerId: string;
 	/** UUID of the central fund that paid. Set when a fund covers this expense. */
@@ -102,7 +102,10 @@ export interface Fund {
 	updatedBy: string;
 }
 
-export type CreateFundInput = Pick<Fund, "title" | "tripId" | "amount" | "currency">;
+export type CreateFundInput = Pick<
+	Fund,
+	"title" | "tripId" | "amount" | "currency"
+>;
 export type UpdateFundInput = Partial<CreateFundInput>;
 
 // ── Split results ─────────────────────────────────────────────────────────────
@@ -128,4 +131,20 @@ export interface SplitValidation {
 	totalAssigned: number;
 	expectedTotal: number;
 	discrepancy: number;
+}
+
+export interface ExpenseLog {
+	id: string;
+	expenseId: string | null;
+	tripId: string;
+	action: "CREATE" | "UPDATE" | "DELETE";
+	data: any;
+	userId: string;
+	timestamp: string;
+	user: {
+		id: string;
+		name: string;
+		email: string;
+		image?: string | null;
+	};
 }

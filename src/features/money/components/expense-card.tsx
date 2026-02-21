@@ -24,8 +24,9 @@ export const ExpenseCard = memo(function ExpenseCard({
 	overrideAmount,
 	overrideSubAmount,
 }: ExpenseCardProps) {
-	const category =
-		expense.isSettlement ? getCategoryById("settlement") : getCategoryById(expense.category);
+	const category = expense.isSettlement
+		? getCategoryById("settlement")
+		: getCategoryById(expense.category);
 	const isCentral = expense.payerId === CENTRAL_FUND_ID;
 
 	if (!category) return null;
@@ -55,9 +56,7 @@ export const ExpenseCard = memo(function ExpenseCard({
 			<div className="flex-1 min-w-0">
 				<h4 className="font-bold text-sm truncate">{expense.description}</h4>
 				<div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-					<span className="truncate max-w-[80px]">
-						{getPayerName()}
-					</span>
+					<span className="truncate max-w-[80px]">{getPayerName()}</span>
 					<span>•</span>
 					<span>
 						{new Date(expense.date).toLocaleDateString([], {
@@ -74,7 +73,8 @@ export const ExpenseCard = memo(function ExpenseCard({
 					{formatMoney(overrideAmount ?? expense.thbAmount, tripCurrency)}
 				</p>
 				{/* Show original currency as subtitle if different or if overridden */}
-				{(overrideSubAmount !== undefined || expense.currency !== tripCurrency) && (
+				{(overrideSubAmount !== undefined ||
+					expense.currency !== tripCurrency) && (
 					<p className="text-[10px] text-muted-foreground">
 						{formatMoney(overrideSubAmount ?? expense.amount, expense.currency)}
 					</p>

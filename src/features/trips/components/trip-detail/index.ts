@@ -13,7 +13,6 @@ export {
 	DEFAULT_COVER_IMAGE,
 } from "./constants";
 
-
 // Context
 export { TripDetailProvider, useTripDetail } from "./trip-detail-context";
 
@@ -28,12 +27,7 @@ export { MainContent } from "./main-content";
 export { DeleteTripDialog } from "./delete-trip-dialog";
 
 // Tabs
-export {
-	ItineraryTab,
-	PlacesTab,
-	MoneyTab,
-	TabHeader,
-} from "./tabs";
+export { ItineraryTab, PlacesTab, MoneyTab, TabHeader } from "./tabs";
 
 export { TabContent } from "./tabs/tab-content";
 

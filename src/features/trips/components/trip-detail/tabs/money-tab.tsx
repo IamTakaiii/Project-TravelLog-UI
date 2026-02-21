@@ -28,11 +28,13 @@ export function MoneyTab() {
 
 	// Calculate totals
 	const totalBudget = trip.budget ? parseFloat(trip.budget) : 0;
-	const totalSpent = backendSum ?? expenses
-		.filter(
-			(ex) => ex.category !== "settlement" && ex.payerId !== CENTRAL_FUND_ID
-		)
-		.reduce((sum, ex) => sum + ex.thbAmount, 0);
+	const totalSpent =
+		backendSum ??
+		expenses
+			.filter(
+				(ex) => ex.category !== "settlement" && ex.payerId !== CENTRAL_FUND_ID
+			)
+			.reduce((sum, ex) => sum + ex.thbAmount, 0);
 
 	const remaining = totalBudget - totalSpent;
 	const currency = (trip.currency as CurrencyCode) || "THB";
@@ -78,7 +80,6 @@ export function MoneyTab() {
 				/>
 			</div>
 
-
 			{/* CTA Section */}
 			<div className="relative group overflow-hidden bg-card/50 backdrop-blur-xl rounded-[2.5rem] p-10 border border-border/50 shadow-sm text-center space-y-6">
 				<div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-50 group-hover:scale-110 transition-transform duration-700" />
@@ -103,7 +104,8 @@ export function MoneyTab() {
 							size="lg"
 							className="rounded-full font-black text-base px-8 py-7 shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 transition-all gap-3 active:scale-95"
 						>
-							{t("trips.detail.manage_finances")} <ArrowRight className="size-5" />
+							{t("trips.detail.manage_finances")}{" "}
+							<ArrowRight className="size-5" />
 						</Button>
 					</Link>
 				</div>
@@ -111,4 +113,3 @@ export function MoneyTab() {
 		</motion.div>
 	);
 }
-

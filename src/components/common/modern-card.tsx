@@ -17,7 +17,6 @@ export function ModernCard({
 	return (
 		<div
 			onClick={onClick}
-
 			className={cn(
 				"rounded-3xl border border-border/50 p-6 shadow-sm",
 				glass ? "bg-card/50 backdrop-blur-xl" : "bg-card",

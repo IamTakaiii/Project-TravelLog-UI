@@ -36,7 +36,3 @@ export function useEditTrip(trip: Trip) {
 		onSubmit,
 	};
 }
-
-
-
-

@@ -3,7 +3,10 @@ import { useParams } from "@tanstack/react-router";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { expensesQueryOptions, categoriesQueryOptions } from "../queries/money-queries";
+import {
+	expensesQueryOptions,
+	categoriesQueryOptions,
+} from "../queries/money-queries";
 import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
 import {
 	ExpenseFormSheet,
@@ -11,6 +14,7 @@ import {
 	ExpensesTab,
 	BalancesTab,
 	MoneyManagementHeader,
+	HistorySheet,
 } from "../components";
 import { useExpenseFilters } from "../hooks/use-expense-filters";
 import { useBudgetStats } from "../hooks/use-budget-stats";
@@ -32,6 +36,7 @@ export function MoneyManagementPage() {
 	const { data: trip } = useSuspenseQuery(tripQueryOptions(params.tripId));
 
 	const [activeTab, setActiveTab] = useState<TabType>(TABS.EXPENSES);
+	const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
 	const {
 		searchQuery,
@@ -43,19 +48,30 @@ export function MoneyManagementPage() {
 
 	// Debounce search to avoid firing a request on every keystroke
 	const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
-	const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+	const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+		undefined
+	);
 	useEffect(() => {
 		clearTimeout(debounceRef.current);
-		debounceRef.current = setTimeout(() => setDebouncedSearch(searchQuery), 350);
+		debounceRef.current = setTimeout(
+			() => setDebouncedSearch(searchQuery),
+			350
+		);
 		return () => clearTimeout(debounceRef.current);
 	}, [searchQuery]);
 
-	const filters = useMemo(() => ({
-		categories: selectedCategories.length > 0 ? selectedCategories : undefined,
-		search: debouncedSearch || undefined,
-	}), [selectedCategories, debouncedSearch]);
+	const filters = useMemo(
+		() => ({
+			categories:
+				selectedCategories.length > 0 ? selectedCategories : undefined,
+			search: debouncedSearch || undefined,
+		}),
+		[selectedCategories, debouncedSearch]
+	);
 
-	const { data: expensesData, isLoading: isExpensesLoading } = useQuery(expensesQueryOptions(trip.id, filters));
+	const { data: expensesData, isLoading: isExpensesLoading } = useQuery(
+		expensesQueryOptions(trip.id, filters)
+	);
 	const { data: categories = [] } = useQuery(categoriesQueryOptions(trip.id));
 	const expenses = expensesData?.expenses || [];
 	const backendSum = expensesData?.sum;
@@ -78,30 +94,58 @@ export function MoneyManagementPage() {
 	const totalBudget = trip.budget ? parseFloat(trip.budget) : 0;
 	const tripDays = calculateTripDuration(trip.startDate, trip.endDate);
 
-	const budgetStats = useBudgetStats({ expenses, totalBudget, tripDays, backendSum });
+	const budgetStats = useBudgetStats({
+		expenses,
+		totalBudget,
+		tripDays,
+		backendSum,
+	});
 
 	const { t } = useTranslation();
 
-	const handleExpenseClick = useCallback((expense: Expense) => {
-		setSelectedExpense(expense);
-	}, [setSelectedExpense]);
+	const handleExpenseClick = useCallback(
+		(expense: Expense) => {
+			setSelectedExpense(expense);
+		},
+		[setSelectedExpense]
+	);
 
-	const moneyTabs = useMemo(() => [
-		{ id: TABS.EXPENSES, label: t("money.tabs.expenses"), icon: Receipt },
-		{ id: TABS.BALANCES, label: t("money.tabs.balances"), icon: ArrowRightLeft },
-	], [t]);
+	const moneyTabs = useMemo(
+		() => [
+			{ id: TABS.EXPENSES, label: t("money.tabs.expenses"), icon: Receipt },
+			{
+				id: TABS.BALANCES,
+				label: t("money.tabs.balances"),
+				icon: ArrowRightLeft,
+			},
+		],
+		[t]
+	);
 
 	const { data: session } = useQuery(sessionQueryOptions);
-	const userMap = useMemo(() => new Map(trip.members.map(m => [m.userId, m.user.name])), [trip.members]);
+	const userMap = useMemo(
+		() => new Map(trip.members.map((m) => [m.userId, m.user.name])),
+		[trip.members]
+	);
 
 	return (
 		<FeaturePageLayout>
-			<MoneyManagementHeader trip={trip} budgetStats={budgetStats} />
+			<MoneyManagementHeader
+				trip={trip}
+				budgetStats={budgetStats}
+				onHistoryClick={() => setIsHistoryOpen(true)}
+			/>
 
 			<TabSwitcher
 				activeTab={activeTab}
 				onTabChange={(tab) => setActiveTab(tab as TabType)}
 				tabs={moneyTabs}
+			/>
+
+			<HistorySheet
+				tripId={trip.id}
+				open={isHistoryOpen}
+				onOpenChange={setIsHistoryOpen}
 			/>
 
 			<AnimatePresence mode="wait">
@@ -119,7 +163,6 @@ export function MoneyManagementPage() {
 						tripCurrency={tripCurrency}
 						categories={categories}
 					/>
-
 				) : (
 					<BalancesTab
 						expenses={expenses}
@@ -160,7 +203,11 @@ export function MoneyManagementPage() {
 				title={t("money.confirm.delete_title")}
 				description={
 					<>
-						{t("money.confirm.delete_description")} <span className="text-foreground font-bold italic">"{selectedExpense?.description}"</span>.
+						{t("money.confirm.delete_description")}{" "}
+						<span className="text-foreground font-bold italic">
+							"{selectedExpense?.description}"
+						</span>
+						.
 					</>
 				}
 				confirmText={t("money.confirm.confirm_delete")}

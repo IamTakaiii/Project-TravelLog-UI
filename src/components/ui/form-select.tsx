@@ -21,7 +21,12 @@ interface FormSelectProps<T extends FieldValues> {
 	name: FieldPath<T>;
 	label?: string;
 	placeholder?: string;
-	options: { label: string; value: string; disabled?: boolean; icon?: ReactNode }[];
+	options: {
+		label: string;
+		value: string;
+		disabled?: boolean;
+		icon?: ReactNode;
+	}[];
 	className?: string;
 	disabled?: boolean;
 }

@@ -28,4 +28,3 @@ export function BasicInfoFields({ control, mode }: BasicInfoFieldsProps) {
 		</div>
 	);
 }
-

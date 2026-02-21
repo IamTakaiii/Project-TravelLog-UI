@@ -5,36 +5,42 @@ import { CurrencyCode } from "../types";
 import { BudgetStats } from "../utils/budget-calculator";
 
 interface MoneyManagementHeaderProps {
-    trip: {
-        id: string;
-        title: string;
-        currency?: string;
-    };
-    budgetStats: BudgetStats;
+	trip: {
+		id: string;
+		title: string;
+		currency?: string;
+	};
+	budgetStats: BudgetStats;
+	onHistoryClick?: () => void;
 }
 
-export function MoneyManagementHeader({ trip, budgetStats }: MoneyManagementHeaderProps) {
-    const currency = (trip.currency as CurrencyCode) || "THB";
-    
-    return (
-        <div className="space-y-6">
-            <MoneyHeader tripId={trip.id} tripTitle={trip.title} />
+export function MoneyManagementHeader({
+	trip,
+	budgetStats,
+	onHistoryClick,
+}: MoneyManagementHeaderProps) {
+	const currency = (trip.currency as CurrencyCode) || "THB";
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <BudgetSummaryCard
-                    totalSpent={budgetStats.totalSpent}
-                    totalBudget={budgetStats.totalBudget}
-                    remaining={budgetStats.remaining}
-                    percentage={budgetStats.percentage}
-                    dailyAverage={budgetStats.dailyAverage}
-                    currency={currency}
-                />
+	return (
+		<div className="space-y-6">
+			<MoneyHeader
+				tripId={trip.id}
+				tripTitle={trip.title}
+				onHistoryClick={onHistoryClick}
+			/>
 
-                <CentralFundCard
-                    tripId={trip.id}
-                    currency={currency}
-                />
-            </div>
-        </div>
-    );
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+				<BudgetSummaryCard
+					totalSpent={budgetStats.totalSpent}
+					totalBudget={budgetStats.totalBudget}
+					remaining={budgetStats.remaining}
+					percentage={budgetStats.percentage}
+					dailyAverage={budgetStats.dailyAverage}
+					currency={currency}
+				/>
+
+				<CentralFundCard tripId={trip.id} currency={currency} />
+			</div>
+		</div>
+	);
 }

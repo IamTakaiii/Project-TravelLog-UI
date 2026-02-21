@@ -6,7 +6,6 @@ import type { Trip } from "../api/trips-api";
 import { getStatusConfig } from "../utils/trip-status";
 import { useTranslation } from "react-i18next";
 
-
 interface TripCardProps {
 	trip: Trip;
 }

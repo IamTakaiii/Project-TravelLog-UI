@@ -26,7 +26,8 @@ export function useTripMutations() {
 	});
 
 	const updateTrip = useMutation({
-		mutationFn: ({ id, data }: { id: string; data: any }) => tripsApi.update(id, data),
+		mutationFn: ({ id, data }: { id: string; data: any }) =>
+			tripsApi.update(id, data),
 		onSuccess: (_, { id }) => {
 			queryClient.invalidateQueries({ queryKey: tripQueryKeys.lists() });
 			queryClient.invalidateQueries({ queryKey: tripQueryKeys.detail(id) });

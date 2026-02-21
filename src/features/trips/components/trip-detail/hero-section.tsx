@@ -6,7 +6,6 @@ import { DEFAULT_COVER_IMAGE } from "./constants";
 import { fadeInUp } from "@/lib/animations";
 
 export function HeroSection() {
-
 	const { trip } = useTripDetail();
 	const coverImage = trip.coverImage || DEFAULT_COVER_IMAGE;
 

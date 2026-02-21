@@ -4,8 +4,6 @@ export { type Trip, type CreateTripPayload } from "../types";
 import { Trip, CreateTripPayload } from "../types";
 
 export const tripsApi = {
-
-
 	async create(data: CreateTripFormValues): Promise<Trip> {
 		const payload: CreateTripPayload = {
 			title: data.title,
@@ -59,5 +57,3 @@ export const tripsApi = {
 		});
 	},
 };
-
-

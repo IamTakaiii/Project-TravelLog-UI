@@ -2,7 +2,12 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { formatMoney } from "../utils/money-formatter";
 import { DebtBreakdown } from "../hooks/use-debt-calculator";
 import { ExpenseCard } from "./expense-card";
-import { CheckCircle2, Receipt, ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import {
+	CheckCircle2,
+	Receipt,
+	ArrowDownLeft,
+	ArrowUpRight,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -51,7 +56,12 @@ export function DebtDetailSheet({
 						<div className="size-20 rounded-3xl bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-lg border border-border/50 text-2xl font-black text-foreground">
 							{userName.slice(0, 2).toUpperCase()}
 						</div>
-						<div className={cn("absolute -bottom-1.5 -right-1.5 p-1.5 rounded-full border-2 border-background", badgeClassName)}>
+						<div
+							className={cn(
+								"absolute -bottom-1.5 -right-1.5 p-1.5 rounded-full border-2 border-background",
+								badgeClassName
+							)}
+						>
 							{isPay ? (
 								<ArrowUpRight className="size-3 text-white" />
 							) : (
@@ -61,12 +71,15 @@ export function DebtDetailSheet({
 					</div>
 
 					<h2 className="text-base font-semibold text-muted-foreground">
-						{isPay
-							? `You owe ${userName}`
-							: `${userName} owes you`}
+						{isPay ? `You owe ${userName}` : `${userName} owes you`}
 					</h2>
 
-					<span className={cn("text-4xl sm:text-5xl font-black font-mono tracking-tighter mt-2", amountClassName)}>
+					<span
+						className={cn(
+							"text-4xl sm:text-5xl font-black font-mono tracking-tighter mt-2",
+							amountClassName
+						)}
+					>
 						{isPay ? "-" : "+"}
 						{formatMoney(Math.abs(debt.amount), tripCurrency)}
 					</span>
@@ -74,7 +87,10 @@ export function DebtDetailSheet({
 					<Button
 						onClick={onSettle}
 						size="lg"
-						className={cn("mt-6 rounded-full font-bold shadow-lg gap-2 active:scale-95 transition-all px-8", buttonClassName)}
+						className={cn(
+							"mt-6 rounded-full font-bold shadow-lg gap-2 active:scale-95 transition-all px-8",
+							buttonClassName
+						)}
 					>
 						<CheckCircle2 className="size-4" />
 						Mark as Settled
@@ -105,7 +121,10 @@ export function DebtDetailSheet({
 								let share = ex.thbAmount / splitters.length;
 								let originalShare = ex.amount / splitters.length;
 
-								if (ex.splitDetails.type === 'exact' && ex.splitDetails.amounts) {
+								if (
+									ex.splitDetails.type === "exact" &&
+									ex.splitDetails.amounts
+								) {
 									share = ex.splitDetails.amounts[targetUserId] || 0;
 									originalShare = ex.splitDetails.amounts[targetUserId] || 0;
 									share = originalShare * ex.exchangeRate;
@@ -120,7 +139,7 @@ export function DebtDetailSheet({
 									>
 										<ExpenseCard
 											expense={ex}
-											onClick={() => { }}
+											onClick={() => {}}
 											userMap={userMap}
 											overrideAmount={share}
 											overrideSubAmount={originalShare}

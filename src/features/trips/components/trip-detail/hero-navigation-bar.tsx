@@ -24,7 +24,6 @@ export function HeroNavigationBar() {
 				</Button>
 			</Link>
 
-
 			<div className="flex gap-2">
 				<Link to={`/trips/${trip.id}/money` as any}>
 					<Button
@@ -64,7 +63,6 @@ export function HeroNavigationBar() {
 					<Trash2 className="size-4" />
 				</Button>
 			</div>
-
 		</div>
 	);
 }

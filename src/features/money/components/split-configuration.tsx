@@ -61,7 +61,9 @@ export function SplitConfiguration({
 				</Label>
 				<RadioGroup
 					value={splitType}
-					onValueChange={(value) => onSplitTypeChange(value as "equal" | "exact")}
+					onValueChange={(value) =>
+						onSplitTypeChange(value as "equal" | "exact")
+					}
 					className="grid grid-cols-2 gap-3"
 				>
 					<SplitTypeButton
@@ -97,7 +99,9 @@ export function SplitConfiguration({
 							amount={equalSplitAmount}
 							currency={currency}
 							exactValue={exactAmounts[user.id]?.toString() || ""}
-							onExactAmountChange={(val) => onExactAmountChange(user.id, parseFloat(val) || 0)}
+							onExactAmountChange={(val) =>
+								onExactAmountChange(user.id, parseFloat(val) || 0)
+							}
 						/>
 					))}
 				</div>
@@ -105,7 +109,7 @@ export function SplitConfiguration({
 
 			{/* Summary Blocks */}
 			{splitType === "exact" && involvedUserIds.length > 0 && (
-				<ExactSplitSummary 
+				<ExactSplitSummary
 					isExactValid={isExactValid}
 					exactTotal={exactTotal}
 					totalAmount={totalAmount}
@@ -114,7 +118,7 @@ export function SplitConfiguration({
 			)}
 
 			{splitType === "equal" && involvedUserIds.length > 0 && (
-				<EqualSplitSummary 
+				<EqualSplitSummary
 					equalSplitAmount={equalSplitAmount}
 					currency={currency}
 				/>
@@ -125,8 +129,18 @@ export function SplitConfiguration({
 
 // Internal Helper Components
 
-function SplitTypeButton({ value, label, description, icon, active }: { 
-	value: string; label: string; description: string; icon: React.ReactNode; active: boolean 
+function SplitTypeButton({
+	value,
+	label,
+	description,
+	icon,
+	active,
+}: {
+	value: string;
+	label: string;
+	description: string;
+	icon: React.ReactNode;
+	active: boolean;
 }) {
 	return (
 		<div>
@@ -148,39 +162,72 @@ function SplitTypeButton({ value, label, description, icon, active }: {
 	);
 }
 
-function ExactSplitSummary({ isExactValid, exactTotal, totalAmount, currency }: {
-	isExactValid: boolean; exactTotal: number; totalAmount: number; currency: CurrencyCode;
+function ExactSplitSummary({
+	isExactValid,
+	exactTotal,
+	totalAmount,
+	currency,
+}: {
+	isExactValid: boolean;
+	exactTotal: number;
+	totalAmount: number;
+	currency: CurrencyCode;
 }) {
 	return (
 		<div
 			className={cn(
 				"p-4 rounded-2xl border-2 transition-all",
-				isExactValid ? "border-emerald-500/50 bg-emerald-500/5" : "border-destructive/50 bg-destructive/5"
+				isExactValid
+					? "border-emerald-500/50 bg-emerald-500/5"
+					: "border-destructive/50 bg-destructive/5"
 			)}
 		>
 			<div className="flex items-center justify-between mb-2">
-				<span className="text-xs font-bold text-muted-foreground uppercase">Total Split</span>
-				<span className={cn("text-sm font-black", isExactValid ? "text-emerald-500" : "text-destructive")}>
+				<span className="text-xs font-bold text-muted-foreground uppercase">
+					Total Split
+				</span>
+				<span
+					className={cn(
+						"text-sm font-black",
+						isExactValid ? "text-emerald-500" : "text-destructive"
+					)}
+				>
 					{formatMoney(exactTotal, currency)}
 				</span>
 			</div>
 			<div className="flex items-center justify-between">
-				<span className="text-xs font-bold text-muted-foreground uppercase">Expense Total</span>
-				<span className="text-sm font-black text-foreground">{formatMoney(totalAmount, currency)}</span>
+				<span className="text-xs font-bold text-muted-foreground uppercase">
+					Expense Total
+				</span>
+				<span className="text-sm font-black text-foreground">
+					{formatMoney(totalAmount, currency)}
+				</span>
 			</div>
 			{!isExactValid && (
-				<p className="text-xs text-destructive font-medium mt-2">⚠️ Amounts must sum to total expense</p>
+				<p className="text-xs text-destructive font-medium mt-2">
+					⚠️ Amounts must sum to total expense
+				</p>
 			)}
 		</div>
 	);
 }
 
-function EqualSplitSummary({ equalSplitAmount, currency }: { equalSplitAmount: number; currency: CurrencyCode; }) {
+function EqualSplitSummary({
+	equalSplitAmount,
+	currency,
+}: {
+	equalSplitAmount: number;
+	currency: CurrencyCode;
+}) {
 	return (
 		<div className="p-4 rounded-2xl border-2 border-primary/50 bg-primary/5">
 			<div className="flex items-center justify-between">
-				<span className="text-xs font-bold text-muted-foreground uppercase">Each Person Pays</span>
-				<span className="text-lg font-black text-primary">{formatMoney(equalSplitAmount, currency)}</span>
+				<span className="text-xs font-bold text-muted-foreground uppercase">
+					Each Person Pays
+				</span>
+				<span className="text-lg font-black text-primary">
+					{formatMoney(equalSplitAmount, currency)}
+				</span>
 			</div>
 		</div>
 	);

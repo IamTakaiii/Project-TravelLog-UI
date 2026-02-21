@@ -88,7 +88,6 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
 						>
 							<Search className="mr-2 size-4" /> Explore Destinations
 						</Button>
-
 					</motion.div>
 				</div>
 

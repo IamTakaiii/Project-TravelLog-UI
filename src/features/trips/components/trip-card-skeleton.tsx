@@ -3,7 +3,10 @@ import { ModernCard } from "@/components/common/modern-card";
 
 export function TripCardSkeleton() {
 	return (
-		<ModernCard glass={false} className="p-0 overflow-hidden flex flex-col h-full">
+		<ModernCard
+			glass={false}
+			className="p-0 overflow-hidden flex flex-col h-full"
+		>
 			<Skeleton className="aspect-[4/3] rounded-none" />
 			<div className="p-5 space-y-4 flex-1">
 				<Skeleton className="h-6 w-3/4" />

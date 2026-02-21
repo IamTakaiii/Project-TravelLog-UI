@@ -1,7 +1,10 @@
 import { Wallet, TrendingUp, AlertCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { formatMoney } from "../utils/money-formatter";
-import { BUDGET_WARNING_PERCENT, BUDGET_CRITICAL_PERCENT } from "../constants/thresholds";
+import {
+	BUDGET_WARNING_PERCENT,
+	BUDGET_CRITICAL_PERCENT,
+} from "../constants/thresholds";
 import { CurrencyCode } from "../types";
 import { ModernCard } from "@/components/common/modern-card";
 
@@ -53,9 +56,7 @@ export function BudgetSummaryCard({
 				<div
 					className={`p-3 rounded-2xl ${bgColor} transition-colors duration-500 shrink-0`}
 				>
-					<Wallet
-						className={`size-6 ${statusColor.replace("bg-", "text-")}`}
-					/>
+					<Wallet className={`size-6 ${statusColor.replace("bg-", "text-")}`} />
 				</div>
 			</div>
 
@@ -105,4 +106,3 @@ export function BudgetSummaryCard({
 		</ModernCard>
 	);
 }
-

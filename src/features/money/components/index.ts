@@ -15,6 +15,7 @@ export { ExpenseFormSheet } from "./expense-form-sheet";
 export { DetailSheetHero } from "./detail-sheet-hero";
 export { ExpenseDetailSheet } from "./expense-detail-sheet";
 export { DebtDetailSheet } from "./debt-detail-sheet";
+export { HistorySheet } from "./history-sheet";
 
 // Tab Components
 export { ExpensesTab } from "./expenses-tab";

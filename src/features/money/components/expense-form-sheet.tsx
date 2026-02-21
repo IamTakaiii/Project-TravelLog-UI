@@ -13,7 +13,10 @@ import { SplitConfiguration } from "./split-configuration";
 import { useState, useMemo } from "react";
 import { CurrencyCode, Expense } from "../types";
 import { useExpenseForm, FormMode } from "../hooks/use-expense-form";
-import { calculateEqualSplit, validateExactSplit } from "../utils/split-calculator";
+import {
+	calculateEqualSplit,
+	validateExactSplit,
+} from "../utils/split-calculator";
 import { useQuery } from "@tanstack/react-query";
 import { tripQueryOptions } from "@/features/trips/queries/trips-queries";
 import { fundsQueryOptions } from "../queries/fund-queries";
@@ -49,7 +52,7 @@ export function ExpenseFormSheet({
 
 	const users = useMemo(() => {
 		if (!trip || !trip.members) return [];
-		return trip.members.map(m => ({
+		return trip.members.map((m) => ({
 			id: m.userId,
 			name: m.user.name || "Unknown User",
 			avatar: m.user.image || "",
@@ -57,7 +60,6 @@ export function ExpenseFormSheet({
 	}, [trip]);
 
 	const { data: funds = [] } = useQuery(fundsQueryOptions(tripId));
-
 
 	const { form, mode, setMode, isEditing, isPending, onSubmit } =
 		useExpenseForm({
@@ -118,7 +120,10 @@ export function ExpenseFormSheet({
 
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-						<AmountHeroInput control={form.control} tripCurrency={(currency as CurrencyCode) || "THB"} />
+						<AmountHeroInput
+							control={form.control}
+							tripCurrency={(currency as CurrencyCode) || "THB"}
+						/>
 
 						<BasicInfoFields control={form.control} mode={mode} />
 
@@ -137,12 +142,21 @@ export function ExpenseFormSheet({
 									name="splitType"
 									render={({ field }) => {
 										const amount = form.watch("amount") || 0;
-										const watchedCurrency = form.watch("currency") as CurrencyCode;
+										const watchedCurrency = form.watch(
+											"currency"
+										) as CurrencyCode;
 										const involvedUserIds = form.watch("involvedUserIds") || [];
-										const watchedExactAmounts = form.watch("exactAmounts") ?? {};
+										const watchedExactAmounts =
+											form.watch("exactAmounts") ?? {};
 
-										const equalSplit = calculateEqualSplit(amount, involvedUserIds);
-										const exactValidation = validateExactSplit(amount, watchedExactAmounts);
+										const equalSplit = calculateEqualSplit(
+											amount,
+											involvedUserIds
+										);
+										const exactValidation = validateExactSplit(
+											amount,
+											watchedExactAmounts
+										);
 
 										return (
 											<FormItem>
@@ -202,4 +216,3 @@ export function ExpenseFormSheet({
 		</Sheet>
 	);
 }
-

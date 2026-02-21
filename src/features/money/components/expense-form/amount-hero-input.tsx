@@ -1,7 +1,12 @@
 import { Control, useWatch } from "react-hook-form";
 import { DEFAULT_CURRENCIES } from "../../constants/currencies";
 import { ExpenseFormValues } from "../../schemas/expense-schema";
-import { FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
+import {
+	FormField,
+	FormItem,
+	FormControl,
+	FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FormSelect } from "@/components/ui/form-select";
 import { useExchangeRates } from "../../hooks/use-exchange-rates";
@@ -16,10 +21,18 @@ interface AmountHeroInputProps {
 	onRateChange?: (rate: number) => void;
 }
 
-export function AmountHeroInput({ control, tripCurrency, onRateChange }: AmountHeroInputProps) {
+export function AmountHeroInput({
+	control,
+	tripCurrency,
+	onRateChange,
+}: AmountHeroInputProps) {
 	// Fetch rates with tripCurrency as base: getRate(X) = "how many tripCurrency per 1 X"
-	const { getRate, isLoading, isError, lastUpdated } = useExchangeRates(tripCurrency);
-	const selectedCurrency = useWatch({ control, name: "currency" }) as CurrencyCode;
+	const { getRate, isLoading, isError, lastUpdated } =
+		useExchangeRates(tripCurrency);
+	const selectedCurrency = useWatch({
+		control,
+		name: "currency",
+	}) as CurrencyCode;
 
 	// Rate = how many tripCurrency units per 1 unit of selected currency
 	const rate = getRate(selectedCurrency ?? tripCurrency);
@@ -77,13 +90,20 @@ export function AmountHeroInput({ control, tripCurrency, onRateChange }: AmountH
 						"Loading rate..."
 					) : isError ? (
 						<span className="text-amber-500">
-							⚠ Fallback: 1 {selectedCurrency} ≈ {tripSymbol}{rate.toFixed(2)} {tripCurrency}
+							⚠ Fallback: 1 {selectedCurrency} ≈ {tripSymbol}
+							{rate.toFixed(2)} {tripCurrency}
 						</span>
 					) : (
 						<>
-							<span className="text-emerald-500 font-bold">●</span>{" "}
-							1 {selectedCurrency} = {tripSymbol}{rate.toFixed(selectedCurrency === "JPY" || tripCurrency === "JPY" ? 2 : 2)} {tripCurrency}
-							{lastUpdated && <span className="opacity-60"> (updated {lastUpdated})</span>}
+							<span className="text-emerald-500 font-bold">●</span> 1{" "}
+							{selectedCurrency} = {tripSymbol}
+							{rate.toFixed(
+								selectedCurrency === "JPY" || tripCurrency === "JPY" ? 2 : 2
+							)}{" "}
+							{tripCurrency}
+							{lastUpdated && (
+								<span className="opacity-60"> (updated {lastUpdated})</span>
+							)}
 						</>
 					)}
 				</p>
@@ -91,6 +111,3 @@ export function AmountHeroInput({ control, tripCurrency, onRateChange }: AmountH
 		</div>
 	);
 }
-
-
-
