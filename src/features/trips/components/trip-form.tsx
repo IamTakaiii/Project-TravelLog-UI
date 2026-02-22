@@ -111,7 +111,7 @@ export function TripForm({
 						name="currency"
 						label="Currency"
 						options={currencyOptions}
-						disabled={isLoading}
+						disabled={isLoading || isEditMode}
 					/>
 
 					<FormInput
