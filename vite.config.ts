@@ -18,7 +18,10 @@ export default defineConfig({
 					[
 						"@react-dev-inspector/babel-plugin",
 						{
-							excludes: ["src/components/ui/form.tsx"],
+							excludes: [
+								"src/components/ui/form.tsx",
+								"src/features/money/components/debt-summary.tsx",
+							],
 						},
 					],
 				],

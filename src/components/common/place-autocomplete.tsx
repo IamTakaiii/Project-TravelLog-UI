@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { toast } from "sonner";
 import {
 	Check,
 	ChevronsUpDown,
@@ -125,8 +126,19 @@ function PlaceAutocompleteInner<T extends FieldValues>({
 					fields: ["displayName", "formattedAddress", "location"],
 				});
 
-				const address =
-					place.formattedAddress || place.displayName || prediction.text.text;
+				// Prefer "DisplayName, Address" so POIs like "Tokyo DisneySea" are
+				// shown by name instead of just a nearby street address.
+				const displayName = place.displayName;
+				const formattedAddress = place.formattedAddress;
+
+				let address: string;
+				if (displayName && formattedAddress) {
+					address = `${displayName}, ${formattedAddress}`;
+				} else {
+					address =
+						displayName || formattedAddress || prediction.text.text;
+				}
+
 				field.onChange(address);
 				setSuggestions([]);
 				setInputValue(address);
@@ -139,37 +151,75 @@ function PlaceAutocompleteInner<T extends FieldValues>({
 	);
 
 	const handleCurrentLocation = useCallback(() => {
-		if (!navigator.geolocation) return;
+		if (!navigator.geolocation) {
+			toast.error("Geolocation is not supported by your browser");
+			return;
+		}
 		setIsLoadingLocation(true);
 
-		navigator.geolocation.getCurrentPosition(
-			async ({ coords: { latitude, longitude } }) => {
-				try {
-					const { Geocoder } = (await google.maps.importLibrary(
-						"geocoding"
-					)) as google.maps.GeocodingLibrary;
-					const geocoder = new Geocoder();
-					const { results } = await geocoder.geocode({
-						location: { lat: latitude, lng: longitude },
-					});
-					if (results[0]) {
-						const address = results[0].formatted_address;
-						field.onChange(address);
-						setInputValue(address);
-						setOpen(false);
-					}
-				} catch (err) {
-					console.error("[PlaceAutocomplete] Reverse geocode error:", err);
-				} finally {
-					setIsLoadingLocation(false);
+		const reverseGeocode = async (latitude: number, longitude: number) => {
+			try {
+				const { Geocoder } = (await google.maps.importLibrary(
+					"geocoding"
+				)) as google.maps.GeocodingLibrary;
+				const geocoder = new Geocoder();
+				const { results } = await geocoder.geocode({
+					location: { lat: latitude, lng: longitude },
+				});
+				if (results[0]) {
+					const address = results[0].formatted_address;
+					field.onChange(address);
+					setInputValue(address);
+					setOpen(false);
 				}
-			},
-			(err) => {
-				console.error("[PlaceAutocomplete] Geolocation error:", err);
+			} catch (err) {
+				console.error("[PlaceAutocomplete] Reverse geocode error:", err);
+				toast.error("Could not determine your address");
+			} finally {
 				setIsLoadingLocation(false);
-			},
-			{ timeout: 10000, maximumAge: 60000, enableHighAccuracy: true }
-		);
+			}
+		};
+
+		const onSuccess = (position: GeolocationPosition) => {
+			const { latitude, longitude } = position.coords;
+			void reverseGeocode(latitude, longitude);
+		};
+
+		const onError = (err: GeolocationPositionError) => {
+			console.error("[PlaceAutocomplete] Geolocation error:", err);
+
+			// If high-accuracy failed, retry without it as a fallback
+			if (err.code === err.POSITION_UNAVAILABLE) {
+				navigator.geolocation.getCurrentPosition(
+					onSuccess,
+					(fallbackErr) => {
+						console.error(
+							"[PlaceAutocomplete] Geolocation fallback error:",
+							fallbackErr
+						);
+						setIsLoadingLocation(false);
+						toast.error(
+							"Unable to get your location. Please check your location settings."
+						);
+					},
+					{ timeout: 15000, maximumAge: 300000, enableHighAccuracy: false }
+				);
+				return;
+			}
+
+			setIsLoadingLocation(false);
+			if (err.code === err.PERMISSION_DENIED) {
+				toast.error("Location permission denied. Please allow location access.");
+			} else {
+				toast.error("Unable to get your location. Please try again.");
+			}
+		};
+
+		navigator.geolocation.getCurrentPosition(onSuccess, onError, {
+			timeout: 10000,
+			maximumAge: 60000,
+			enableHighAccuracy: true,
+		});
 	}, [field]);
 
 	const showEmpty = !inputValue || inputValue.length < 2;
@@ -311,7 +361,12 @@ function PlaceAutocompleteInner<T extends FieldValues>({
 											const main =
 												prediction.mainText?.text ?? prediction.text.text;
 											const secondary = prediction.secondaryText?.text ?? "";
-											const isSelected = field.value === prediction.text.text;
+											const isSelected =
+												!!field.value &&
+												(field.value === prediction.text.text ||
+													(field.value as string).startsWith(
+														prediction.mainText?.text ?? ""
+													));
 
 											return (
 												<CommandItem
